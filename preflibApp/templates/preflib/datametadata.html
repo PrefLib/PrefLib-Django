@@ -1,0 +1,115 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    {% include 'includes/htmlHeaderContent.html' %}
+	<title>Preflib</title>
+</head>
+
+<body>
+
+{% include 'includes/header.html' %}
+
+<div id="content">
+
+<h1>Metadata</h1>
+
+<p>We have annotated most of our data files to be able to have a more fine grain analysis of the data we host. This allow for instance to be able to have a more interesting <a href="{% url 'preflibapp:dataSearch' %}">search tool</a>. For each data file, its metadata are presented in the page of the corresponding datapatch.</p>
+
+<p>In the following we present all the metadata we are using. Note that they may not always be available as some of them require sophisticated computations and/or do not apply for types of data.</p>
+
+<h2>General properties</h2>
+
+<h3>Modification type</h3>
+
+<p>The modification type represents how the data was collected, or generated. See the data <a href="{% url 'preflibapp:dataFormat'%}#modification">format page</a> for more information.
+
+<h3>Number of alternatives</h3>
+
+<p>The number of alternatives is the number of elements agents had to vote on. It is only available for data representing orderings of the alternatives.</p> 
+
+<h3>Number of voters</h3>
+
+<p>The number of voters is the number of ballots that were submitted. For weighted matching graphs
+
+<h3>Sum of vote count</h3>
+
+<p>The sum of the weights of the ballots cast. See the data <a href="{% url 'preflibapp:dataFormat'%}#election">format page</a> for more information.
+
+<h3>Number of unique orders</h3>
+
+<p>The number of distinct ballots that were casts.</p>
+
+<h3>Number of nodes</h3>
+
+<p>For data representing graphs, it represents the number of nodes in the graph.</p>
+
+<h3>Number of edges</h3>
+
+<p>For data representing graphs, it represents the number of edges in the graph.</p>
+
+<h3>File size</h3>
+
+<p>The size of the data file.</p>
+
+<h2>Preference structure</h2>
+
+<h3>Strict orders</h3>
+
+<p>A boolean value set to True if all the ballots that were cast represent strict linear orders.</p>
+
+<h3>Complete orders</h3>
+
+<p>A boolean value set to True if all the ballots that were cast represent complete linear orders.</p>
+
+<h3>Approval profile</h3>
+
+<p>A boolean value set to True if the ballots can be interpreted as approval ballots. That is the case if, either every ballot consist of a single set of indifferences, or every ballots is complete and consist of two set of indifferences.</p>
+
+<h3>Single-peaked</h3>
+
+<p>A boolean value set to True if the set of ballots cast represents <a href="https://en.wikipedia.org/wiki/Single_peaked_preferences">single-peaked preferences</a>. To check this property, we used the <a href="https://github.com/zmf6921/incompletesp">code of Zack Fitzsimmons and Martin Lackner</a> available on GitHub that we want to thank here.</p>
+
+<h3>Single-crossing</h3>
+
+<p>A boolean value set to True if the set of ballots cast represents single-crossing preferences.
+
+<h2>Ballots structure</h2>
+
+<h3>Size of the largest ballot</h3>
+
+<p>Given a set of ballots, how many alternatives have been submitted in the ballot with the highest number of submitted alternatives. In data representing complete orders (<a href="{% url 'preflibapp:datatypes'%}#soc">SOC</a> and <a href="{% url 'preflibapp:datatypes'%}#toc">TOC</a>), this should be equal to the number of alternatives.</p>
+
+<h3>Size of the smallest ballot</h3>
+
+<p>Given a set of ballots, how many alternatives have been submitted in the ballot with the smallest number of submitted alternatives. In data representing complete orders (<a href="{% url 'preflibapp:datatypes'%}#soc">SOC</a> and <a href="{% url 'preflibapp:datatypes'%}#toc">TOC</a>), this should be equal to the number of alternatives.</p>
+
+<h3>Maximum number of indifferences</h3>
+
+<p>In a given ballot, an indifference is a position in the order such that more than one alternative is ranked at this position. Given a set of ballots, the maximum number of indifferences is the number of indifferences in the ballot with the highest number of them. In data witout ties (<a href="{% url 'preflibapp:datatypes'%}#soc">SOC</a> and <a href="{% url 'preflibapp:datatypes'%}#soi">SOI</a>), this should be 0. </p>
+
+<h3>Minimum number of indifferences</h3>
+
+<p>In a given ballot, an indifference is a position in the order such that more than one alternative is ranked at this position. Given a set of ballots, the minimum number of indifferences is the number of indifferences in the ballot with the smallest number of them. In data witout ties (<a href="{% url 'preflibapp:datatypes'%}#soc">SOC</a> and <a href="{% url 'preflibapp:datatypes'%}#soi">SOI</a>), this should be 0. </p>
+
+<h3>Size of the largest indifference</h3>
+
+<p>In a given ballot, an indifference is a position in the order such that more than one alternative is ranked at this position. Given a set of ballots, the size of the largest indifference is the maximal number of alternatives which are tied in a ballot. In data witout ties (<a href="{% url 'preflibapp:datatypes'%}#soc">SOC</a> and <a href="{% url 'preflibapp:datatypes'%}#soi">SOI</a>), this should be 0. </p>
+
+<h3>Size of the smallest indifference</h3>
+
+<p>In a given ballot, an indifference is a position in the order such that more than one alternative is ranked at this position. Given a set of ballots, the size of the largest indifference is the maximal number of alternatives which are tied in a ballot. In data witout ties (<a href="{% url 'preflibapp:datatypes'%}#soc">SOC</a> and <a href="{% url 'preflibapp:datatypes'%}#soi">SOI</a>), this should be 0. </p>
+
+<h2>Graph structure</h2>
+
+<h3>Condorcet winner</h3>
+
+<p>A boolean value set to True if the ballot represented as a graph admits a <a href="https://en.wikipedia.org/wiki/Condorcet_criterion">Condorcet winner</a>.</p>
+
+</div>
+</body>
+
+{% include 'includes/footer.html' %}
+
+</html>

@@ -1,0 +1,36 @@
+{% if paginator.num_pages > 1 %}
+	<div class="pagination_wrapper">
+		<div class="pagination">
+			{% if page != 1 %}
+				<a href="?page={{ page|add:"-1" }}">&laquo;</a>
+			{% else %}
+				<a>&laquo;</a>
+			{% endif %}
+
+			{% for p in pagesBefore %}
+				{% if p == "..." %}
+					<a>...</a>
+				{% else %}	
+					<a href="?page={{ p }}">{{ p }}</a>
+				{% endif %}
+			{% endfor %}
+
+			<a class="active">{{ page }}</a>
+
+			{% for p in pagesAfter %}
+				{% if p == "..." %}
+					<a>...</a>
+				{% else %}	
+					<a href="?page={{ p }}">{{ p }}</a>
+				{% endif %}
+			{% endfor %}
+
+
+			{% if page != paginator.num_pages %}
+				<a href="?page={{ page|add:1 }}">&raquo;</a>
+			{% else %}
+				<a>&raquo;</a>
+			{% endif %}
+		</div>
+	</div>
+{% endif %}

@@ -1,0 +1,60 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	{% include 'includes/htmlHeaderContent.html' %}
+	<title>Preflib</title>
+</head>
+
+<body>
+
+{% include 'includes/header.html' %}
+
+<div id="content">
+
+<h1>Tools</h1>
+
+<p>Here are few tools that could be useful for anyone looking to work with preference data.</p>
+
+<h2>PrefLib Tools</h2>
+
+<p>We have developed a small set of lightweight tools in Python3 for working with PrefLib and generating synthetic data. Please download the current version of the tools below and check the README for full details. PrefLib tools are covered under the BSD License and is available at the <a href="https://github.com/nmattei/PrefLib-Tools">PrefLib-Tools GitHub Page</a>.</p>
+
+<h3>Version Comments and History:</h3>
+<p>
+<ul>
+	<li><a href="https://github.com/nmattei/PrefLib-Tools">Download PrefLib Tools at GitHub!</a></li>
+	<li>Release 0.2: Added a robust command line interface for generating data. Now includes code to test for various domain restrictions such as single-peakedness.</li>
+	<li>Release 0.1: Read and write the Election data and Matching data PrefLib formats. Generate synthetic datasets for any number of candidates and voters for: Mallows Mixture Models, Impartial Culture, Impartial Anonymous Culture, Urn Models, Single Peaked Impartial Culture.</li>
+</ul>
+</p>
+
+<h2>Contributed Tools</h2>
+
+<p>Empirical experiments with real data are becoming a more fundamental part of work in computational social choice. In addition to a lightweight set of tools for working with data from PrefLib we also host documentation for several of these project. Please contact Nick if you have code that you would like to share with the community.</p>
+
+<h3><a href="{% url 'preflibapp:toolsIVS' %}">Iterative Voting Simulator</a></h3>
+
+<p>This is a voting simulator built for the paper <a href="https://arxiv.org/abs/1404.4688">A Local-Dominance Theory of Voting Equilibria</a>. We are releasing its source code to be expanded and enhanced by the community. However, it is quite versatile in its current construction, and can be used for various simulations "as is".</p>
+
+<p><a href="{% url 'preflibapp:toolsIVS' %}">Learn more.</a></p>
+
+<h3><a href="{% url 'preflibapp:toolsKDG' %}">Kidney Dataset Generator</a></h3>
+
+<p>Kidney failure is a life-threatening health issue that affects hundreds of thousands of people worldwide. In the US alone, the waitlist for a kidney transplant has over 100,000 patients. This list is growing: demand far outstrips supply.This codebase includes: structural elements of kidney exchange like "pools", "hospitals", and "pairs", a couple of kidney exchange graph generators, a couple of kidney exchange solvers (max weight, failure-aware, fairness-aware, individually rational), and a dynamic kidney exchange simulator.</p>
+
+<p><a href="{% url 'preflibapp:toolsKDG' %}">Learn more.</a></p>
+
+<h3><a href="{% url 'preflibapp:toolsCRIS' %}">CRISNER: A Qualitative Preference Reasoner for CP-nets, TCP-nets, CP-Theories</a></h3>
+
+<p>CRISNER stands for Conditional and Relative Importance Statement Network PrEference Reasoner. It can reason about ceteris paribus preference languages such as CP-nets, TCP-nets and CP-theories. Given a preference specification (a set of preference statements) in one of these languages, CRISNER succinctly encodes its induced preference graph (IPG) into a Kripke structure model in the language of the NuSMV model checker. This Kripke model is reachability-equivalent to the induced preference graph. CRISNER generates the model only once, and then translates each query posed against this preference specification into a temporal logic formula in computation-tree temporal logic (CTL) such that the formula is verified in the Kripke model if and only if the query holds true according to the ceteris paribus semantics of the preference language. The model checker either affirms the query or returns with a counterexample. For answering queries related to equivalence and subsumption checking of two sets of preferences, CRISNER constructs a combined IPG and uses temporal queries in CTL to identify whether every dominance that holds in one also holds in the other, and vice-versa.</p>
+
+<p><a href="{% url 'preflibapp:toolsCRIS' %}">Learn more.</a></p>
+
+</div>
+</body>
+
+{% include 'includes/footer.html' %}
+
+</html>

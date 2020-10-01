@@ -1,0 +1,69 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	{% include 'includes/htmlHeaderContent.html' %}
+	<title>Preflib</title>
+</head>
+
+<body>
+
+{% include 'includes/header.html' %}
+
+<div id="content">
+
+<h1>Create an user</h1>
+
+{% if form.errors %}
+	<p id="center_p"> <strong> An error has occured, please retry ! </strong> </p>
+    {% for field in form %}
+        {% for error in field.errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endfor %}
+    {% for error in form.non_field_errors %}
+        <div class="alert alert-danger">
+            <strong>{{ error|escape }}</strong>
+        </div>
+    {% endfor %}
+{% endif %}
+
+{% if created %} 
+
+	<p>Your account has been created. You will be redirected in 3 seconds.</p>
+
+	<script>
+		function redirect () {
+			window.location.href = "{% url 'preflibapp:ownadmin' %}" ;
+		}
+		setTimeout(redirect, 3000); 
+	</script>
+
+{% else %}
+	<div id="form">
+		<form method="post" action="{% url 'preflibapp:createUser' %}">
+			{% csrf_token %}
+
+			<p id="center_p">
+			<table align="center">
+			{% for field in form %}
+				<tr>
+					<td>{{ field.label_tag }}</td>
+					<td>{{ field }}</td>
+				</tr>
+			{% endfor %}
+			</table>
+			</p>
+			<p id="center_p"><input id="submit_button" type="submit" value="Create the user"/><p>
+		</form>
+	</div>
+{% endif %}
+</div>
+</body>
+
+{% include 'includes/footer.html' %}
+
+</html>

@@ -1,0 +1,48 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	{% include 'includes/htmlHeaderContent.html' %}
+	<title>Preflib</title>
+</head>
+
+<body>
+
+{% include 'includes/header.html' %}
+
+<div id="content">
+
+<h1>About</h1>
+
+<p> PrefLib is a reference library of preference data and links assembled by <a href="http://www.nickmattei.net">Nicholas Mattei</a>, <a href="http://www.cse.unsw.edu.au/~tw/">Toby Walsh</a> and lately <a href="http://simonrey.fr">Simon Rey</a>. This site and library is proudly supported by the <a href="https://research.csiro.au/adt/">Algorithmic Decision Theory group</a> at <a href="https://www.data61.csiro.au/">Data61</a>.</p>
+
+<p>We want to provide a comprehensive resource for the multiple research communities that deal with preferences, including computational social choice, recommender systems, data mining, machine learning, and combinatorial optimization, to name just a few. </p>
+
+<h2> Citation Policy </h2>
+
+<p>We ask that you provide a reference to our repository when publishing research based on data gathered here as this will allow other researchers to find us. Additionally, some of our datasets have citation policies specific to them, please comply with these requests. Many hours have been spent to gather, organize, and publish these datasets and we want to provide credit where credit is due.</p>
+
+<ul>
+	<li>Mattei, Nicholas and Walsh, Toby. PrefLib: A Library of Preference Data. Proceedings of Third International Conference on Algorithmic Decision Theory (ADT 2013). Springer, Lecture Notes in Artificial Intelligence, November 13-15, 2013.
+
+	<p id="center_p" style="font-size: inherit;"><span id="downloadButton"><a href="{% static 'preflibADTPaper.pdf' %}">Download the PDF file</a></span> &nbsp; &nbsp; <span id="downloadButton"><a href="{% static 'preflibADTCite.txt' %}" target="_blank">Download Bibtex citation</a></span></p></li>
+
+	<li>Mattei, Nicholas, and Walsh, Toby. A Preflib.org Retrospective: Lessons Learned and New Directions. Trends in Computational Social Choice. AI Access Foundation (2017): 289-309.
+
+	<p id="center_p" style="font-size: inherit;"><span id="downloadButton"><a href="{% static 'preflibTrendsComSoCChapter.pdf' %}">Download the PDFfile</a></span> &nbsp; &nbsp; <span id="downloadButton"><a href="{% static 'preflibTrendsComSoCCite.txt' %}" target="_blank">Download Bibtex citation</a></span></p></li>
+</ul>
+
+<p>If you use data from PrefLib in a publication please let us know and we will add it to our <a href="{% url 'preflibapp:papers' %}">Papers page</a>.</p>
+
+<h2> Donation Policy </h2>
+
+<p> Please contact <a href="http://www.nickmattei.net">Nicholas Mattei</a> via email at nsmattei{at}gmail{dot}com or <a href="http://simonrey.fr">Simon Rey</a> at srey{at}uva{dot}nl to contribute a data set. We will host the data set and work with you on keeping it up to date. We rely on the support of the community in order to increase the usefulness and coverage of this site. Please don't hesitate to contact us! </p>
+
+</div>
+
+</body>
+
+{% include 'includes/footer.html' %}
+
+</html>

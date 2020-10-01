@@ -1,0 +1,8 @@
+@article{mattei2017apreflib,
+  title={APreflib. ORG Retrospective: Lessons Learned and New Directions},
+  author={Mattei, Nicholas and Walsh, Toby},
+  journal={Trends in Computational Social Choice. AI Access Foundation},
+  pages={289--309},
+  year={2017}
+}
+

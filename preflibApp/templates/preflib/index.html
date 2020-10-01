@@ -1,0 +1,85 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	{% include 'includes/htmlHeaderContent.html' %}
+	<title>Preflib</title>
+</head>
+
+<body>
+
+{% include 'includes/header.html' %}
+
+<div id="content">
+	<div class="indexContent-wrap">
+		<div class="indexMainContent">
+			<h1>PrefLib</h1>
+			<p> PrefLib is a reference library of preference data and links assembled by <a href="http://www.nickmattei.net">Nicholas Mattei</a>, <a href="http://www.cse.unsw.edu.au/~tw/">Toby Walsh</a> and lately <a href="http://simonrey.fr">Simon Rey</a>. This site and library is proudly supported by the <a href="https://research.csiro.au/adt/">Algorithmic Decision Theory group</a> at <a href="https://www.data61.csiro.au/">Data61</a>.</p>
+
+			<p>We want to provide a comprehensive resource for the multiple research communities that deal with preferences, including computational social choice, recommender systems, data mining, machine learning, and combinatorial optimization, to name just a few. </p>
+
+			<p> For more information on PrefLib and some helpful tips on using it, please see Nick's Tutorial <a href="http://www.explore14.preflib.org/?page_id=11">Slides and Code</a> from <a href="http://www.explore14.preflib.org/">EXPLORE 2014</a>. Check out the <a href="{% url 'preflibapp:datatypes' %}">data type</a> page to learn more about the kind of data we provide. </p>
+
+			<p> Please see the <a href="{% url 'preflibapp:about' %}">about</a> page for information about the site, contacting us, and our citation policy. We rely on the support of the community in order to grow the usefulness of this site. To contribute, please contact <a href="http://www.nickmattei.net">Nicholas Mattei</a> at: nsmattei{at}gmail or <a href="http://simonrey.fr">Simon Rey</a> at: s.j.rey{at}uva{dot}nl. </p>
+
+			{% if randomProp %}
+				<p id="center_p" style="margin-top: 50px;">
+					{% with 'data/'|add:randomProp.dataFile.dataPatch.dataSet.extension|add:'/'|add:randomProp.dataFile.dataPatch.dataSet.abbreviation|add:'/img/'|add:randomProp.image as imgFile %}
+						<a href="{% url 'preflibapp:datapatch' randomProp.dataFile.dataPatch.dataSet.extension randomProp.dataFile.dataPatch.dataSet.seriesNumber randomProp.dataFile.dataPatch.seriesNumber %}">
+							<img src="{% static imgFile %}" class="indexPropImg">
+						</a>
+					{% endwith %}
+				</p>
+
+				<p id="center_p">
+					<a href="{% url 'preflibapp:datapatch' randomProp.dataFile.dataPatch.dataSet.extension randomProp.dataFile.dataPatch.dataSet.seriesNumber randomProp.dataFile.dataPatch.seriesNumber %}">{{ randomProp.dataFile.fileName }}</a> from the dataset <a href="{% url 'preflibapp:dataset' randomProp.dataFile.dataPatch.dataSet.extension randomProp.dataFile.dataPatch.dataSet.seriesNumber %}">{{ randomProp.dataFile.dataPatch.dataSet.name }}</a>
+				</p>
+			{% endif %}
+
+		</div>
+
+		<div class="indexRightContent">
+			<h2>In Brief</h2>
+			<p> We currently host:</p>
+			<ul>
+				<li> {{ nbDataType }} types of data </li>
+				<li> {{ nbDataSet }} datasets </li>
+				<li> {{ nbDataFile }} data files </li>
+				<li> More than {{ totalSize }} Gb. of data </li>
+			</ul>
+
+			<h2>Other Links</h2>
+
+			<p> Here are some links that you might find relevant as well.</p>
+
+			<ul>
+				<li><a href="http://democratix.dbai.tuwien.ac.at/">DEMOCRATIX:</a> A Declarative Approach to Winner Determination</li>
+				<li><a href="https://pnyx.dss.in.tum.de/">Pnyx:</a> An Easy to Use Aggregation Tool</li>
+				<li><a href="https://whale.imag.fr/">Whale3:</a> Which Alternative is Elected?</li>
+				<li><a href="http://votelib-hdm.ise.bgu.ac.il/">VoteLib:</a> A Library of Voting Behavior</li>
+				<li><a href="http://www.ece.iastate.edu/~gsanthan/crisner.html">CRISNER:</a> A Qualitative Preference Reasoner</li>
+				<li><a href="http://www.spliddit.org/">Spliddit:</a> Quick and Easy Solutions to Fair Division Problems</li>
+				<li><a href="http://robovote.org/">RoboVote:</a> AI Driven Decisions</li>
+			</ul>
+
+			<p>To find more data check these websites.</p>
+			<ul>
+				<li><a href="http://archive.ics.uci.edu/ml/">UC Irvine Machine Learning Repository</a> </li>
+				<li><a href="http://www.grouplens.org/node/12">University of Minnesota GroupLens Data Sets</a> </li>
+				<li><a href="http://www.csplib.org/">CSPLib: A Problem Library for Constraints</a> </li>
+				<li><a href="http://research.microsoft.com/en-us/um/beijing/projects/letor/">Microsoft Learning to Rank Datasets</a> </li>
+				<li><a href="https://www.cs.ubc.ca/~hoos/SATLIB/index-ubc.html">SATLib: The Satisfiability Library</a> </li>
+				<li><a href="http://www.preference-learning.org/">Preference-Learning.org</a> </li>
+				<li><a href="http://www.kamishima.net/sushi/">Toshihiro Kamishima's Sushi Preference Dataset</a> </li>
+				<li><a href="https://maxsat-evaluations.github.io/">MAX-SAT Evaluations and Datasets</a></li>
+				<li><a href="http://snap.stanford.edu/">Stanford Network Analysis Project</a></li>
+			</ul>
+		</div>
+	</div>
+</div>
+
+{% include 'includes/footer.html' %}
+
+</body>
+</html>

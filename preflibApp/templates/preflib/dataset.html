@@ -1,0 +1,100 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	{% include 'includes/htmlHeaderContent.html' %}
+	<title>Preflib</title>
+</head>
+
+<body>
+
+{% include 'includes/header.html' %}
+
+<div id="content">
+<h1>{{ dataset.extension }}-{{ dataset.seriesNumber }}: {{ dataset.name }}</h1>
+
+<div class="indexContent-wrap">
+	<div class="indexMainContent">
+		{% autoescape off %}
+		<p>{{ dataset.description }}</p>
+		{% endautoescape %}
+
+		{% autoescape off %}
+		<p> Required citations: {{ dataset.requiredCitations }} </p>	
+		{% endautoescape %}
+
+		{% autoescape off %}
+		<p> Selected studies: {{ dataset.selectedStudies }} </p>
+		{% endautoescape %}
+
+		<p id="center_p"><a href="{% static zipfilepath %}" id="downloadButton">Click here to download the all data files</a></p>
+	</div>
+
+	<div class="indexRightContent">
+		<h2>Details</h2>
+		<ul>
+			<li> Number of files: {{ nbFiles }}</li>
+			<li> Total size: {{ totalSize }} Mo.</li>
+			<li> Data types: {{ datatypes }}</li>
+			<li> Publication date: {{ dataset.publicationDate }} </li>
+			<li> Last modification: {{ dataset.modificationDate }} </li>
+		</ul>
+	</div>
+</div>
+
+<h2>All the patches of the dataset </h2>
+
+{% include 'includes/paginator.html' %}
+
+<div class="patchGrid">
+
+	{% for patch in patches %}
+		<div class="patchCell">
+			<h3><a href="{% url 'preflibapp:datapatch' dataset.extension dataset.seriesNumber patch.seriesNumber %}">{{ patch.name }}: <span>{{ patch.description }}</span></a></h3>
+
+			<div class="patchCellContent">
+
+				{% with patch.datafile_set.all|dictsortreversed:"dataType"|dictsortreversed:"modificationType" as sortedFiles %}
+					<p>
+						{% with 'data/'|add:dataset.extension|add:'/'|add:dataset.abbreviation|add:'/img/'|add:sortedFiles.0.proptofile.image as imgFile %}
+							{% if imgFile %}
+								<a href="{% url 'preflibapp:datapatch' dataset.extension dataset.seriesNumber patch.seriesNumber %}"><img src="{% static imgFile %}"></a>
+							{% endif %}
+						{% endwith %}
+					</p>
+
+					<table align="center">
+						<tr>
+							<th id="datasettable">Modification</th>
+							<th id="datasettable">Type</th>
+							<th id="datasettable">File Size</th>
+							<th id="datasettable"></th>
+						</tr>
+						{% for file in sortedFiles %}
+							<tr>
+							<td><a href="{% url 'preflibapp:dataFormat'%}#modification">{{ file.modificationType }}</a></td>
+							<td><a href="{% url 'preflibapp:datatypes'%}#{{file.dataType}}">{{ file.dataType }}</a></td>
+							<td>{{ file.fileSize }} bytes</td>
+								{% with 'data/'|add:dataset.extension|add:'/'|add:dataset.abbreviation|add:'/'|add:file.fileName as f %}
+									<td><span id="downloadButton"><a href="{% static f %}">Download</a></span></td>
+								{% endwith %}
+							</tr>
+						{% endfor %}
+					</table>
+
+					<p>Learn more about this data patch <a href="{% url 'preflibapp:datapatch' dataset.extension dataset.seriesNumber patch.seriesNumber %}">on this page</a>.</p>
+				{% endwith %}
+			</div>
+		</div>
+	{% endfor %}
+</div>
+
+{% include 'includes/paginator.html' %}
+
+</div>
+</body>
+
+{% include 'includes/footer.html' %}
+
+</html>

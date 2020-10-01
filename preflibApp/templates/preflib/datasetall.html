@@ -1,0 +1,51 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	{% include 'includes/htmlHeaderContent.html' %}
+	<title>Preflib</title>
+</head>
+
+<body>
+
+{% include 'includes/header.html' %}
+
+<div id="content">
+
+<h1> {{ title|capfirst }} data sets </h1>
+
+{% if datasets %}
+
+	<p>Here is a list of all the data sets in the {{ title }} category, showing 20 per page.</p>
+	
+	{% include 'includes/paginator.html' %}
+	
+	{% for ds in datasets %}
+		<h2> <a href="{% url 'preflibapp:dataset' ds.extension ds.seriesNumber %}"> {{ ds.name }} </a></h2>
+
+		{% autoescape off %}
+		<p> {{ ds.description }} </p>
+		{% endautoescape %}
+
+		<p> Want to have more details, see <a href="{% url 'preflibapp:dataset' ds.extension ds.seriesNumber %}"> this page</a>.</p>
+
+		{% with 'data/'|add:ds.extension|add:'/'|add:ds.abbreviation|add:'/'|add:ds.abbreviation|add:'.zip' as zip_static %}
+			<p id="center_p">
+				<a href="{% static zip_static %}" id="downloadButton">Click here to download the dataset</a>
+			</p>
+		{% endwith %}
+	{% endfor %}
+
+	{% include 'includes/paginator.html' %}
+	
+{% else %}
+	<p> There are no such dataset right now, do you want to contribute ? </p>
+{% endif %}
+
+</div>
+</body>
+
+{% include 'includes/footer.html' %}
+
+</html>

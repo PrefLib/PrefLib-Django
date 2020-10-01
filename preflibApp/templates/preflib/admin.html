@@ -1,0 +1,78 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	{% include 'includes/htmlHeaderContent.html' %}
+	<title>Preflib</title>
+</head>
+
+<body>
+
+{% include 'includes/header.html' %}
+
+<div id="content">
+
+<h1> Website administration </h1>
+
+<p>This is the interface for administrating the website. Watch out your actions could be irreversible, especially when applied on the databases.</p>
+
+<div class="adminMenu">
+	<div class="adminTab">
+		<h4><a href="{% url 'preflibapp:adminNews' %}">Publish a news</a></h4> 
+		<div class="adminMenuContent"> 
+			<a href="{% url 'preflibapp:adminNews' %}"><img src="{% static 'adminLogo/news.png' %}" width="100%"></a>
+			<p> Use this form to publish a news that will appear on the <a href="{% url 'preflibapp:main' %}">main page</a> of the website. News might be disabled.</p>
+		</div>
+	</div>
+
+	<div class="adminTab">
+		<h4><a href="{% url 'preflibapp:adminPaper' %}">Add a paper</a></h4>
+		<div class="adminMenuContent">
+				<a href="{% url 'preflibapp:adminPaper' %}"><img src="{% static 'adminLogo/scholar.png' %}" width="100%"></a>
+				<p>Use this form to add a paper that has been published and which uses PrefLib, it will appear on the <a href="{% url 'preflibapp:papers' %}">Papers page</a>.</p>
+			</div>
+		</div>
+
+	<div class="adminTab">
+		<h4><a href="{% url 'preflibapp:createUser' %}">Create an user</a></h4>
+		<div class="adminMenuContent">
+			<a href="{% url 'preflibapp:createUser' %}"><img src="{% static 'adminLogo/user.png' %}" width="100%"></a>
+			<p> Use this form to create an user, you will be able to decide whether he or she should be a superuser or not.</p>
+		</div>
+	</div>
+</div>
+
+<div class="adminMenu">
+	<div class="adminTab">
+		<h4><a href="{% url 'preflibapp:adminZip' %}">Regenerate zip files</a></h4>
+		<div class="adminMenuContent">
+			<a href="{% url 'preflibapp:adminZip' %}"><img src="{% static 'adminLogo/zip.png' %}" width="100%"></a>
+			<p> Run the script to regenerate the zip files of the data. Should be used if new data sets have been added.</p>
+		</div>
+	</div>
+
+	<div class="adminTab">
+		<h4><a href="{% url 'preflibapp:adminAddDataset' %}">Add datasets</a></h4>
+		<div class="adminMenuContent">
+			<a href="{% url 'preflibapp:adminAddDataset' %}"><img src="{% static 'adminLogo/database.png' %}" width="100%"></a>
+			<p> Run the script to add PrefLib formatted datasets to the website. Use the zipping script afterward.</p>
+		</div>
+	</div>
+
+	<div class="adminTab">
+		<h4><a href="{% url 'admin:index' %}">Django admin</a></h4>
+		<div class="adminMenuContent">
+			<a href="{% url 'admin:index' %}"><img src="{% static 'adminLogo/django.png' %}" width="100%"></a>
+			<p> Enter the Django administration interface, you will be able to edit the database itself there.</p>
+		</div>
+	</div>
+
+</div>
+
+</div>
+</body>
+
+{% include 'includes/footer.html' %}
+
+</html>

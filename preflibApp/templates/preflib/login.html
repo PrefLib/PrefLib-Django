@@ -1,0 +1,65 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	{% include 'includes/htmlHeaderContent.html' %}
+	<title>Preflib</title>
+</head>
+
+<body>
+
+{% include 'includes/header.html' %}
+
+<div id="content">
+
+{% if user.is_authenticated %}
+	<h1> Logged in ! </h1>
+{% else %}
+	<h1>Log in</h1>
+{% endif %}
+
+{% if error %}
+	<p id="center_p"> <strong> An error has occured, please retry ! </strong> </p>
+{% endif %}
+
+{% if user.is_authenticated %}
+	<p> Welcome {{ user.username }} ! <p>
+	{% if next %}
+	{% else %}
+	<p>You will be redirected in 3 seconds.</p>
+	<script>
+		function redirect () {
+			window.location.href = "{% url 'preflibapp:main' %}" ;
+		}
+		setTimeout(redirect, 3000); 
+	</script>
+
+	{% endif %}
+{% else %}
+
+	{% if next %}
+		<p id="center_p"> <stong> You need to be connected if you want to go on this page ! </stong> </p>
+	{% endif %}
+
+	<p> Please enter your login informations to continue. </p>
+	<div id="form">
+		<form method="post" action="{% url 'preflibapp:login' %}">
+			{% csrf_token %}
+			{% for field in form %}
+					<p id="center_p">{{ field.label_tag }} {{ field }}</p>
+			{% endfor %}
+			<input type="hidden" name="next" value="{{ next }}"/>
+			<p id="center_p"><input id="submit_button" type="submit" value="Login"/><p>
+		</form>
+	</div>
+{% endif %}
+
+<br>
+
+</div>
+</body>
+
+{% include 'includes/footer.html' %}
+
+</html>

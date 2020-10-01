@@ -1,0 +1,64 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	{% include 'includes/htmlHeaderContent.html' %}
+	<title>Preflib</title>
+</head>
+
+<body>
+
+{% include 'includes/header.html' %}
+
+<div id="content">
+
+<h1>Regenerate the zip files</h1>
+
+{% if launchedText %}
+	{% autoescape off %}
+	<p> {{ launchedText }} </p>
+	{% endautoescape %}
+
+	<script>
+		function redirect () {
+			window.location.href = "{% url 'preflibapp:ownadmin' %}" ;
+		}
+		setTimeout(redirect, 5000); 
+	</script>
+
+{% else %}
+	<p>
+	<form method="post" action="{% url 'preflibapp:adminZip' %}">
+		{% csrf_token %}
+		<input type="hidden" name="zip" value="True"/>
+		<p> Click here to regenerate the zip files on the server: <input id="submit_button" type="submit" value="Run zipping process"/></p>
+	</form>
+	</p>
+
+	{% if log %}
+		<p> Here is the last log:</p>
+
+		<div id="news">
+		{% autoescape off %}
+		{{ log.log }}
+		{% endautoescape %}
+		</div>
+
+		<p> Want to see some other logs ?
+			<ul>
+			{% for l in logs %}
+				<li><a href="{% url 'preflibapp:adminLog' 'zip' l.logNum %}">Log #{{ l.logNum }} - {{ l.publicationDate }}</a></li>
+			{% endfor %}
+			</ul>
+		</p>
+	{% endif %}
+
+{% endif %}
+
+</div>
+</body>
+
+{% include 'includes/footer.html' %}
+
+</html>

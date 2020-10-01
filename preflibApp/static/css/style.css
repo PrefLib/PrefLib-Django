@@ -1,0 +1,882 @@
+/* ==================================================================
+                            General style                            
+================================================================== */
+
+:root {
+	--color-blue1:navy;
+	--color-blue2:#6495ED;
+	--color-blue3:#def1fa;
+}
+
+/* ===========
+Responsiveness
+=========== */
+
+@media screen and (max-width: 1100px) {
+	.largeScreen {display: none;}
+}
+
+@media screen and (max-width: 1300px) {
+	.extraLargeScreen {display: none;}
+}
+
+/* =============================
+Header with the name and logo 
+============================= */
+
+#header {
+	margin: 0;
+	padding: 0;
+}
+
+#banner {
+	background: var(--color-blue1);
+	color: white;
+	padding: 0px 5%;
+}
+
+.title-wrap {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.title p {
+	font-size: 250%;
+	font-weight: bold;
+	height: 1em;
+	line-height: 1em;
+	white-space: nowrap;
+	text-shadow: 0px 2px 0px black;
+}
+
+.title a {
+    text-decoration: none;
+    font-size: 130%;
+    font-weight: bold;
+    font-style: normal;
+    color:white;
+}
+
+.supportedBy img {
+	height: 65px;
+	vertical-align: middle;
+	margin: 0;
+}
+
+@media screen and (min-width: 1100px) and (max-width: 1300px) {
+	.supportedBy {display: none;}
+}
+
+/* ========
+Header menu 
+======== */
+
+.menu-wrap {
+	background: var(--color-blue2);
+	width: 100%;
+	color: white;
+	margin: 0;
+	padding: 0;
+}
+
+#menu ul, #menu li {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+}
+
+#menu li > a, #toggle-menu {
+	color: white;
+	padding: 10px 40px;
+	font-style: normal;
+	font-size: 120%;
+	transition: all linear 0.1s;
+}
+
+#menu > ul > li > a, #toggle-menu {
+	text-shadow: 0px 1px 0px black;
+	font-weight: bold;
+}
+
+#menu > ul > li > ul > li:hover {
+	background: var(--color-blue2);
+}
+
+#menu > ul > li > ul > li > ul > li {
+	background: var(--color-blue2);
+}
+
+#menu > ul > li > ul > li > ul > li:hover {
+	background: var(--color-blue3);
+}
+
+#menu > ul > li > ul > li > ul > li > a:hover {
+	color: black;
+}
+
+#menu .main-menu {
+	display: none;
+}
+
+#menu input[type="checkbox"], #menu ul span.drop-icon {
+	display: none;
+}
+
+#menu li {
+	position: relative;
+}
+
+#menu a {
+	display: block;
+	position: relative;
+}
+
+#menu ul li ul li {
+	display: block;
+}
+
+#menu .sub-menu {
+	display: none;
+}
+
+
+#menu li > a > div {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+#menu input[type="checkbox"]:checked + .sub-menu {
+	display: block;
+}
+
+#toggle-menu {
+	width: 100%;
+	font-size: 150%;
+}
+
+#toggle-menu > div {
+	display: flex;
+	justify-content: space-between;
+}
+
+.drop-icon {
+	text-shadow: 0px 1px 1px black;
+}
+
+#menucheck:checked + .main-menu {
+	display: block;
+}
+
+@media only screen and (max-width: 1100px) {
+	#menu li {
+		border-bottom: 2px solid var(--color-blue1);
+		background: var(--color-blue2);
+	}
+
+	#menu li:first-child {
+		border-top: 2px solid var(--color-blue1);
+	}
+
+	#menu ul li ul li:last-child {
+		border-bottom: none;
+	}
+
+	#toggle-menu > div {
+		padding: 0px 5%;
+	}
+	
+	#menu li > a {
+		padding: 10px 7%;
+		padding-right: 5%;
+	}
+	
+	#menu li > ul > li > a {
+		padding: 10px 9%;
+		font-size: 90%;
+	}
+
+	.sub-sub-menu label.drop-icon {
+		display: none;
+	}
+
+	#menu > ul > li > a {
+		font-weight: normal;
+	}
+
+	.sub-menu li {
+		background: var(--color-blue2);
+	}
+}
+
+@media only screen and (min-width: 1100px) {
+	#listspan {
+		display: none;
+	}
+
+	.menu-wrap nav {
+		margin: 0 5%;
+	}
+
+	#menu .main-menu {
+		display: block;
+	}
+
+	#toggle-menu, #menu label.drop-icon {
+		display: none;
+	}
+
+	#menu > ul > li:hover {
+		background: var(--color-blue1);
+	}
+
+	#menu > ul > li > ul > li {
+		background: var(--color-blue1);
+	}
+
+	#menu > ul > li {
+		position: relative;
+		display: inline-block;
+	}
+
+	#menu ul span.drop-icon {
+		display: inline-block;
+	}
+
+	#menu .sub-menu {
+		position: absolute;
+		top: 100%;
+		left: 0;
+		z-index: 3000;
+	}
+
+	#menu .sub-menu, #menu input[type="checkbox"]:checked + .sub-menu {
+		display: none;
+	}
+
+	#menu .sub-menu > li .sub-menu {
+		top: 0;
+		left: 100%;
+	}
+
+	#menu .sub-sub-menu > a {
+		padding-right: 15px;
+	}
+
+	#menu > ul > li:hover > .sub-menu {
+		display: block;
+	}
+
+	#menu ul li ul li.sub-sub-menu:hover ul {
+		display: block;
+	}
+}
+
+/* ===
+Footer
+=== */
+
+@media screen and (min-width: 1100px) {
+	.footer-wrap {display: inline-block;}
+
+	.footer-item {display: inline-block;}
+}
+
+.footer-wrap {
+	background: var(--color-blue2);
+	width: 100%;
+	color: white;
+	margin: 0px;
+    text-align: center;
+    padding: 1px 0px;
+    border-bottom: 15px solid var(--color-blue1);
+}
+
+.footer-item {
+	vertical-align: middle;
+	margin: 5px 30px;
+	text-align: center;
+}
+
+.footer-item div {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+}
+
+.footer-item a {
+	color: white;
+	font-style: normal;
+}
+
+.footer-wrap img {
+	height: 1em;
+}
+
+/* =============
+Main page layout 
+============= */
+
+html {
+	margin: 0;
+	padding: 0;
+	background: var(--color-blue3);
+}
+
+body {
+	margin: 0px 0px;
+}
+
+p {
+	text-align: justify;
+	font-size: 120%;
+}
+
+li {
+	font-size: 120%;
+}
+
+li li {
+	font-size: inherit;
+}
+
+a {
+	font-style: italic;
+	color: var(--color-blue2);
+	text-decoration: none;
+}
+
+#content {
+	background: white;
+	margin: 0px 5%;
+	padding: 1% 2%;
+}
+
+#center_p {
+	text-align: center;
+}
+
+/* ===
+Titles 
+=== */
+
+h1 {
+	text-align: center;
+	color: var(--color-blue1);
+	font-size: 220%;
+}
+
+h1 a {
+	text-decoration: none;
+	color : var(--color-blue1);
+	font-style: normal;
+}
+
+h2 {
+	text-align : center;
+	color : var(--color-blue1) ;
+	padding: 10px;
+	font-size: 150%;
+	border-top: 2px dashed var(--color-blue1);
+	border-bottom: 2px dashed var(--color-blue1);
+}
+
+h2 a {
+	text-decoration: none;
+	color : var(--color-blue1);
+	font-style: normal;
+}
+
+h2 span {
+	font-weight: normal;
+}
+
+
+h3 {
+	color: var(--color-blue1);
+	text-align: left;
+	font-size: 120%;
+}
+
+h3 a {
+	text-decoration: none;
+	color : var(--color-blue1);
+	font-style: normal;
+}
+
+h3 span {
+	font-weight: normal;
+}
+
+h4 {
+	color: var(--color-blue1);
+}
+
+h4 a {
+	text-decoration: none;
+	color: var(--color-blue1);
+	font-style: normal;
+}
+
+/* ===
+Strong 
+=== */
+
+strong  {
+	color: red;
+	text-decoration: bold;
+}
+
+/* ==========
+Tables layout 
+========== */
+
+table {
+    text-align: center;
+	border-spacing: 0;
+}
+
+th, td {
+	padding: 5px 5px;
+}
+
+#datatypetable {
+	padding: 10px 10px;
+	border-bottom: 1px solid #ddd;
+}
+
+/* =========
+Lists layout 
+========= */
+
+li {
+	margin: 10px 0px;
+}
+
+/* =======
+Pagination
+======= */
+
+.pagination_wrapper {
+	text-align: center;
+	margin: 10px 0;
+}
+
+.pagination {
+	display: inline-block;
+}
+
+.pagination a {
+	color: black;
+	float: left;
+	padding: 8px 16px;
+	text-decoration: none;
+	border-radius: 5px;
+}
+
+.pagination a.active {
+	background-color: var(--color-blue2);
+	color: white;
+	border-radius: 5px;
+}
+
+.pagination a:hover:not(.active) {
+	background-color: var(--color-blue3);
+}
+
+/* ============
+Download button 
+============ */
+
+#downloadButton {
+	background-color: #33A70D;
+	border-radius: 4px;
+	padding: 4px;
+	margin: 2px;
+	color: white;
+}
+
+#downloadButton a {
+	color: white;
+	text-decoration: none;
+	font-style: normal;
+}
+
+/* ========
+Colored box
+======== */
+
+.coloredbox {
+	background-color: #f2f4f4;
+	border: solid 1px var(--color-blue2);
+	border-radius: 6px;
+	padding: 5px 60px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+/* == 
+Marks
+== */
+
+.checkmark {
+	color: #33A70D;
+}
+
+.xmark {
+	color: red;
+}
+
+/* =====
+Code box
+===== */
+
+.codebox {
+	padding: 10px 10px;
+	border: solid 1px black;
+	border-radius: 6px;
+	background: #414141;
+	color: white;
+	text-shadow: 0px 1px 0px black;
+}
+
+.codebox p {
+	margin: 0
+}
+
+.codebox table {
+	width: 100%;
+	border-spacing: 0;
+}
+
+.codebox tr {
+	margin: 0;
+}
+
+.codebox tr > td:first-child {
+	width: 1%;
+	white-space: nowrap;
+}
+
+.codebox td {
+	text-align: left;
+	margin: 0;
+}
+
+.codebox .lineNumber {
+	border-right: solid 3px #abb2b9;
+	text-align: right;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.codebox .lineContent {
+	padding-left: 20px;
+}
+
+.collapsible {
+	background-color: var(--color-grey);
+	cursor: pointer;
+	width: 100%;
+	border: none;
+	text-align: left;
+	outline: none;
+}
+
+
+/* ================
+Publications layout 
+================ */
+
+#publication {
+	padding: 2px
+}
+
+/* ===
+Images 
+=== */
+
+img {
+	margin: 5px;
+}
+
+/* =======
+Patch grid
+======= */
+
+@media screen and (max-width: 1200px) {
+	.patchGrid {
+		grid-template-columns: 100%;
+	}
+}
+
+@media screen and (min-width: 1200px) {
+	.patchGrid {
+		grid-template-columns: 50% 50%;
+	}
+}
+
+.patchGrid {
+	display: grid;
+	width: 100%;
+}
+
+.patchCell {
+	display: inline-grid;
+	text-align: center;
+	border: 2px solid var(--color-blue2);
+}
+
+.patchGrid img {
+	width: 20em;
+	border: 1px solid var(--color-grey);
+	background: color;
+	padding: 2px;
+}
+
+.patchGrid h2, .patchGrid h3 {
+	background: var(--color-blue2);
+	margin: 0px;
+	padding: 8px;
+	color: white;
+	text-align: center;
+	border: none;
+	height: 1.2em;
+}
+
+.patchGrid h2 a, .patchGrid h3 a {
+	color: inherit;
+}
+
+.patchCellContent {
+	padding: 10px;
+}
+
+.patchCellContent p {
+	text-align: center;
+}
+
+/* =======
+Admin menu
+======= */
+
+.adminMenu {
+	display: table;
+	width: 100%;
+}
+
+.adminTab {
+	display: table-cell;
+	text-align: center; 
+	border: 2px solid var(--color-blue2);
+	width: 33%;
+	background: var(--color-blue3);
+}
+
+.adminMenu img {
+	width: 7em;
+}
+
+.adminMenu h4 {
+	background: var(--color-blue2);
+	margin: 0px;
+	padding: 10px;
+	color: white;
+	text-align: center;
+}
+
+.adminMenu h4 > a {
+	color: white;
+}
+
+.adminMenuContent {
+	padding: 10px;
+}
+
+/* ====================================================================
+                            Specific styles                            
+==================================================================== */
+
+/* =======
+Index page
+======= */
+
+@media screen and (min-width: 1100px) {
+	.indexContent-wrap {
+		display: flex;
+	}
+
+	.indexRightContent {
+		flex: 30%;
+		margin-left: 40px;
+		flex-shrink: 0;
+	}
+}
+
+.indexPropImg {
+	width: 60%;
+}
+
+/* =========
+Dataset page
+========= */
+
+#datasettable {
+	padding: 10px 20px;
+	border-bottom: 1px solid #ddd;
+}
+
+/* ===========
+Datapatch page
+=========== */
+
+.propertyTable {
+	margin: 0 auto;
+	border: 2px solid var(--color-blue3);
+}
+
+.propertyTable th {
+	background: var(--color-blue3);
+}
+
+.propertyTable td {
+	text-align: left;
+}
+
+.propertyTable tr td:first-child {
+	text-align: right;
+}
+
+/* ===========
+Data search page
+=========== */
+
+.searchGrid {
+	display: grid;
+	grid-template-columns: 1fr 1fr max-content;
+	grid-column-gap: 2%;
+	width: 100%;
+}
+
+.searchCell {
+	display: inline-grid;
+	text-align: center;
+}
+
+.searchCell table {
+	border-collapse: collapse;
+}
+
+.searchCell table th {
+	color: var(--color-blue1);
+}
+
+.searchCell table td {
+	text-align: left;
+	padding: 0
+}
+
+.searchCell table .subHeader {
+	font-weight: bold;
+	padding: 10px 0px;
+}
+
+.slider-wrapper {
+	margin: 10px 30px;
+}
+
+.triValuedSelector {
+	margin: 1px 10px;
+}
+
+.triValuedSelector input{
+	display: none;
+}
+
+.triValuedSelector label {
+	display: inline-block;
+	width: 1.5em;
+	height: 1.5em;
+	text-align: center;
+	border: 1px solid #ddd;
+	line-height: 1.5em;
+	cursor: pointer
+}
+
+.triValuedSelectorYes:checked + label {
+	background: #33A70D;
+	color: #ffffff;
+}
+
+.triValuedSelectorIndef:checked + label {
+	background: #f7c561;
+	color: #ffffff;
+}
+
+.triValuedSelectorNo:checked + label {
+	background: #d74444;
+	color: #ffffff;
+}
+
+.searchResults table {
+	border-collapse: collapse;
+}
+
+.searchResults table tr {
+	border: none;
+}
+
+.searchResults table td {
+	border-left: 1px #ccc solid;
+}
+
+.searchResults table th {
+	border-bottom: 1px #ccc solid;
+}
+
+th.headerRotate {
+	height: 130px;
+	white-space: nowrap;
+}
+
+th.headerRotate > div {
+	transform: 
+		translate(10px, 48px)
+		rotate(315deg);
+	width: 30px;
+}
+
+span.resNone {
+	display: inline-block;
+	width: 1.5em;
+	height: 1.5em;
+	text-align: center;
+	border: 1px solid #ddd;
+	line-height: 1.5em;
+	background: #f7c561;
+	color: white;
+}
+
+span.resYes {
+	display: inline-block;
+	width: 1.5em;
+	height: 1.5em;
+	text-align: center;
+	border: 1px solid #ddd;
+	line-height: 1.5em;
+	background: #33A70D;
+	color: white;
+}
+
+span.resNo {
+	display: inline-block;
+	width: 1.5em;
+	height: 1.5em;
+	text-align: center;
+	border: 1px solid #ddd;
+	line-height: 1.5em;
+	background: #d74444;
+	color: white;
+}

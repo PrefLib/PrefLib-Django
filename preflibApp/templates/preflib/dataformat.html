@@ -1,0 +1,331 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    {% include 'includes/htmlHeaderContent.html' %}
+	<title>Preflib</title>
+</head>
+
+<body>
+
+{% include 'includes/header.html' %}
+
+<div id="content">
+
+<h1>Data Format</h1>
+
+<p>Each data file we host has a unique identifier in the format [XX]-YYYYY-ZZZZZZZZ.EXT. These numbers are broken down as:</p>
+<ul>
+    <li> XX is a 2 letter category code.</li>
+    <li> YYYYY is a 5 digit Series Code which specifies the source of the data. This is the dataset identifier. </li>
+    <li> ZZZZZZZZ is an 8 digit Element Number for each individual file of a series. This is the data patch identifier. </li>
+    <li> EXT which is a unique file extension describing the type of data in the file. See the <a href="{% url 'preflibapp:datatypes' %}">data types page</a> for more details about the extension.</li>
+</ul>
+
+<h2><a id="modification"></a>Modification type</h2>
+
+<p>Each data file is labeled as either Original, Induced, Imbued or Synthetic.</p>
+<ul>
+    <li><em>Original</em>: Data that has only been converted into our formatting.</li>
+    <li><em>Induced</em>: Data that has been induced from another context. For example, computing a pairwise relation from a set of strict total orders. No assumptions have been made to create these files, just a change in the expression language.</li>
+    <li><em>Imbued</em>: Data that has been imbued with extra information. For example, extending an incomplete partial order by placing all unranked candidates tied at the end.</li>
+    <li><em>Synthetic</em>: Data that has been generated artificially. It is for example, instances of the kidney matching problem generated via the art donor pool generation method.</li> 
+</ul>
+<p>We encourage you to understand some of the impacts that making these assumptions can have, see, e.g. A Behavioral Perspective on Social Choice. Anna Popova, Michel Regenwetter, and Nicholas Mattei. Annals of Mathematics and Artificial Intelligence 68(1-3), 2013. </p>
+
+<p> We currently have 3 data formats that are described below.</p>
+<ul>
+    <li><a href="#election">Election data</a></li>
+    <li><a href="#matching">Matching data</a></li>
+    <li><a href="#extra">Extra data</a></li>
+</ul>
+
+<h2><a id="election"></a>Election Data</h2>
+
+<p>The format for all ranked preferences (orders over candidates or sets of candidates) is as follow with each element being on a new line. The file extensions <a href="{% url 'preflibapp:datatypes'%}#soc ">SOC</a>, <a href="{% url 'preflibapp:datatypes'%}#soi ">SOI</a>, <a href="{% url 'preflibapp:datatypes'%}#toc ">TOC</a>, <a href="{% url 'preflibapp:datatypes'%}#toi ">TOI</a>, <a href="{% url 'preflibapp:datatypes'%}#tog ">TOG</a>, <a href="{% url 'preflibapp:datatypes'%}#mjg ">MJG</a>, <a href="{% url 'preflibapp:datatypes'%}#wmg ">WMG</a> and <a href="{% url 'preflibapp:datatypes'%}#pwg ">PWG</a> use this format.</p>
+<div class="coloredbox">
+    <ul>
+        <li>Number of Candidates</li>
+        <li>1, Candidate Name</li>
+        <li>2, Candidate Name</li>
+        <li>...</li>
+        <li>Number of Voters, Sum of Vote Count, Number of Unique Orders</li>
+        <li>Count, Preference list</li>
+        <li>Count, Preference list</li>
+        <li>...</li>
+    </ul>
+</div>
+
+<p>Votes are sorted by count in the individual data files. Each field is described below:</p>
+<ul>
+    <li><em>Number of Candidates</em>: the number of candidates or alternatives agents vote over.</li>
+    <li><em>X, Candidate Name</em>: the name of the candidate or the alternative labeled by the number X.</li>
+    <li><em>Number of Voters</em>: the number of actual ballots that were cast.</li>
+    <li><em>Sum of Vote Count</em>: the sum of weights. In most cases the Number of Voters = Sum of Vote Count, except where for example, we have induced a relation like generating a pairwise graph from a set of linear orders. In this case we would have some number n of voters over m alternatives but we would have n * m choose 2 as the sum of weights since each voter expresses a relation between each pair of elements.</li>
+    <li><em>Number of Unique Orders</em>: the number of distinct ballots that were cast.</li>
+    <li><em>X, Preference list</em>: the preference list together with the number of agents who submitted it.</li>
+    <li><em>Preference list</em>: a strict ordering indicated by comma and elements that are indifferent are grouped with brackets.</li>
+</ul>
+
+<p>Here is an example of the 25 first lines of a data file of complete orders with ties (<a href="{% url 'preflibapp:datatypes'%}#toc ">TOC</a>) (taken from the debian election dataset).</p>
+
+<div class='codebox'>
+    <table>
+        <tbody>
+            <tr>
+                <td class='lineNumber'> 1 </td>
+                <td class='lineContent'> 4 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 2 </td>
+                <td class='lineContent'> 1, Branden Robinson </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 3 </td>
+                <td class='lineContent'> 2, Raphael Hertzog </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 4 </td>
+                <td class='lineContent'> 3, Bdale Garbee </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 5 </td>
+                <td class='lineContent'> 4, None Of The Above </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 6 </td>
+                <td class='lineContent'> 475, 475, 41 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 7 </td>
+                <td class='lineContent'> 60, 3, 1, 2, 4 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 8 </td>
+                <td class='lineContent'> 50, 1, 3, 2, 4 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 9 </td>
+                <td class='lineContent'> 40, 3, 1, 2,  4 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 10 </td>
+                <td class='lineContent'> 34, 3, 2, 1, 4 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 11 </td>
+                <td class='lineContent'> 31, 3, 2, 4, 1 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 12 </td>
+                <td class='lineContent'> 29, 2, 3, 1, 4 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 13 </td>
+                <td class='lineContent'> 29, 1, 3, 2,  4 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 14 </td>
+                <td class='lineContent'> 24, 2, 1, 3, 4 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 15 </td>
+                <td class='lineContent'> 22, 1, 2, 3, 4 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 16 </td>
+                <td class='lineContent'> 20, 3, 2, 1,  4 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 17 </td>
+                <td class='lineContent'> 15, 1, 3, 4, 2 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 18 </td>
+                <td class='lineContent'> 14, 2, 3, 1,  4 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 19 </td>
+                <td class='lineContent'> 11, 3, 1, 4, 2 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 20 </td>
+                <td class='lineContent'> 9, 2, 3, 4, 1 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 21 </td>
+                <td class='lineContent'> 9, 3, {1, 2, 4} </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 22 </td>
+                <td class='lineContent'> 8, 1, 2, 3,  4 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 23 </td>
+                <td class='lineContent'> 7, 1, {2, 3, 4} </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 24 </td>
+                <td class='lineContent'> 5, 3, 4, {1, 2} </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 25 </td>
+                <td class='lineContent'> 5, 3, 2, {1, 4} </td>
+            </tr>
+        </tbody>
+    </table>
+</div> 
+
+<h2><a id="matching"></a>Weighted Matching Data</h2>
+
+<p>The format for all weighted matching data is as follow with each element being on a new line. Only the file extensions <a href="{% url 'preflibapp:datatypes'%}#pwg ">WMD</a> uses this format.</p>
+
+<div class="coloredbox">
+    <ul>
+        <li>Number of Nodes, Number of Edges</li>
+        <li>1, Node Name</li>
+        <li>2, Node Name</li>
+        <li>...</li>
+        <li>Source, Destination, Weight</li>
+        <li>Source, Destination, Weight</li>
+        <li>...</li>
+    </ul>
+</div>
+
+<p>The edges are sorted by source so that all edges starting from the same source are grouped together. Each field is described below:</p>
+<ul>
+    <li><em>Number of Nodes</em>: the number of nodes in the graph.</li>
+    <li><em>Number of Edges</em>: the number of edges in the graph.</li>
+    <li><em>X, Node Name</em>: the name of the node labeled by the number X.</li>
+    <li><em>Source, Destination, Weight</em>: an edge represented by its source node, its destination node and its weight.</li>
+</ul>
+
+<p>Here is an example of the 25 first lines of a weighted matching data file (<a href="{% url 'preflibapp:datatypes'%}#wmd ">WMD</a>) (taken from the kidney matching dataset).</p>
+
+<div class='codebox'>
+    <table>
+        <tbody>
+            <tr>
+                <td class='lineNumber'> 1 </td>
+                <td class='lineContent'> 16, 26 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 2 </td>
+                <td class='lineContent'> 1, Pair 1 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 3 </td>
+                <td class='lineContent'> 2, Pair 2 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 4 </td>
+                <td class='lineContent'> 3, Pair 3 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 5 </td>
+                <td class='lineContent'> 4, Pair 4 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 6 </td>
+                <td class='lineContent'> 5, Pair 5 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 7 </td>
+                <td class='lineContent'> 6, Pair 6 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 8 </td>
+                <td class='lineContent'> 7, Pair 7 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 9 </td>
+                <td class='lineContent'> 8, Pair 8 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 10 </td>
+                <td class='lineContent'> 9, Pair 9 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 11 </td>
+                <td class='lineContent'> 10, Pair 10 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 12 </td>
+                <td class='lineContent'> 11, Pair 11 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 13 </td>
+                <td class='lineContent'> 12, Pair 12 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 14 </td>
+                <td class='lineContent'> 13, Pair 13 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 15 </td>
+                <td class='lineContent'> 14, Pair 14 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 16 </td>
+                <td class='lineContent'> 15, Pair 15 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 17 </td>
+                <td class='lineContent'> 16, Pair 16 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 18 </td>
+                <td class='lineContent'> 0, 4, 1 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 19 </td>
+                <td class='lineContent'> 2, 7, 1 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 20 </td>
+                <td class='lineContent'> 2, 3, 1 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 21 </td>
+                <td class='lineContent'> 3, 4, 1 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 22 </td>
+                <td class='lineContent'> 5, 7, 1 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 23 </td>
+                <td class='lineContent'> 5, 3, 1 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 24 </td>
+                <td class='lineContent'> 6, 7, 1 </td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 25 </td>
+                <td class='lineContent'> 6, 3, 1 </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<h2><a id="extra"></a>Extra Data File</h2>
+
+<p>When miscellaneous data are needed, we use the file extension <a href="{% url 'preflibapp:datatypes'%}#dat ">DAT</a> which always is a simple <a href="https://en.wikipedia.org/wiki/Comma-separated_values" target="_blank">CSV</a> file with headers.</p>
+
+<div class="coloredbox">
+    <ul>
+        <li>Item 1 Name, Item 2 Name, Item 3 Name, ..., Item N Name</li>
+        <li>Item 1 Value, Item 2 Value, Item 3 Value, ..., Item N Value</li>
+    </ul>
+</div>
+
+<p>Files with a dat extension are generally paired with another file, providing more information than is expressible in the basic data formats.</p>
+
+</div>
+</body>
+
+{% include 'includes/footer.html' %}
+
+</html>

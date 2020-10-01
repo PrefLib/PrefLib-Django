@@ -1,0 +1,47 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	{% include 'includes/htmlHeaderContent.html' %}
+	<title>Preflib</title>
+</head>
+
+<body>
+
+{% include 'includes/header.html' %}
+
+<div id="content">
+
+<h1>CRISNER: A Qualitative Preference Reasoner for CP-nets, TCP-nets, CP-Theories</h1>
+
+<p>CRISNER stands for Conditional and Relative Importance Statement Network PrEference Reasoner. It can reason about ceteris paribus preference languages such as CP-nets, TCP-nets and CP-theories. Given a preference specification (a set of preference statements) in one of these languages, CRISNER succinctly encodes its induced preference graph (IPG) into a Kripke structure model in the language of the NuSMV model checker. This Kripke model is reachability-equivalent to the induced preference graph. CRISNER generates the model only once, and then translates each query posed against this preference specification into a temporal logic formula in computation-tree temporal logic (CTL) such that the formula is verified in the Kripke model if and only if the query holds true according to the ceteris paribus semantics of the preference language. The model checker either affirms the query or returns with a counterexample. For answering queries related to equivalence and subsumption checking of two sets of preferences, CRISNER constructs a combined IPG and uses temporal queries in CTL to identify whether every dominance that holds in one also holds in the other, and vice-versa.</p>
+
+<h3>Versions and History</h3>
+<p><ul>
+	<li>CRISNER's Website includes downloads, examples, and documentation on using the tool. <a href="http://www.ece.iastate.edu/~gsanthan/crisner.html">Current Release</a>.</li>
+	<li>Contact: Ganesh Ram Santhanam at <a href="mailto:gsanthan@iastate.edu">gsanthan@iastate.edu</a> for more information on usage, extensions and to report bugs.</li>
+</ul></p>
+
+<h2>Justification of Answers to Preference Queries</h2>
+
+<p>CRISNER's reasoning is exact and provably correct for dominance, consistency, equivalence and subsumption queries. Because CRISNER uses a model checker for answering queries, CRISNER is also able to provide proofs or justifications to dominance of one outcome over another, inconsistency of a preference specifications, etc. CRISNER automatically builds proofs by collecting and examining the model checker output and producing a (flipping) sequence of preference statements.</p>
+
+<h2>Architecture</h2>
+
+<p id="center_p"><img src="{% static 'crisner.png' %}" align="center" width="50%"></p>
+
+<p>CRISNER is developed in pure Java and is domain-agnostic in the sense that any set of variables with any domain can be included in a preference specification, although it is optimized for variables with binary domains (due to the use of BDDs by the model checker). It accepts preference specifications and queries in a XML format, which provides a common and generic syntax using which users can specify preferences for CP-languages. The results (answers and proofs) for the corresponding queries are also saved in the form XML, so that the results can be further transformed into vocabulary that is more easily understandable by domain users.</p>
+
+<h2>Required Citations</h2>
+<p><ul>
+	<li>Ganesh Ram Santhanam, Samik Basu and Vasant Honavar. <a href="https://www.aaai.org/ocs/index.php/AAAI/AAAI10/paper/view/1844">Dominance Testing via Model Checking</a>. AAAI National Conference on Artificial Intelligence. Publisher: AAAI Press; pages: 357 - 362. 2010.</li>
+	<li>Ganesh Ram Santhanam, Samik Basu and Vasant Honavar. <a href="https://link.springer.com/chapter/10.1007/978-3-642-41575-3_25">Verifying Preferential Equivalence and Subsumption via Model Checking</a>. Algorithmic Decision Theory. Springer; pages: 324-335. 2013</li>
+</ul></p>
+
+</div>
+</body>
+
+{% include 'includes/footer.html' %}
+
+</html>

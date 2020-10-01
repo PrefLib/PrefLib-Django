@@ -1,0 +1,57 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	{% include 'includes/htmlHeaderContent.html' %}
+	<title>Preflib</title>
+</head>
+
+<body>
+
+{% include 'includes/header.html' %}
+
+<div id="content">
+
+<h1>Data structure</h1>
+
+<p>We have attempted to unify the formatting of the data as much as possible. Each format is as close to a comma separated format (CSV) as possible to improve portability. See the <a href="{% url 'preflibapp:dataFormat' %}">data format page</a> for more details. </p>
+
+<h2>Data Categories</h2>
+
+<p>Our data is separated into four broad categories:</p>
+<ul>
+	<li><a href="{% url 'preflibapp:alldatasets' 'ED' %}">Election Data (ED)</a>: This category contains data that either was an election, or can be interpreted as election data. Generally speaking the sets are preference relations (votes) over a set of objects (candidates). We have data from actual elections, movie rankings, and competitor rankings from various sporting competitions.</li>
+	<li><a href="{% url 'preflibapp:alldatasets' 'MD' %}">Matching Data (MD)</a>: This category contains data where agents express preference over items (and vise-verse) in order to pair agents to items. We have synthetic data from organ and kidney matching in the USA as well as bidding data from large conferences. We hope to obtain data in a variety of domains including two-sided matching markets such as residents bidding on hospitals and one-sided markets such as students bidding on dorm rooms.</li>
+	<li><a href="{% url 'preflibapp:alldatasets' 'CD' %}">Rating and Combinatorial Preference Data (CD)</a>: This category contains data from a broad set of domains that can be viewed as combinatorial and/or multidimensional. This includes multi-attribute ratings, CP-nets, GAI-nets and lexicographical preferences for multi-attribute objects.</li>
+</ul>
+
+<h2>Database structure</h2>
+
+<p>Our database is organized as follows.</p>
+<ul>
+	<li>Each of the data category described above is a collection of datasets.</li>
+	<li>A dataset consists in a collection of data patches.</li>
+	<li>A data patch is a set of data files, all representing the same original data interpreted in different ways (see <a href = "{% url 'preflibapp:dataFormat'%}#modification">modification types</a> for more details). </li>
+	<li>Each of the data file is of one of the following types:
+		<ul>
+			<li><a href="{% url 'preflibapp:datatypes'%}#soc"> SOC - Strict Orders - Complete List</a>: complete, transitive and asymmetric preference relations.</li>
+	        <li><a href="{% url 'preflibapp:datatypes'%}#soi"> SOI - Strict Orders - Incomplete List</a>: transitive and asymmetric preference relations which might not be complete.</li>
+	        <li><a href="{% url 'preflibapp:datatypes'%}#toc"> TOC - Orders with Ties - Complete List</a>: complete and transitive preference relations where preferences are over sets of object to indicate possible ties.</li>
+	        <li><a href="{% url 'preflibapp:datatypes'%}#toi"> TOI - Orders with Ties - Incomplete List</a>: transitive preference relations possibly incomplete where preferences are over sets of object to indicate possible ties.</li>
+	        <li><a href="{% url 'preflibapp:datatypes'%}#tog"> TOG - Tournament Graph</a>: voting tournament graphs indicating who wins against who for every match of the tournament.</li>
+	        <li><a href="{% url 'preflibapp:datatypes'%}#mjg"> MJG - Majority Graph</a>: majority graphs indicating the winner in every pairwise majority contest. </li>
+	        <li><a href="{% url 'preflibapp:datatypes'%}#wmg"> WMG - Weighted Majority Graph</a>: weighted majority graphs indicating the winner in every pairwise majority contest.</li>
+	        <li><a href="{% url 'preflibapp:datatypes'%}#pwg"> PWG - Pairwise Graph</a>: pairwise graphs indicating for every ordered pair of candidates the number of agent who ranked the candidates in this order. </li>
+	        <li><a href="{% url 'preflibapp:datatypes'%}#wmd"> WMD - Weighted Matching Data</a>: directed weighted graphs with a source and a sink.</li>
+	        <li><a href="{% url 'preflibapp:datatypes'%}#dat"> DAT - Extra Data File</a>: miscellaneous data.</li>
+	    </ul>
+	</li>
+</p>
+
+</div>
+</body>
+
+{% include 'includes/footer.html' %}
+
+</html>

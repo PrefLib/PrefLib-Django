@@ -1,0 +1,239 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	{% include 'includes/htmlHeaderContent.html' %}
+	<title>Preflib</title>
+</head>
+
+<body>
+
+{% include 'includes/header.html' %}
+
+<div id="content">
+
+<h1>Data Patch: {{ dataPatch.name }}</h1>
+
+<p><a href="{% url 'preflibapp:dataset' dataSet.extension dataSet.seriesNumber %}">Return to the data set.</a></p>
+
+<div class="patchGrid">
+	{% for dataFile in dataFiles %}
+		<div class="patchCell">
+			<h2>{{ dataFile.fileName }}</h2>
+			{% with dataFile.proptofile as properties %}
+				{% if properties %}
+
+					<div class="patchCellContent"> 
+						{% if dataFile.dataType in "soc soi toc toi tog mjg wmg pwg wmd" %}
+							{% with 'data/'|add:dataSet.extension|add:'/'|add:dataSet.abbreviation|add:'/img/'|add:properties.image as imgFile %}
+								<p>
+									<img src="{% static imgFile %}">
+								</p>
+							{% endwith %}
+						{% endif %}
+
+						{% if dataFile.dataType in "dat csv" %}
+							<div class="codebox">
+								<p>{{ properties.text|linebreaksbr }}...</p>
+							</div>
+						{% endif %}
+
+						{% with 'data/'|add:dataSet.extension|add:'/'|add:dataSet.abbreviation|add:'/'|add:dataFile.fileName as f %}
+							<p><span id="downloadButton"><a href="{% static f %}">Download</a></span></p>
+						{% endwith %}
+						
+						<div class="patchCellContentFlex">
+							<table class="propertyTable">
+								<tr>
+									<th colspan="2">General properties</th>
+								</tr>
+								<tr>
+									<td>Modification type</td>
+									<td>{{ dataFile.modificationType }}</td>
+								</tr>
+								{% if properties.nbAlternatives is not None %}
+									<tr>
+										{% if dataFile.dataType in "tog mjg wmg pwg wmd" %}
+											<td>Number of nodes</td>
+										{% else %}
+											<td>Number of alternatives</td>
+										{% endif %}
+										<td>{{ properties.nbAlternatives }}</td>
+									</tr>
+								{% endif %}
+								{% if properties.nbVoters is not None %}
+									<tr>
+										{% if dataFile.dataType in "dat csv" %}
+											<td>Number of lines</td>
+										{% else %}
+											{% if dataFile.dataType in "wmd" %}
+												<td>Number of edges</td>
+											{% else %}
+												<td>Number of voters</td>
+											{% endif %}
+										{% endif %}
+										<td>{{ properties.nbVoters }}</td>
+									</tr>
+								{% endif %}
+								{% if properties.nbSumVoters is not None %}
+									<tr>
+										<td>Sum of vote count</td>
+										<td>{{ properties.nbSumVoters }}</td>
+									</tr>
+								{% endif %}
+								{% if properties.nbDifferentOrders is not None %}
+									<tr>
+										<td>Number of unique order</td>
+										<td>{{ properties.nbDifferentOrders }}</td>
+									</tr>
+								{% endif %}
+								<tr>
+									<td>File size</td>
+									<td>{{ dataFile.fileSize }} bytes</td>
+								</tr>
+
+								{% if dataFile.dataType in "soc soi toi toc" %}
+									<tr>
+										<th colspan="2">Preference structure</th>
+									</tr>
+									{% if properties.isStrict is not None %}
+										<tr>
+											<td>Strict orders</td>
+											{% if properties.isStrict %}
+												<td><span class="checkmark">&#x2713;</span></td>
+											{% else %}
+												<td><span class="xmark">&#x2717;</span></td>
+											{% endif %}
+										</tr>
+									{% endif %}
+									{% if properties.isComplete is not None %}
+										<tr>
+											<td>Complete orders</td>
+											{% if properties.isComplete %}
+												<td><span class="checkmark">&#x2713;</span></td>
+											{% else %}
+												<td><span class="xmark">&#x2717;</span></td>
+											{% endif %}
+										</tr>
+									{% endif %}
+									{% if properties.isApproval is not None %}
+										<tr>
+											<td>Approval profile</td>
+											{% if properties.isApproval %}
+												<td><span class="checkmark">&#x2713;</span></td>
+											{% else %}
+												<td><span class="xmark">&#x2717;</span></td>
+											{% endif %}
+										</tr>
+									{% endif %}
+									{% if properties.isSinglePeaked is not None %}
+										<tr>
+											<td>Single-peaked</td>
+											{% if properties.isSinglePeaked %}
+												<td><span class="checkmark">&#x2713;</span></td>
+											{% else %}
+												<td><span class="xmark">&#x2717;</span></td>
+											{% endif %}
+										</tr>
+									{% endif %}
+									{% if properties.minNumPeaks is not None %}
+										<tr>
+											<td>Minimum number of peaks</td>
+											<td>{{ properties.minNumPeaks }}</td>
+										</tr>
+									{% endif %}
+									{% if properties.isSingleCrossed is not None %}
+										<tr>
+											<td>Single-crossed</td>
+											{% if properties.isSingleCrossed %}
+												<td><span class="checkmark">&#x2713;</span></td>
+											{% else %}
+												<td><span class="xmark">&#x2717;</span></td>
+											{% endif %}
+										</tr>
+									{% endif %}
+								{% endif %}
+
+								{% if dataFile.dataType in "soc soi toi toc" %}
+									<tr>
+										<th colspan="2">Ballots structure</th>
+									</tr>
+									{% if properties.largestBallot is not None %}
+										<tr>
+											<td>Size of the largest ballot</td>
+											<td>{{ properties.largestBallot }}</td>
+										</tr>
+									{% endif %}
+									{% if properties.smallestBallot is not None %}
+										<tr>
+											<td>Size of the smallest ballot</td>
+											<td>{{ properties.smallestBallot }}</td>
+										</tr>
+									{% endif %}
+									{% if properties.maxNbIndif is not None %}
+										<tr>
+											<td>Max number of indifference</td>
+											<td>{{ properties.maxNbIndif }}</td>
+										</tr>
+									{% endif %}
+									{% if properties.minNbIndif is not None %}
+										<tr>
+											<td>Min number of indifference</td>
+											<td>{{ properties.minNbIndif }}</td>
+										</tr>
+									{% endif %}
+									{% if properties.largestIndif is not None %}
+										<tr>
+											<td>Size of the largest indifference</td>
+											<td>{{ properties.largestIndif }}</td>
+										</tr>
+									{% endif %}
+									{% if properties.smallestIndif is not None %}
+										<tr>
+											<td>Size of the smallest indifference</td>
+											<td>{{ properties.smallestIndif }}</td>
+										</tr>
+									{% endif %}
+								{% endif %}
+
+								{% if dataFile.dataType in "tog mjg wmg pwg" %}
+									<tr>
+										<th colspan="2">Graph structure</th>
+									</tr>
+									{% if properties.hasCondorcet is not None %}
+										<tr>
+											<td>Condorcet winner</td>
+											{% if properties.hasCondorcet %}
+												<td><span class="checkmark">&#x2713;</span></td>
+											{% else %}
+												<td><span class="xmark">&#x2717;</span></td>
+											{% endif %}
+										</tr>
+									{% endif %}
+									{% if properties.graphEqClass is not None %}
+										<tr>
+											<td>Graph equivalence class</td>
+											<td>{{ properties.graphEqClass }}</td>
+										</tr>
+									{% endif %}
+								{% endif %}
+							</table>
+						</div>
+					</div>
+				{% else %}
+
+				<p>No properties is known for this file.</p>
+
+				{% endif %}
+			{% endwith %}
+		</div>
+	{% endfor %}
+</div>
+
+</div>
+</body>
+
+{% include 'includes/footer.html' %}
+
+</html>
