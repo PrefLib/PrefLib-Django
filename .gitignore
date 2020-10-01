@@ -1,0 +1,4 @@
+static/
+preflib/settings.py
+*.zip
+preflibApp/static/data/
