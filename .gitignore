@@ -1,4 +1,5 @@
-static/
+/static/
 preflib/settings.py
-*.zip
 preflibApp/static/data/
+__pycache__/
+migrations
