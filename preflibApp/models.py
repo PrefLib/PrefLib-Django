@@ -89,7 +89,7 @@ class DataFile(models.Model):
 	dataType = models.CharField(choices = DATATYPES, max_length = 5)
 	metadatas = models.ManyToManyField(Metadata, through = "DataProperty")
 	modificationType = models.CharField(choices = MODIFICATIONTYPES, max_length = 20)
-	fileName = models.CharField(max_length = 1000, unique = True)
+	fileName = models.CharField(max_length = 255, unique = True)
 	fileSize = models.FloatField(default = 0)
 	image = models.CharField(max_length = 1000, null = True)
 	publicationDate = models.DateTimeField(auto_now = True)
