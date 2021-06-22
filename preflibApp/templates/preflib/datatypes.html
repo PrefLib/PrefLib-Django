@@ -11,11 +11,13 @@
 
 {% include 'includes/header.html' %}
 
-<div id="content">
+<div class="content">
 
 <h1>Data Types</h1>
 
-<p>Each data file has one of the extensions described below. For more information of the data format, go to the <a href="{% url 'preflibapp:dataFormat' %}">data format page</a>.</p>
+<p>Each data file has a given type which somehow represents the underlying mathematical object representing the data. These types are also used as extensions for the files. You will find more information about them in the following.</p>
+
+<p>If you want to know what exactly is in data file, go to the <a href="{% url 'preflibapp:dataFormat' %}">file format page</a>.</p>
 
 <h2><a id="soc"></a>SOC - Strict Orders - Complete List</h2>
 

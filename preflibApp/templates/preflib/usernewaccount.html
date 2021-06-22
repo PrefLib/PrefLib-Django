@@ -1,0 +1,75 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	{% include 'includes/htmlHeaderContent.html' %}
+	<title>Preflib</title>
+</head>
+
+<body>
+
+{% include 'includes/header.html' %}
+
+<div class="content">
+
+<h1>Create a new account</h1>
+
+
+{% if created %} 
+
+	<p>Your account has been created. You will be redirected in 3 seconds.</p>
+
+	<script>
+		function redirect () {
+			window.location.href = "{% url 'preflibapp:main' %}" ;
+		}
+		setTimeout(redirect, 3000); 
+	</script>
+
+{% else %}
+	
+	<p>If you are interested in helping with the development of PrefLib, you can create an account. Creating an account will allow you to access participative tools that we developed to improve the quality of the website: Leaving comments, suggesting edits and so on.</p>
+
+	<p>Please fill in the following form in order to create your account.</p>
+
+	{% if form.errors %}
+		<p id="center_p"> <strong> An error has occured, please retry ! </strong> </p>
+		{% for field in form %}
+			{% for error in field.errors %}
+				<div class="alert alert-danger">
+					<strong>{{ error|escape }}</strong>
+				</div>
+			{% endfor %}
+		{% endfor %}
+		{% for error in form.non_field_errors %}
+			<div class="alert alert-danger">
+				<strong>{{ error|escape }}</strong>
+			</div>
+		{% endfor %}
+	{% endif %}
+
+	<div id="form">
+		<form method="post" action="{% url 'preflibapp:newAccount' %}">
+			{% csrf_token %}
+
+			<p id="center_p">
+			<table align="center">
+			{% for field in form %}
+				<tr>
+					<td style="text-align: right;">{{ field.label_tag }}</td>
+					<td>{{ field }}</td>
+				</tr>
+			{% endfor %}
+			</table>
+			</p>
+			<p id="center_p"><input id="submit_button" type="submit" value="Create the user"/><p>
+		</form>
+	</div>
+{% endif %}
+</div>
+</body>
+
+{% include 'includes/footer.html' %}
+
+</html>

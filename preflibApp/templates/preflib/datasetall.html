@@ -11,7 +11,7 @@
 
 {% include 'includes/header.html' %}
 
-<div id="content">
+<div class="content">
 
 <h1> {{ title|capfirst }} data sets </h1>
 
@@ -22,15 +22,15 @@
 	{% include 'includes/paginator.html' %}
 	
 	{% for ds in datasets %}
-		<h2> <a href="{% url 'preflibapp:dataset' ds.extension ds.seriesNumber %}"> {{ ds.name }} </a></h2>
+		<h2> <a href="{% url 'preflibapp:dataset' ds.category ds.seriesNumber %}"> {{ ds.name }} </a></h2>
 
 		{% autoescape off %}
 		<p> {{ ds.description }} </p>
 		{% endautoescape %}
 
-		<p> Want to have more details, see <a href="{% url 'preflibapp:dataset' ds.extension ds.seriesNumber %}"> this page</a>.</p>
+		<p> Want to have more details, see <a href="{% url 'preflibapp:dataset' ds.category ds.seriesNumber %}"> this page</a>.</p>
 
-		{% with 'data/'|add:ds.extension|add:'/'|add:ds.abbreviation|add:'/'|add:ds.abbreviation|add:'.zip' as zip_static %}
+		{% with 'data/'|add:ds.category|add:'/'|add:ds.abbreviation|add:'/'|add:ds.abbreviation|add:'.zip' as zip_static %}
 			<p id="center_p">
 				<a href="{% static zip_static %}" id="downloadButton">Click here to download the dataset</a>
 			</p>

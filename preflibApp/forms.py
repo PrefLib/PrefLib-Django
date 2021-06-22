@@ -5,13 +5,12 @@ from datetime import datetime
 from .models import *
 
 class SearchForm(forms.Form):
-	dataSetExtension = forms.ChoiceField(choices = DATASETEXTENSIONS + [('all', 'all')])
+	dataSetExtension = forms.ChoiceField(choices = DATACATEGORY + [('all', 'all')])
 	nbAlternativesMax = forms.IntegerField(label = "Maximal number of alternatives")
 	nbAlternativesMin = forms.IntegerField(label = "Minimal number of alternatives")
 	nbVotersMax = forms.IntegerField(label = "Maximal number of voters")
 	nbVotersMin = forms.IntegerField(label = "Minimal number of voters")
 
-# Login form
 class LoginForm(forms.Form):
 	username = forms.CharField(label = "Username", max_length = 30)
 	password = forms.CharField(label = "Password", widget = forms.PasswordInput)
@@ -20,8 +19,7 @@ class CreateUserForm(forms.Form):
 	username = forms.CharField(label = "Username", max_length = 30)
 	email = forms.EmailField(label = "Email")
 	password1 = forms.CharField(min_length = 8, label = "Password", widget = forms.PasswordInput)
-	password2 = forms.CharField(min_length = 8, label = "Password", widget = forms.PasswordInput)
-	superuser = forms.BooleanField(label = "Is superuser")
+	password2 = forms.CharField(min_length = 8, label = "Password again", widget = forms.PasswordInput)
 
 	# Re define __init__ so the label suffix is empty (by default there is a ':')
 	def __init__(self, *args, **kwargs):
@@ -48,6 +46,9 @@ class CreateUserForm(forms.Form):
 					return cleaned_data
 		else:
 			raise forms.ValidationError("The two passwords should be the same !")
+
+class EditProfileForm(forms.Form):
+	pass
 
 # News form
 class PaperForm(forms.Form):

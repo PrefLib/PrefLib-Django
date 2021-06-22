@@ -6,20 +6,19 @@
 			<div class='title'>
 				<p><a href="{% url 'preflibapp:main' %}">PrefLib<span class="largeScreen">: A Library for Preferences</span></a></p>
 			</div>
-			<div class='supportedBy'>
-				<p><a href="https://research.csiro.au/data61/preflib-tools-and-archive/"><img src="{% static 'data61white.png' %}" alt="Data61 and CSIRO logo"/></a></p>
-			</div>
 		</div>
 	</div>
 
 	<div class="menu-wrap">
-		<nav id="menu">
+		<div id="menu">
 			<div>
-			<a><label for="menucheck" id="toggle-menu"><div>Menu<span class="drop-icon">&nbsp;&#x25be;</span></div></a></label></div>
+			<a>
+				<label for="menucheck" id="toggle-menu">
+					<div>Menu<span class="drop-icon">&nbsp;&#x25be;</span></div>
+				</label>
+			</a></div>
 			<input type="checkbox" id="menucheck">
 			<ul class="main-menu cf">
-				<li><a href="{% url 'preflibapp:main' %}"><span id="listspan">&#x2756;&nbsp;</span>Overview</a></li>
-				
 				<li>
 					<a href="{% url 'preflibapp:data' %}">
 						<div>
@@ -30,74 +29,98 @@
 					</a>
 					<input type="checkbox" id="datacheck">
 					<ul class="sub-menu">
-						<li><a href="{% url 'preflibapp:dataFormat' %}"><span id="listspan">&#x2666;&nbsp;</span>Data format</a></li>
-						<li><a href="{% url 'preflibapp:dataMetadata' %}"><span id="listspan">&#x2666;&nbsp;</span>Metadata</a></li>
-						<li class="sub-sub-menu" >
+						<li>
 							<a href="{% url 'preflibapp:datatypes' %}">
-								<div>
-									<span><span id="listspan">&#x2666;&nbsp;</span>Data types</span> <span class="drop-icon">&nbsp;&#x25b8;</span>
-									<label title="Toggle Drop-down" class="drop-icon" for="typecheck">&nbsp;&#x25be;</label>
-								</div>
+								<span id="listspan">&#x2666;&nbsp;</span>Types
 							</a>
-							<input type="checkbox" id="typecheck">
-							<ul class="sub-menu">
-								{% for dataType in DATATYPES %}
-									<li><a href="{% url 'preflibapp:datatypes'%}#{{dataType.0}}">{{ dataType.0|upper }}</a></li>
-								{% endfor %}
-							</ul>
 						</li>
-						{% for dataExtension in DATASETEXTENSIONS %}
-							<li><a href="{% url 'preflibapp:alldatasets' dataExtension.0 %}"><span id="listspan">&#x2666;&nbsp;</span>{{ dataExtension.1|capfirst }} data</a></li>
-						{% endfor %}
-						<li><a href="{% url 'preflibapp:dataSearch' %}"><span id="listspan">&#x2666;&nbsp;</span>Search</a></li>
+						<li>
+							<a href="{% url 'preflibapp:dataFormat' %}">
+								<span id="listspan">&#x2666;&nbsp;</span>Format
+							</a>
+						</li>
+						<li>
+							<a href="{% url 'preflibapp:dataMetadata' %}">
+								<span id="listspan">&#x2666;&nbsp;</span>Metadata
+							</a>
+						</li>
 					</ul>
 				</li>
 
 				<li>
-					<a href="{% url 'preflibapp:tools' %}">
-						<div>
-							<span><span id="listspan">&#x2756;&nbsp;</span>Tools</span>
-							<span class="drop-icon">&nbsp;&#x25be;</span>
-							<label title="Toggle Drop-down" class="drop-icon" for="toolscheck">&nbsp;&#x25be;</label>
-						</div>
+					<a href="{% url 'preflibapp:alldatasets' 'ED' %}">
+						<span id="listspan">&#x2756;&nbsp;</span>Elections
 					</a>
-					<input type="checkbox" id="toolscheck">
-					<ul class="sub-menu">
-						<li><a href="https://github.com/nmattei/PrefLib-Tools" target="_blank"><span id="listspan">&#x2666;&nbsp;</span>PrefLib tools on Github</a></li>
-						<li><a href="{% url 'preflibapp:toolsIVS' %}"><span id="listspan">&#x2666;&nbsp;</span>Iterative Voting Simulator</a></li>
-						<li><a href="{% url 'preflibapp:toolsKDG' %}"><span id="listspan">&#x2666;&nbsp;</span>Kidney Data Generator</a></li>
-						<li><a href="{% url 'preflibapp:toolsCRIS' %}"><span id="listspan">&#x2666;&nbsp;</span>CRISNER</a></li>
-					</ul>
 				</li>
 
-				<li><a href="{% url 'preflibapp:papers' %}"><span id="listspan">&#x2756;&nbsp;</span>Papers</a></li>
+				<li>
+					<a href="{% url 'preflibapp:alldatasets' 'MD' %}">
+						<span id="listspan">&#x2756;&nbsp;</span>Matchings
+					</a>
+				</li>
 
-				<li><a href="{% url 'preflibapp:about' %}"><span id="listspan">&#x2756;&nbsp;</span>About</a></li>
+				<li>
+					<a href="{% url 'preflibapp:alldatasets' 'CD' %}">
+						<span id="listspan">&#x2756;&nbsp;</span>Ratings
+					</a>
+				</li>
 
-				{% if user.is_superuser %}
-					<li>
-						<a href="{% url 'preflibapp:ownadmin' %}">
-							<div>
-								<span><span id="listspan"><strong>&#x2756;&nbsp;</strong></span><strong>Admin</strong></span>
-								<span class="drop-icon">&nbsp;&#x25be;</span>
-								<label title="Toggle Drop-down" class="drop-icon" for="admincheck"><strong>&nbsp;&#x25be;</strong></label>
-							</div>
-						</a>
-						<input type="checkbox" id="admincheck">
-						<ul class="sub-menu">
-							<li><a href="{% url 'preflibapp:adminNews' %}"><span id="listspan">&#x2666;&nbsp;</span>Publish news</a></li>
-							<li><a href="{% url 'preflibapp:adminPaper' %}"><span id="listspan">&#x2666;&nbsp;</span>Add a paper</a></li>
-							<li><a href="{% url 'preflibapp:createUser' %}"><span id="listspan">&#x2666;&nbsp;</span>Create an user</a></li>
-							<li><a href="{% url 'preflibapp:adminAddDataset' %}"><span id="listspan">&#x2666;&nbsp;</span>Add datasets</a></li>
-							<li><a href="{% url 'preflibapp:adminZip' %}"><span id="listspan">&#x2666;&nbsp;</span>Regenerate zip files</a></li>
-							<li><a href="{% url 'admin:index' %}"><span id="listspan">&#x2666;&nbsp;</span>Django admin</a></li>
-						</ul>
-					</li>
-				{% endif %}
-				{% if user.is_authenticated %}
-					<li><a href="{% url 'preflibapp:logout' %}"><strong>Logout</strong></a></li>
-				{% endif %}
+				<li>
+					<a href="{% url 'preflibapp:dataSearch' %}">
+						<span id="listspan">&#x2756;&nbsp;</span>Search
+					</a>
+				</li>
+
+				<li>
+					<a href="{% url 'preflibapp:about' %}">
+						<span id="listspan">&#x2756;&nbsp;</span>About
+					</a>
+				</li>
 			</ul>
-		</nav>
+		</div>
+
+		<!-- <div id="account-wrap">
+			<ul>
+				<li>
+					<a>
+						{% if user.is_authenticated %}
+							Account <span class="drop-icon">&nbsp;&#x25be;</span>
+						{% else %}
+							Sign in/up
+						{% endif %}
+					</a>
+					<div id="account-window">
+						{% if user.is_authenticated %}
+						<p id="center_p" style="margin-bottom: 20px;"><span id="downloadButton">{{ user.username | title}}</span></p>
+
+						<ul>
+							<li><a href="{% url 'preflibapp:userProfile' %}">Edit profile</a></li>
+						</ul>
+
+						<form>
+							<p id="center_p" style="margin-top: 20px;"><button type="submit" formaction="{% url 'preflibapp:logout' %}">Log out</button></p>
+						</form>
+
+						{% else %}
+
+						<p>Log in:</p>
+						<div id="acount-form">
+							<form method="post" action="{% url 'preflibapp:login' %}">
+								{% csrf_token %}
+								<input type="text" placeholder="Username" name="username" required>
+								<br>
+								<input type="password" placeholder="Password" name="password" required>
+								
+								<input type="hidden" name="next" value="{{ loginNextUrl }}"/>
+								<p id="center_p"><input id="login_button" type="submit" value="Log in"/><p>
+							</form>
+						</div>
+						<p style="margin-top: 20px; margin-bottom: 10px;">Sign up:</p>
+						<p id="center_p"><a href="{% url 'preflibapp:newAccount' %}" id="downloadButton">Create an account</a></p>
+						{% endif %}
+					</div>
+				</li>
+			</ul>
+		</div> -->
 	</div>
 </div>

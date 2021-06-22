@@ -2,13 +2,15 @@ from django.contrib.auth import authenticate, login, logout, update_session_auth
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, Http404
-from django.contrib.staticfiles import finders
 from django.db.models import Sum, Max, Min, Count
+from django.contrib.staticfiles import finders
+from django.db.models.functions import Cast
 from django.core.paginator import Paginator
 from django.core import management
+from django.utils import timezone
 
-from datetime import datetime
 from subprocess import Popen
+from math import floor, ceil
 
 import random
 import copy
@@ -63,8 +65,9 @@ def getPaginator(request, iterable, pageSize = 20, windowSize = 3, maxNumberPage
 # ============
 
 def my_render(request, template, args = dict([])):
-	args['DATASETEXTENSIONS'] = DATASETEXTENSIONS
+	args['DATACATEGORY'] = DATACATEGORY
 	args['DATATYPES'] = DATATYPES
+	args['loginNextUrl'] = request.get_full_path
 	return render(request, template, args)
 
 def error_render(request, template, status):
@@ -93,8 +96,13 @@ def main(request):
 	if totalSize != None:
 		totalSize = round(totalSize / 1000000000, 2)
 	nbDataType = DataFile.objects.values('dataType').distinct().count()
-	if DataProp.objects.exists():
-		randomProp = random.choice(DataProp.objects.filter(nbAlternatives__gt = 5, image__isnull = False))
+	
+	filesWithImages = DataFile.objects.filter(image__isnull = False)
+	if filesWithImages.exists():
+		randomFileWithImage = random.choice(filesWithImages)
+	
+	(paginator, papers, page, pagesBefore, pagesAfter) = getPaginator(request, Paper.objects.all(), pageSize = 15)
+	
 	return my_render(request, os.path.join('preflib', 'index.html'), locals())
 
 # Data views
@@ -105,127 +113,116 @@ def dataFormat(request):
 	return my_render(request, os.path.join('preflib', 'dataformat.html'))
 
 def dataMetadata(request):
-	return my_render(request, os.path.join('preflib', 'datametadata.html'))
+	metadataPerCategories = [(c[1], Metadata.objects.filter(isActive = True, category = c[0])) for c in METADATACATEGORIES]
+	return my_render(request, os.path.join('preflib', 'datametadata.html'), locals())
 
-def alldatasets(request, dataextension):
-	(paginator, datasets, page, pagesBefore, pagesAfter) = getPaginator(request, DataSet.objects.filter(extension = dataextension).order_by('name'))
-	title = findChoiceValue(DATASETEXTENSIONS, dataextension)
+def alldatasets(request, datacategory):
+	(paginator, datasets, page, pagesBefore, pagesAfter) = getPaginator(request, DataSet.objects.filter(category = datacategory).order_by('name'))
+	title = findChoiceValue(DATACATEGORY, datacategory)
 	return my_render(request, os.path.join('preflib', 'datasetall.html'), locals())
 
-def dataset(request, dataextension, dataSetNum):
-	dataset = get_object_or_404(DataSet, extension = dataextension, seriesNumber = dataSetNum)
+def dataset(request, datacategory, dataSetNum):
+	dataset = get_object_or_404(DataSet, category = datacategory, seriesNumber = dataSetNum)
 	(paginator, patches, page, pagesBefore, pagesAfter) = getPaginator(request, DataPatch.objects.filter(dataSet = dataset).order_by("name"))
 	allFiles = DataFile.objects.filter(dataPatch__dataSet = dataset)
 	nbFiles = allFiles.count()
 	totalSize = allFiles.aggregate(Sum('fileSize'))['fileSize__sum']
 	if totalSize != None:
 		totalSize = round(totalSize / 1000, 2)
-	allTypes = allFiles.order_by('dataType').values('dataType').distinct()
-	allDataTypes = ", ".join([t['dataType'] for t in allTypes])
-	zipfilepath = os.path.join('data', dataextension, str(dataset.abbreviation), str(dataset.abbreviation) + '.zip')
+	allTypes = allFiles.order_by('dataType').values_list('dataType').distinct()
+	zipfilepath = os.path.join('data', datacategory, str(dataset.abbreviation), str(dataset.abbreviation) + '.zip')
 	return my_render(request, os.path.join('preflib', 'dataset.html'), locals())
 
-def datapatch(request, dataextension, dataSetNum, dataPatchNum):
-	dataSet = get_object_or_404(DataSet, extension = dataextension, seriesNumber = dataSetNum)
+def datapatch(request, datacategory, dataSetNum, dataPatchNum):
+	dataSet = get_object_or_404(DataSet, category = datacategory, seriesNumber = dataSetNum)
 	dataPatch = get_object_or_404(DataPatch, dataSet = dataSet, seriesNumber = dataPatchNum)
 	dataFiles = DataFile.objects.filter(dataPatch = dataPatch).order_by('-modificationType')
+	metadataPerCategories = [(c[1], Metadata.objects.filter(isActive = True, category = c[0])) for c in METADATACATEGORIES]
+	filesAndMetadata = []
+	for file in dataFiles:
+		tmp = []
+		for (category, metadata) in metadataPerCategories:
+			tmp2 = []
+			for m in metadata:
+				if DataProperty.objects.filter(metadata = m, dataFile = file).exists():
+					tmp2.append((m, DataProperty.objects.get(metadata = m, dataFile = file).getTypedValue()))
+			if len(tmp2) > 0:
+				tmp.append((category, tmp2))
+		if len(tmp) > 0:
+			filesAndMetadata.append((file, tmp))
+	
 	return my_render(request, os.path.join('preflib', 'datapatch.html'), locals())
 
 def datatypes(request):
 	return my_render(request, os.path.join('preflib', 'datatypes.html'))
 
 def dataSearch(request):
-	def filterTrivaluedField(queryset, field, value):
-		queryset.filter(**{field: value})
-
-	extensions = copy.deepcopy(DATASETEXTENSIONS)
+	categories = copy.deepcopy(DATACATEGORY)
 	types = copy.deepcopy(DATATYPES)
 	types.remove(('dat', 'extra data file'))
 	types.remove(('csv', 'comma-separated values'))
-	allProps = DataProp.objects.all().exclude(dataFile__dataType__in = ['dat', 'csv'])
-	nbAlt = [allProps.aggregate(Min('nbAlternatives'))['nbAlternatives__min'], 
-		allProps.aggregate(Max('nbAlternatives'))['nbAlternatives__max']]
-	nbAlt.append(nbAlt[1] * 0.1)
-	nbBallot = [allProps.aggregate(Min('nbVoters'))['nbVoters__min'], 
-		allProps.aggregate(Max('nbVoters'))['nbVoters__max']]
-	nbBallot.append(nbBallot[1] * 0.1)
-	nbUniqueBallot = [allProps.aggregate(Min('nbDifferentOrders'))['nbDifferentOrders__min'], 
-		allProps.aggregate(Max('nbDifferentOrders'))['nbDifferentOrders__max']]
-	nbUniqueBallot.append(nbUniqueBallot[1] * 0.1)
+	allMetadata = Metadata.objects.filter(isActive = True)
 
+	metadataSliderValues = dict()
+	removeMetadata = []
+	# We compute the max and min values of the slider for each metadata
+	for m in allMetadata:
+		if m.searchWidget == "range":
+			props = DataProperty.objects.filter(metadata = m).annotate(floatValue = Cast('value', models.FloatField()))
+			maxValue = ceil(props.aggregate(Max('floatValue'))['floatValue__max'])
+			minValue = floor(props.aggregate(Min('floatValue'))['floatValue__min'])
+			intermediateValue = floor((maxValue - minValue) * 0.3) if maxValue > 30 else floor((maxValue - minValue) * 0.5)
+			metadataSliderValues[m] = (minValue, intermediateValue, maxValue)
+			# If the min and max are equal, filtering on that metadata is useless so we remove it
+			if maxValue == minValue:
+				removeMetadata.append(m)
+	for m in removeMetadata:
+		allMetadata = allMetadata.exclude(pk = m.pk)
+
+	# This is to save the POST data when we change to a different page of the results
 	if request.method != 'POST' and 'page' in request.GET:
 		if 'searchDataFilesPOST' in request.session:
 			request.POST = request.session['searchDataFilesPOST']
 			request.method = 'POST'
 
-	filterDict = dict([])
-	filterDict['dataType__in'] = [t[0] for t in types]
-	excludeDict = dict([])
+	allFiles = DataFile.objects.all()
 	if request.method == 'POST':
 		request.session['searchDataFilesPOST'] = request.POST
-		electionTypeFilter = [ext[0] for ext in extensions]
-		for ext in extensions:	
-			if request.POST.get(ext[0] + 'selector') == "no":
-				if ext[0] in electionTypeFilter: electionTypeFilter.remove(ext[0])
-			elif request.POST.get(ext[0] + 'selector') == "yes":
-				electionTypeFilter = [e for e in electionTypeFilter if e == ext[0]]
-		filterDict['dataPatch__dataSet__extension__in'] = electionTypeFilter
+	
+		categoryFilter = [cat[0] for cat in categories]
+		for cat in categories:	
+			if request.POST.get(cat[0] + 'selector') == "no":
+				if cat[0] in categoryFilter: categoryFilter.remove(cat[0])
+			elif request.POST.get(cat[0] + 'selector') == "yes":
+				categoryFilter = [c for c in categoryFilter if c == cat[0]]
+		allFiles = allFiles.filter(dataPatch__dataSet__category__in = categoryFilter)
+
 		dataTypeFilter = [t[0] for t in types]
 		for t in types:
 			if request.POST.get(t[0] + 'selector') == "no":
 				if t[0] in dataTypeFilter: dataTypeFilter.remove(t[0])
-			elif request.POST.get(ext[0] + 'selector') == "yes":
+			elif request.POST.get(t[0] + 'selector') == "yes":
 				dataTypeFilter = [x for x in dataTypeFilter if x == t[0]]
-		filterDict['dataType__in'] = dataTypeFilter
-		if request.POST.get('isSPselector') == "no":
-			filterDict['proptofile__isSinglePeaked'] = False
-		elif request.POST.get('isSPselector') == "yes":
-			filterDict['proptofile__isSinglePeaked'] = True
-		if request.POST.get('isSCselector') == "no":
-			filterDict['proptofile__isSingleCrossed'] = False
-		elif request.POST.get('isSCselector') == "yes":
-			filterDict['proptofile__isSingleCrossed'] = True
-		if request.POST.get('isAppselector') == "no":
-			filterDict['proptofile__isApproval'] = False
-		elif request.POST.get('isAppselector') == "yes":
-			filterDict['proptofile__isApproval'] = True
-		if request.POST.get('isStrictselector') == "no":
-			filterDict['proptofile__isStrict'] = False
-		elif request.POST.get('isStrictselector') == "yes":
-			filterDict['proptofile__isStrict'] = True
-		if request.POST.get('isComplselector') == "no":
-			filterDict['proptofile__isComplete'] = False
-		elif request.POST.get('isComplselector') == "yes":
-			filterDict['proptofile__hasCondorcet'] = True
-		if request.POST.get('hasCondselector') == "no":
-			filterDict['proptofile__isComplete'] = False
-		elif request.POST.get('hasCondselector') == "yes":
-			filterDict['proptofile__hasCondorcet'] = True
-		excludeDict['proptofile__nbAlternatives__lt'] = request.POST.get('nbAltsSliderValueMin')
-		excludeDict['proptofile__nbAlternatives__gt'] = request.POST.get('nbAltsSliderValueMax')
-		excludeDict['proptofile__nbVoters__lt'] = request.POST.get('nbBallotsSliderValueMin')
-		excludeDict['proptofile__nbVoters__gt'] = request.POST.get('nbBallotsSliderValueMax')
-		excludeDict['proptofile__nbDifferentOrders__lt'] = request.POST.get('nbUniqBallotsSliderValueMin')
-		excludeDict['proptofile__nbDifferentOrders__gt'] = request.POST.get('nbUniqBallotsSliderValueMax')
-		excludeDict['proptofile__largestBallot__gt'] = request.POST.get('sizeBallotsSliderValueMax')
-		excludeDict['proptofile__smallestBallot__lt'] = request.POST.get('sizeBallotsSliderValueMin')
-		excludeDict['proptofile__maxNbIndif__gt'] = request.POST.get('nbIndifSliderValueMax')
-		excludeDict['proptofile__minNbIndif__lt'] = request.POST.get('nbIndifSliderValueMin')
-		excludeDict['proptofile__largestIndif__gt'] = request.POST.get('sizeIndifSliderValueMax')
-		excludeDict['proptofile__smallestIndif__lt'] = request.POST.get('sizeIndifSliderValueMin')
+		allFiles = allFiles.filter(dataType__in = dataTypeFilter)
 
-	# print(filterDict)
-	# print(excludeDict)
-	allFiles = DataFile.objects.filter(**filterDict)
-	for key, value in excludeDict.items():
-		# print(key)
-		# print(value)
-		allFiles = allFiles.exclude(**{key: value})
-		# print(allFiles)
-		# print(len(allFiles))
-		# print()
-	allFiles = allFiles.order_by('dataType', 'fileName')	
-	(paginator, dataFiles, page, pagesBefore, pagesAfter) = getPaginator(request, allFiles, pageSize = 50)
+		for m in allMetadata:
+			if m.searchWidget == "ternary":
+				if request.POST.get(m.shortName + 'selector') == "no":
+					propretyQuery = DataProperty.objects.filter(metadata = m, value = True)
+					allFiles = allFiles.exclude(dataproperty__in = models.Subquery(propretyQuery.values('pk')))
+				elif request.POST.get(m.shortName + 'selector') == "yes":
+					propretyQuery = DataProperty.objects.filter(metadata = m, value = True)
+					allFiles = allFiles.filter(dataproperty__in = models.Subquery(propretyQuery.values('pk')))
+
+			elif m.searchWidget == "range":
+				propretyQueryMin = DataProperty.objects.filter(metadata = m).annotate(floatValue = Cast('value', models.FloatField())).filter(floatValue__lt = float(request.POST.get(m.shortName + 'SliderValueMin')))
+				allFiles = allFiles.exclude(dataproperty__in = models.Subquery(propretyQueryMin.values('pk')))
+				propretyQueryMax = DataProperty.objects.filter(metadata = m).annotate(floatValue = Cast('value', models.FloatField())).filter(floatValue__gt = float(request.POST.get(m.shortName + 'SliderValueMax')))
+
+				allFiles = allFiles.exclude(dataproperty__in = models.Subquery(propretyQueryMax.values('pk')))
+
+	allFiles = allFiles.order_by('dataType', 'fileName')
+	(paginator, dataFiles, page, pagesBefore, pagesAfter) = getPaginator(request, allFiles, pageSize = 40)
 	return my_render(request, os.path.join('preflib', 'datasearch.html'), locals())
 
 # About views
@@ -259,6 +256,7 @@ def archive(request):
 
 # User stuff
 def userLogin(request):
+	print(request.POST)
 	error = False
 	# The variable that get the next page if there is one
 	next = request.POST.get('next', request.GET.get('next', ''))
@@ -279,7 +277,7 @@ def userLogin(request):
 				error = True
 	else:
 		form = LoginForm()
-	return my_render(request, os.path.join('preflib', 'login.html'), locals())
+	return my_render(request, os.path.join('preflib', 'userlogin.html'), locals())
 
 def userLogout(request):
 	if not request.user.is_authenticated:
@@ -288,24 +286,21 @@ def userLogout(request):
 		logout(request)
 	return redirect('preflibapp:main')
 
-def createUser(request):
+def userProfile(request):
 	if not request.user.is_authenticated:
 		raise Http404
+	return my_render(request, os.path.join('preflib', 'userprofile.html'), locals())
+
+def newAccount(request):
 	form = CreateUserForm(request.POST or None)
 	created = False
 	if form.is_valid():
-		if form.cleaned_data["superuser"]:
-			User.objects.create_superuser(
+		User.objects.create_user(
 			form.cleaned_data["username"], 
 			form.cleaned_data["email"], 
 			form.cleaned_data["password2"])
-		else:
-			User.objects.create_user(
-				form.cleaned_data["username"], 
-				form.cleaned_data["email"], 
-				form.cleaned_data["password2"])
 		created = True
-	return my_render(request, os.path.join('preflib', 'adminuser.html'), locals())
+	return my_render(request, os.path.join('preflib', 'usernewaccount.html'), locals())
 
 # Admin views
 def admin(request):
@@ -321,7 +316,7 @@ def adminNews(request):
 	if request.method == "POST":
 		form = NewsForm(request.POST)
 		if form.is_valid():
-			now = datetime.now()
+			now = timezone.now()
 			News.objects.create(
 				title = form.cleaned_data['title'],
 				text = form.cleaned_data['text'],

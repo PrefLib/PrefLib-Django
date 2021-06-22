@@ -11,7 +11,7 @@
 
 {% include 'includes/header.html' %}
 
-<div id="content">
+<div class="content">
 
 {% if user.is_authenticated %}
 	<h1> Logged in ! </h1>
@@ -42,7 +42,7 @@
 		<p id="center_p"> <stong> You need to be connected if you want to go on this page ! </stong> </p>
 	{% endif %}
 
-	<p> Please enter your login informations to continue. </p>
+	<p> Please enter your login details to continue. </p>
 	<div id="form">
 		<form method="post" action="{% url 'preflibapp:login' %}">
 			{% csrf_token %}

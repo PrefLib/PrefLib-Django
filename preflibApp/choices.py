@@ -4,7 +4,13 @@ def findChoiceValue(choices, key):
 			return v
 	return None
 
-DATASETEXTENSIONS = [
+def isAChoice(choices, choice):
+	for c in choices:
+		if c[0] == choice:
+			return True
+	return False
+
+DATACATEGORY = [
 	('ED', 'election'),
 	('MD', 'matching'),
 	('CD', 'combinatorial'),
@@ -30,4 +36,16 @@ MODIFICATIONTYPES = [
 	('induced', 'induced'),
 	('imbued', 'imbued'),
 	('synthetic', 'synthetic')
+]
+
+METADATACATEGORIES = [
+	('general', 'general properties'),
+	('preference', 'preference structure'),
+	('ballot', 'ballot structure'),
+	# ('graph', 'graph structure')
+]
+
+SEARCHWIDGETS = [
+	('ternary', 'ternary choices'),
+	('range', 'range')
 ]

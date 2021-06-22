@@ -3,9 +3,9 @@
 ================================================================== */
 
 :root {
-	--color-blue1:navy;
-	--color-blue2:#6495ED;
-	--color-blue3:#def1fa;
+	--color-blue1:#0d2673;
+	--color-blue2:#799ad8;
+	--color-blue3:#e4f0f6;
 }
 
 /* ===========
@@ -74,19 +74,29 @@ Header menu
 
 .menu-wrap {
 	background: var(--color-blue2);
-	width: 100%;
 	color: white;
 	margin: 0;
-	padding: 0;
+	padding: 0px 5%;
+	display: flex;
+	align-items: center;
 }
 
-#menu ul, #menu li {
-	margin: 0;
-	padding: 0;
+#menu {
+	margin-right: auto;
+}
+
+#account-wrap {
+	margin: 0px;
+	padding: 0px;
+}
+
+#menu ul, #menu li, #account-wrap ul {
+	margin: 0px;
+	padding: 0px;
 	list-style-type: none;
 }
 
-#menu li > a, #toggle-menu {
+#menu li > a, #toggle-menu, #account-wrap > ul > li > a {
 	color: white;
 	padding: 10px 40px;
 	font-style: normal;
@@ -94,7 +104,7 @@ Header menu
 	transition: all linear 0.1s;
 }
 
-#menu > ul > li > a, #toggle-menu {
+#menu > ul > li > a, #toggle-menu, #account-wrap > ul > li > a {
 	text-shadow: 0px 1px 0px black;
 	font-weight: bold;
 }
@@ -113,10 +123,6 @@ Header menu
 
 #menu > ul > li > ul > li > ul > li > a:hover {
 	color: black;
-}
-
-#menu .main-menu {
-	display: none;
 }
 
 #menu input[type="checkbox"], #menu ul span.drop-icon {
@@ -167,6 +173,36 @@ Header menu
 
 #menucheck:checked + .main-menu {
 	display: block;
+}
+
+#account-window {
+	display: none;
+	background-color: var(--color-blue1);
+	padding: 30px;
+}
+
+#account-window p {
+	margin: 0px;
+	font-size: 100%;
+}
+
+#account-window li {
+	font-size: 100%;
+	list-style: inside;
+	white-space: nowrap;
+}
+
+#account-window a {
+	color: white;
+	font-style: normal;
+}
+
+#account-window input {
+	margin-top: 5px;
+}
+
+#account-window #login_button {
+	margin-bottom: 10px;
 }
 
 @media only screen and (max-width: 1100px) {
@@ -223,11 +259,15 @@ Header menu
 		display: block;
 	}
 
+	.main-menu {
+		position: relative;
+	}
+
 	#toggle-menu, #menu label.drop-icon {
 		display: none;
 	}
 
-	#menu > ul > li:hover {
+	#menu > ul > li:hover, #account-wrap > ul > li:hover > a {
 		background: var(--color-blue1);
 	}
 
@@ -248,7 +288,6 @@ Header menu
 		position: absolute;
 		top: 100%;
 		left: 0;
-		z-index: 3000;
 	}
 
 	#menu .sub-menu, #menu input[type="checkbox"]:checked + .sub-menu {
@@ -269,6 +308,20 @@ Header menu
 	}
 
 	#menu ul li ul li.sub-sub-menu:hover ul {
+		display: block;
+	}
+
+	#account-window {
+		position: absolute;
+		top: 100%;
+		right: 0;
+	}
+
+	#account-wrap > ul > li {
+		position: relative;
+	}
+
+	#account-wrap > ul > li:hover > #account-window {
 		display: block;
 	}
 }
@@ -348,11 +401,19 @@ a {
 	text-decoration: none;
 }
 
-#content {
-	background: white;
-	margin: 0px 5%;
-	padding: 1% 2%;
+.content {
+	/*margin: 0px 5%;*/
+	padding: 1% 5%;
 }
+
+.content:nth-child(even) {
+	background: white;
+}
+
+.content:nth-child(odd) {
+	/*background: #e0ebeb;*/
+	background: var(--color-blue3);
+}	
 
 #center_p {
 	text-align: center;
@@ -381,6 +442,10 @@ h2 {
 	font-size: 150%;
 	border-top: 2px dashed var(--color-blue1);
 	border-bottom: 2px dashed var(--color-blue1);
+}
+
+.noBorder {
+	border: none;
 }
 
 h2 a {
@@ -716,7 +781,7 @@ Index page
 }
 
 .indexPropImg {
-	width: 60%;
+	width: 50%;
 }
 
 /* =========
@@ -753,9 +818,20 @@ Datapatch page
 Data search page
 =========== */
 
-.searchGrid {
+.searchForm form {
+	width: 100%;
+}
+
+.searchGrid3 {
 	display: grid;
-	grid-template-columns: 1fr 1fr max-content;
+	grid-template-columns: 1fr 1fr 1fr;
+	grid-column-gap: 2%;
+	width: 100%;
+}
+
+.searchGrid2 {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
 	grid-column-gap: 2%;
 	width: 100%;
 }
@@ -828,7 +904,11 @@ Data search page
 	border: none;
 }
 
-.searchResults table td {
+.searchResults table tr:nth-child(even) {
+	background: var(--color-blue3);
+}
+
+.searchResults table tr td:nth-child(n + 2) {
 	border-left: 1px #ccc solid;
 }
 

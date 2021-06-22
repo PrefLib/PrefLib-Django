@@ -1,0 +1,93 @@
+{% load static %}
+{% load extratags %}
+
+<table>
+	<tr>
+		<th colspan="2">{{ category.grouper | title }} Metadata</th>
+	</tr>
+
+	{% for metadata in category.list %}
+		{% if metadata.searchWidget == "ternary" %}
+			<tr>
+				<td>
+					<a href="{% url 'preflibapp:dataMetadata' %}#{{metadata.shortName}}" title="{{ metadata.description}}">{{ metadata.searchQuestion }}</a>
+				</td>
+				<td>
+					<div class="triValuedSelector">
+						{% with metadata.shortName|add:'selector' as postKey %}
+							{% with request.POST|keyvalue:postKey as previousValue %}
+								<input type="radio" name="{{ metadata.shortName }}selector" id="{{ metadata.shortName }}selectorYes" class="triValuedSelectorYes" value="yes" {% ifequal previousValue "yes" %} checked {% endifequal %}/>
+								<label for="{{ metadata.shortName }}selectorYes">&#10003;</label>
+								<input type="radio" name="{{ metadata.shortName }}selector" id="{{ metadata.shortName }}selectorIndef" class="triValuedSelectorIndef" value="indef" {% if request.POST %}{% ifequal previousValue "indef" %} checked {% endifequal %}{% else %}checked{% endif %}/>
+								<label for="{{ metadata.shortName }}selectorIndef"><span style="vertical-align: top; font-size: 0.6em;">&#10003;</span>/<span style="vertical-align: bottom; font-size: 0.6em;">&#10007;</span></label>
+								<input type="radio" name="{{ metadata.shortName }}selector" id="{{ metadata.shortName }}selectorNo" class="triValuedSelectorNo" value="no" {% ifequal previousValue "no" %} checked {% endifequal %}/>
+								<label for="{{ metadata.shortName }}selectorNo">&#10007;</label>
+							{% endwith %}
+						{% endwith %}
+					</div>
+				</td>
+			</tr>
+
+		{% else %}
+
+			{% if metadata.searchWidget == "range" %}
+				<tr>
+					<td colspan="2">
+						<a href="{% url 'preflibapp:dataMetadata' %}#{{metadata.shortName}}" title="{{ metadata.description}}">{{ metadata.searchQuestion }}</a> <input id="{{ metadata.shortName }}SliderValueMin" class="valueInput" name="{{ metadata.shortName }}SliderValueMin"> - <input id="{{ metadata.shortName }}SliderValueMax" class="valueInput" name="{{ metadata.shortName }}SliderValueMax">
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<div id="{{ metadata.shortName }}Slider" class="slider-wrapper"></div>
+					</td>
+				</tr>
+
+				{% with metadata.shortName|add:'SliderValueMin' as postKeyMin %}
+					{% with request.POST|keyvalue:postKeyMin as previousMinValue %}
+						{% with metadata.shortName|add:'SliderValueMax' as postKeyMax %}
+							{% with request.POST|keyvalue:postKeyMax as previousMaxValue %}
+								{% with metadataSliderValues|keyvalue:metadata as initValues %}
+									<script>
+										var {{ metadata.shortName }}Slider = document.getElementById('{{ metadata.shortName }}Slider');
+										noUiSlider.create({{ metadata.shortName }}Slider, {
+											start: [{% if request.POST %} {{previousMinValue}}, {{previousMaxValue}} {% else %} {{ initValues.0 }}, {{ initValues.2 }} {% endif %}],
+											step: 1,
+											connect: true,
+											range: {
+												'min': {{ initValues.0 }},
+												'50%': {{ initValues.1 }},
+												'max': {{ initValues.2 }}
+											},
+											format: {
+												to: function ( value ) {
+													return parseInt(value);
+												},
+												from: function ( value ) {
+													return parseInt(value);
+												}
+											}
+										});
+										var {{ metadata.shortName }}SliderValueMin = document.getElementById('{{ metadata.shortName }}SliderValueMin');
+										var {{ metadata.shortName }}SliderValueMax = document.getElementById('{{ metadata.shortName }}SliderValueMax');
+										{{ metadata.shortName }}Slider.noUiSlider.on('update', function (values, handle) {
+											{{ metadata.shortName }}SliderValueMin.value = values[0]
+											{{ metadata.shortName }}SliderValueMax.value = values[1]
+											{{ metadata.shortName }}SliderValueMin.style.width = {{ metadata.shortName }}SliderValueMin.value.length + "em";
+											{{ metadata.shortName }}SliderValueMax.style.width = {{ metadata.shortName }}SliderValueMax.value.length + "em";
+										});
+										{{ metadata.shortName }}SliderValueMin.addEventListener('change', function (evt) {
+											{{ metadata.shortName }}Slider.noUiSlider.set([this.value, null])
+										});
+										{{ metadata.shortName }}SliderValueMax.addEventListener('change', function (evt) {
+											{{ metadata.shortName }}Slider.noUiSlider.set([null, this.value])
+										});
+									</script>
+								{% endwith %}
+							{% endwith %}
+						{% endwith %}
+					{% endwith %}
+				{% endwith %}
+			{% endif %}
+		{% endif %}
+	{% endfor %}
+</table>

@@ -1,8 +1,8 @@
 {% if paginator.num_pages > 1 %}
-	<div class="pagination_wrapper">
+	<div class="pagination_wrapper" id="paginator">
 		<div class="pagination">
 			{% if page != 1 %}
-				<a href="?page={{ page|add:"-1" }}">&laquo;</a>
+				<a href="?page={{ page|add:"-1" }}#paginator">&laquo;</a>
 			{% else %}
 				<a>&laquo;</a>
 			{% endif %}
@@ -11,7 +11,7 @@
 				{% if p == "..." %}
 					<a>...</a>
 				{% else %}	
-					<a href="?page={{ p }}">{{ p }}</a>
+					<a href="?page={{ p }}#paginator">{{ p }}</a>
 				{% endif %}
 			{% endfor %}
 
@@ -21,13 +21,13 @@
 				{% if p == "..." %}
 					<a>...</a>
 				{% else %}	
-					<a href="?page={{ p }}">{{ p }}</a>
+					<a href="?page={{ p }}#paginator">{{ p }}</a>
 				{% endif %}
 			{% endfor %}
 
 
 			{% if page != paginator.num_pages %}
-				<a href="?page={{ page|add:1 }}">&raquo;</a>
+				<a href="?page={{ page|add:1 }}#paginator">&raquo;</a>
 			{% else %}
 				<a>&raquo;</a>
 			{% endif %}
