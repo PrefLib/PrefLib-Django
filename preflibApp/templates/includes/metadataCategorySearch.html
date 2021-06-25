@@ -70,10 +70,38 @@
 										var {{ metadata.shortName }}SliderValueMin = document.getElementById('{{ metadata.shortName }}SliderValueMin');
 										var {{ metadata.shortName }}SliderValueMax = document.getElementById('{{ metadata.shortName }}SliderValueMax');
 										{{ metadata.shortName }}Slider.noUiSlider.on('update', function (values, handle) {
+											console.log(values[1])
 											{{ metadata.shortName }}SliderValueMin.value = values[0]
 											{{ metadata.shortName }}SliderValueMax.value = values[1]
 											{{ metadata.shortName }}SliderValueMin.style.width = {{ metadata.shortName }}SliderValueMin.value.length + "em";
 											{{ metadata.shortName }}SliderValueMax.style.width = {{ metadata.shortName }}SliderValueMax.value.length + "em";
+											{% for upperBounded in metadata.upperBounds.all %}
+													{% with metadataSliderValues|keyvalue:upperBounded as initValues %}
+														if ({{upperBounded.shortName}}Slider.noUiSlider.options['range']['max'] > values[1]) {
+															{{ upperBounded.shortName }}Slider.noUiSlider.updateOptions({
+																range: {
+																	'min': {{ initValues.0 }},
+																	'max': values[1]
+																}
+															});
+														} else if (values[1] <= {{ initValues.2 }}) {
+															{{ upperBounded.shortName }}Slider.noUiSlider.updateOptions({
+																range: {
+																	'min': {{ initValues.0 }},
+																	'max': values[1]
+																}
+															});
+														} else {
+															{{ upperBounded.shortName }}Slider.noUiSlider.updateOptions({
+																range: {
+																	'min': {{ initValues.0 }},
+																	'max': {{ initValues.2 }}
+																}
+															});
+															console.log("{{ upperBounded.shortName }} No case", {{initValues.2}})
+														}
+													{% endwith %}
+											{% endfor %}
 										});
 										{{ metadata.shortName }}SliderValueMin.addEventListener('change', function (evt) {
 											{{ metadata.shortName }}Slider.noUiSlider.set([this.value, null])

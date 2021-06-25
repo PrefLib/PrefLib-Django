@@ -17,12 +17,13 @@ class Command(BaseCommand):
 
 	def initializeMetadata(self):
 
-		metadataObj = Metadata.objects.update_or_create(
+		metadataNumAlt = Metadata.objects.update_or_create(
 			name = "Number of alternatives",
 			defaults = {
 				"category": "general",
 				"description": "The number of alternatives is the number of elements agents had to vote on. It is only available for data representing orderings of the alternatives.",
 				"isActive": True,
+				"isDisplayed": True,
 				"appliesTo": 'soc,soi,toc,toi,tog,mjg,wmg,pwg,wmd',
 				"innerModule": "preflibtools.properties",
 				"innerFunction": "nbAlternatives",
@@ -33,12 +34,13 @@ class Command(BaseCommand):
 				"searchResName": "#Alternatives",
 				"orderPriority": 1})
 
-		metadataObj = Metadata.objects.update_or_create(
+		metadataNumVot = Metadata.objects.update_or_create(
 			name = "Number of voters",
 			defaults = {
 				"category": "general",
 				"description": "The number of voters is the number of ballots that were submitted. For weighted matching graphs",
 				"isActive": True,
+				"isDisplayed": True,
 				"appliesTo": ",".join([t[0] for t in DATATYPES]),
 				"innerModule": "preflibtools.properties",
 				"innerFunction": "nbVoters",
@@ -49,12 +51,13 @@ class Command(BaseCommand):
 				"searchResName": "#Voters",
 				"orderPriority": 2})
 
-		metadataObj = Metadata.objects.update_or_create(
+		metadataSumVote = Metadata.objects.update_or_create(
 			name = "Sum of vote count",
 			defaults = {
 				"category": "general",
 				"description": """The sum of the weights of the ballots cast. See the data <a href="/data/format#election">format page</a> for more information.""",
 				"isActive": True,
+				"isDisplayed": True,
 				"appliesTo": ",".join([t[0] for t in DATATYPES]),
 				"innerModule": "preflibtools.properties",
 				"innerFunction": "nbSumVoters",
@@ -65,12 +68,13 @@ class Command(BaseCommand):
 				"searchResName": "Sum Vote Count",
 				"orderPriority": 3})
 
-		metadataObj = Metadata.objects.update_or_create(
+		metadataUniqOrders = Metadata.objects.update_or_create(
 			name = "Number of unique orders",
 			defaults = {
 				"category": "general",
 				"description": "The number of distinct ballots that were casts.",
 				"isActive": True,
+				"isDisplayed": True,
 				"appliesTo": ",".join([t[0] for t in DATATYPES]),
 				"innerModule": "preflibtools.properties",
 				"innerFunction": "nbDifferentOrders",
@@ -81,13 +85,14 @@ class Command(BaseCommand):
 				"searchResName": "#Unique Ballots",
 				"orderPriority": 4})
 
-		# metadataObj = Metadata.objects.update_or_create(
+		# metadataNumNodes = Metadata.objects.update_or_create(
 		# 	name = "Number of nodes",
 		# 	update_or_create(
 		#	defaults = {
 		#		"category": "general",
 		# 		"description": "For data representing graphs, it represents the number of nodes in the graph.",
 		# 		"isActive": True,
+				"isDisplayed": True,
 		# 		"appliesTo": 'tog,mjg,wmg,pwg,wmd',
 		# 		"innerModule": "preflibtools.properties",
 		# 		"innerFunction": "nbAlternatives",
@@ -98,12 +103,13 @@ class Command(BaseCommand):
 		#		"searchResName": "",
 		#		"orderPriority": "")
 
-		metadataObj = Metadata.objects.update_or_create(
+		metadataIsStrict = Metadata.objects.update_or_create(
 			name = "Strict orders",
 			defaults = {
 				"category": "preference",
 				"description": "A boolean value set to True if all the ballots that were cast represent strict linear orders.",
 				"isActive": True,
+				"isDisplayed": False,
 				"appliesTo": 'soc,soi,toc,toi',
 				"innerModule": "preflibtools.properties",
 				"innerFunction": "isStrict",
@@ -114,12 +120,13 @@ class Command(BaseCommand):
 				"searchResName": "Strict",
 				"orderPriority": 11})
 
-		metadataObj = Metadata.objects.update_or_create(
+		metadataIsComplete = Metadata.objects.update_or_create(
 			name = "Complete orders",
 			defaults = {
 				"category": "preference",
 				"description": "A boolean value set to True if all the ballots that were cast represent complete linear orders.",
 				"isActive": True,
+				"isDisplayed": False,
 				"appliesTo": 'soc,soi,toc,toi',
 				"innerModule": "preflibtools.properties",
 				"innerFunction": "isComplete",
@@ -130,12 +137,13 @@ class Command(BaseCommand):
 				"searchResName": "Complete",
 				"orderPriority": 12})
 
-		metadataObj = Metadata.objects.update_or_create(
+		metadataIsApp = Metadata.objects.update_or_create(
 			name = "Approval profile",
 			defaults = {
 				"category": "preference",
 				"description": "A boolean value set to True if the ballots can be interpreted as approval ballots. That is the case if, either every ballot consist of a single set of indifferences, or every ballots is complete and consist of two set of indifferences.",
 				"isActive": True,
+				"isDisplayed": True,
 				"appliesTo": 'soc,soi,toc,toi',
 				"innerModule": "preflibtools.properties",
 				"innerFunction": "isApproval",
@@ -146,12 +154,13 @@ class Command(BaseCommand):
 				"searchResName": "Approval",
 				"orderPriority": 13})
 
-		metadataObj = Metadata.objects.update_or_create(
+		metadataIsSP = Metadata.objects.update_or_create(
 			name = "Single-peaked",
 			defaults = {
 				"category": "preference",
 				"description": """A boolean value set to True if the set of ballots cast represents <a href="https://en.wikipedia.org/wiki/Single_peaked_preferences">single-peaked preferences</a>. To check this property, we used the <a href="https://github.com/zmf6921/incompletesp">code of Zack Fitzsimmons and Martin Lackner</a> available on GitHub that we want to thank here.""",
 				"isActive": True,
+				"isDisplayed": True,
 				"appliesTo": 'soc',
 				"innerModule": "preflibtools.properties",
 				"innerFunction": "isSP",
@@ -162,12 +171,13 @@ class Command(BaseCommand):
 				"searchResName": "Single-Peaked",
 				"orderPriority": 14})
 
-		metadataObj = Metadata.objects.update_or_create(
+		metadataIsSC = Metadata.objects.update_or_create(
 			name = "Single-crossing",
 			defaults = {
 				"category": "preference",
 				"description": "A boolean value set to True if the set of ballots cast represents single-crossing preferences.",
 				"isActive": True,
+				"isDisplayed": True,
 				"appliesTo": 'soc',
 				"innerModule": "preflibtools.properties",
 				"innerFunction": "isSC",
@@ -178,12 +188,13 @@ class Command(BaseCommand):
 				"searchResName": "Single-Crossing",
 				"orderPriority": 15})
 
-		metadataObj = Metadata.objects.update_or_create(
+		metadataLargBallot = Metadata.objects.update_or_create(
 			name = "Size of the largest ballot",
 			defaults = {
 				"category": "ballot",
 				"description": """Given a set of ballots, how many alternatives have been submitted in the ballot with the highest number of submitted alternatives. In data representing complete orders (<a href="/data/types#soc">SOC</a> and <a href="/data/types#toc">TOC</a>), this should be equal to the number of alternatives.""",
 				"isActive": True,
+				"isDisplayed": True,
 				"appliesTo": 'soc,soi,toc,toi',
 				"innerModule": "preflibtools.properties",
 				"innerFunction": "largestBallot",
@@ -194,12 +205,13 @@ class Command(BaseCommand):
 				"searchResName": "Largest Ballot",
 				"orderPriority": 6})
 
-		metadataObj = Metadata.objects.update_or_create(
+		metadataSmalBallot = Metadata.objects.update_or_create(
 			name = "Size of the smallest ballot",
 			defaults = {
 				"category": "ballot",
 				"description": """Given a set of ballots, how many alternatives have been submitted in the ballot with the smallest number of submitted alternatives. In data representing complete orders (<a href="/data/types#soc">SOC</a> and <a href="/data/types#toc">TOC</a>), this should be equal to the number of alternatives.""",
 				"isActive": True,
+				"isDisplayed": True,
 				"appliesTo": 'soc,soi,toc,toi',
 				"innerModule": "preflibtools.properties",
 				"innerFunction": "smallestBallot",
@@ -210,12 +222,13 @@ class Command(BaseCommand):
 				"searchResName": "Smallest Ballot",
 				"orderPriority": 5})
 
-		metadataObj = Metadata.objects.update_or_create(
+		metadataMaxNumIndif = Metadata.objects.update_or_create(
 			name = "Maximum number of indifferences",
 			defaults = {
 				"category": "ballot",
 				"description": """In a given ballot, an indifference is a position in the order such that more than one alternative is ranked at this position. Given a set of ballots, the maximum number of indifferences is the number of indifferences in the ballot with the highest number of them. In data witout ties (<a href="/data/types#soc">SOC</a> and <a href="/data/types#soi">SOI</a>), this should be 0.""",
 				"isActive": True,
+				"isDisplayed": True,
 				"appliesTo": 'soc,soi,toc,toi',
 				"innerModule": "preflibtools.properties",
 				"innerFunction": "maxNbIndif",
@@ -226,12 +239,13 @@ class Command(BaseCommand):
 				"searchResName": "Max #Indif.",
 				"orderPriority": 8})
 
-		metadataObj = Metadata.objects.update_or_create(
+		metadataMinNumIndif = Metadata.objects.update_or_create(
 			name = "Minimum number of indifferences",
 			defaults = {
 				"category": "ballot",
 				"description": """In a given ballot, an indifference is a position in the order such that more than one alternative is ranked at this position. Given a set of ballots, the minimum number of indifferences is the number of indifferences in the ballot with the smallest number of them. In data witout ties (<a href="/data/types#soc">SOC</a> and <a href="/data/types#soi">SOI</a>), this should be 0.""",
 				"isActive": True,
+				"isDisplayed": True,
 				"appliesTo": 'soc,soi,toc,toi',
 				"innerModule": "preflibtools.properties",
 				"innerFunction": "minNbIndif",
@@ -242,12 +256,13 @@ class Command(BaseCommand):
 				"searchResName": "Min #Indif.",
 				"orderPriority": 7})
 
-		metadataObj = Metadata.objects.update_or_create(
+		metadataLargIndif = Metadata.objects.update_or_create(
 			name = "Size of the largest indifference",
 			defaults = {
 				"category": "ballot",
 				"description": """In a given ballot, an indifference is a position in the order such that more than one alternative is ranked at this position. Given a set of ballots, the size of the largest indifference is the maximal number of alternatives which are tied in a ballot. In data witout ties (<a href="/data/types#soc">SOC</a> and <a href="/data/types#soi">SOI</a>), this should be 0.""",
 				"isActive": True,
+				"isDisplayed": True,
 				"appliesTo": 'soc,soi,toc,toi',
 				"innerModule": "preflibtools.properties",
 				"innerFunction": "largestIndif",
@@ -258,12 +273,13 @@ class Command(BaseCommand):
 				"searchResName": "Largest Indif.",
 				"orderPriority": 10})
 
-		metadataObj = Metadata.objects.update_or_create(
+		metadataSmalIndif = Metadata.objects.update_or_create(
 			name = "Size of the smallest indifference",
 			defaults = {
 				"category": "ballot",
 				"description": """In a given ballot, an indifference is a position in the order such that more than one alternative is ranked at this position. Given a set of ballots, the size of the largest indifference is the maximal number of alternatives which are tied in a ballot. In data witout ties (<a href="/data/types#soc">SOC</a> and <a href="/data/types#soi">SOI</a>), this should be 0.""",
 				"isActive": True,
+				"isDisplayed": True,
 				"appliesTo": 'soc,soi,toc,toi',
 				"innerModule": "preflibtools.properties",
 				"innerFunction": "smallestIndif",
@@ -290,6 +306,12 @@ class Command(BaseCommand):
 		# 		"searchQuestion": "Has a Condorcet winner?",
 		#		"searchResName": "",
 		#		"orderPriority": "")
+
+		metadataNumAlt[0].upperBounds.set([])
+		metadataNumAlt[0].upperBounds.add(metadataSmalBallot[0])
+		metadataNumAlt[0].upperBounds.add(metadataLargBallot[0])
+		metadataNumAlt[0].upperBounds.add(metadataSmalIndif[0])
+		metadataNumAlt[0].upperBounds.add(metadataLargIndif[0])
 
 	def initializePaper(self, Paper):
 		pass

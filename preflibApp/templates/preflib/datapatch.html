@@ -22,28 +22,41 @@
 		<div class="patchCell">
 			<h2>{{ file.0.fileName }}</h2>
 			<div class="patchCellContent">
-				{% if file.1 %}
-					<div class="patchCellContent">
-						{% if file.0.dataType in "soc soi toc toi tog mjg wmg pwg wmd" %}
-							{% with 'data/'|add:dataSet.category|add:'/'|add:dataSet.abbreviation|add:'/img/'|add:file.0.image as imgFile %}
-								<p>
-									<img src="{% static imgFile %}">
-								</p>
-							{% endwith %}
-						{% endif %}
-
-						{% if dataFile.dataType in "dat csv" %}
-							<div class="codebox">
-								<p>{{ properties.text|linebreaksbr }}...</p>
-							</div>
-						{% endif %}
-
-						{% with 'data/'|add:dataSet.category|add:'/'|add:dataSet.abbreviation|add:'/'|add:file.0.fileName as f %}
-							<p><span id="downloadButton"><a href="{% static f %}">Download</a></span></p>
+				<div class="patchCellContent">
+					{% if file.0.dataType in "soc soi toc toi tog mjg wmg pwg wmd" %}
+						{% with 'data/'|add:dataSet.category|add:'/'|add:dataSet.abbreviation|add:'/img/'|add:file.0.image as imgFile %}
+							<p>
+								<img src="{% static imgFile %}">
+							</p>
 						{% endwith %}
+					{% endif %}
 
-						<div class="patchCellContentFlex">
-							<table class="propertyTable">
+					{% with 'data/'|add:dataSet.category|add:'/'|add:dataSet.abbreviation|add:'/'|add:file.0.fileName as f %}
+						<p><span id="downloadButton"><a href="{% static f %}">Download</a></span></p>
+					{% endwith %}
+
+					<div class="patchCellContentFlex">
+						<table class="propertyTable">
+							<tr>
+								<th colspan="2">File Details</th>
+							</tr>
+							<tr>
+								<td>Modification Type</td>
+								<td>{{ file.0.modificationType }}</td>
+							</tr>
+							<tr>
+								<td>Size of the File</td>
+								<td>{{ file.0.fileSize }}b.</td>
+							</tr>
+							<tr>
+								<td>Publication Date</td>
+								<td>{{ file.0.publicationDate.date }}</td>
+							</tr>
+							<tr>
+								<td>Modification Date</td>
+								<td>{{ file.0.modificationDate.date }}</td>
+							</tr>
+							{% if file.1 %}
 								{% for category in file.1 %}
 									<tr>
 										<th colspan="2">{{ category.0 | title }}</th>
@@ -63,15 +76,10 @@
 										</tr>
 									{% endfor %}
 								{% endfor %}
-							</table>
-						</div>
+							{% endif %}
+						</table>
 					</div>
-
-				{% else %}
-
-					<p>No properties is known for this file.</p>
-
-				{% endif %}
+				</div>
 			</div>
 		</div>
 	{% endfor %}

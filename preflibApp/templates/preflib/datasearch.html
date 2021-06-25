@@ -31,127 +31,127 @@
 
 			<div class="searchGrid3">
 
-			<div class="searchCell">
-			
-			<table>
-				<tr>
-					<th colspan="2">Category of Data</th>
-				</tr>
-				{% for cat in categories %}
+				<div class="searchCell">
+				
+				<table>
 					<tr>
-						<td>{{ cat.1|title }} data</td>
+						<th colspan="2">Category of Data</th>
+					</tr>
+					{% for cat in categories %}
+						<tr>
+							<td>{{ cat.1|title }} data</td>
+							<td>
+								<div class="triValuedSelector">
+									{% with cat.0|add:"selector" as key %}
+										{% with request.POST|keyvalue:key as value %}
+											<input type="radio" name="{{ cat.0 }}selector" id="{{ cat.0 }}SelectorYes" class="triValuedSelectorYes" value="yes" {% ifequal value "yes" %} checked {% endifequal %}/>
+											<label for="{{ cat.0 }}SelectorYes">&#10003;</label>
+											<input type="radio" name="{{ cat.0 }}selector" id="{{ cat.0 }}SelectorIndef" class="triValuedSelectorIndef" value="indef" {% if request.POST %}{% ifequal value "indef" %} checked {% endifequal %}{% else %}checked{% endif %}/>
+											<label for="{{ cat.0 }}SelectorIndef"><span style="vertical-align: top; font-size: 0.6em;">&#10003;</span>/<span style="vertical-align: bottom; font-size: 0.6em;">&#10007;</span></label>
+											<input type="radio" name="{{ cat.0 }}selector" id="{{ cat.0 }}SelectorNo" class="triValuedSelectorNo" value="no" {% ifequal value "no" %} checked {% endifequal %}/>
+											<label for="{{ cat.0 }}SelectorNo">&#10007;</label>
+										{% endwith %}
+									{% endwith %}
+								</div>
+							</td>
+						</tr>
+					{% endfor %}
+				</table>
+				<script>
+					{% for cat in categories %}
+						var {{ cat.0 }}selectorYes = document.getElementById('{{ cat.0 }}SelectorYes');
+						var {{ cat.0 }}selectorNo = document.getElementById('{{ cat.0 }}SelectorNo');
+						{{ cat.0 }}selectorYes.addEventListener("change", function(evt) {
+							{% for e in categories %}
+								{% if e.0 != cat.0 %}
+									{{ e.0 }}selectorNo.checked = true;
+								{% endif %}
+							{% endfor %}
+						})
+					{% endfor %}
+				</script>
+
+				</div>
+
+				<div class="searchCell">
+
+				<table>
+					<tr>
+						<th colspan="6">Type of Data</th>
+					</tr>
+					{% for type in types %}
+						{% if forloop.counter0|divisibleby:3 %}
+							{% if forloop.counter0 == 0 %}
+								<tr>
+							{% else %}
+								</tr><tr>
+							{% endif %}
+						{% endif %}
+						<td><a href="{% url 'preflibapp:datatypes' %}#{{type.0}}" title="{{ type.1|title }}">{{ type.0 | upper }}</a></td>
 						<td>
 							<div class="triValuedSelector">
-								{% with cat.0|add:"selector" as key %}
+								{% with type.0|add:"selector" as key %}
 									{% with request.POST|keyvalue:key as value %}
-										<input type="radio" name="{{ cat.0 }}selector" id="{{ cat.0 }}SelectorYes" class="triValuedSelectorYes" value="yes" {% ifequal value "yes" %} checked {% endifequal %}/>
-										<label for="{{ cat.0 }}SelectorYes">&#10003;</label>
-										<input type="radio" name="{{ cat.0 }}selector" id="{{ cat.0 }}SelectorIndef" class="triValuedSelectorIndef" value="indef" {% if request.POST %}{% ifequal value "indef" %} checked {% endifequal %}{% else %}checked{% endif %}/>
-										<label for="{{ cat.0 }}SelectorIndef"><span style="vertical-align: top; font-size: 0.6em;">&#10003;</span>/<span style="vertical-align: bottom; font-size: 0.6em;">&#10007;</span></label>
-										<input type="radio" name="{{ cat.0 }}selector" id="{{ cat.0 }}SelectorNo" class="triValuedSelectorNo" value="no" {% ifequal value "no" %} checked {% endifequal %}/>
-										<label for="{{ cat.0 }}SelectorNo">&#10007;</label>
+										<input type="radio" name="{{ type.0 }}selector" id="{{ type.0 }}selectorYes" class="triValuedSelectorYes" value="yes" {% ifequal value "yes" %} checked {% endifequal %}/>
+										<label for="{{ type.0 }}selectorYes">&#10003;</label>
+										<input type="radio" name="{{ type.0 }}selector" id="{{ type.0 }}selectorIndef" class="triValuedSelectorIndef" value="indef" {% if request.POST %}{% ifequal value "indef" %} checked {% endifequal %}{% else %}checked{% endif %}/>
+										<label for="{{ type.0 }}selectorIndef"><span style="vertical-align: top; font-size: 0.6em;">&#10003;</span>/<span style="vertical-align: bottom; font-size: 0.6em;">&#10007;</span></label>
+										<input type="radio" name="{{ type.0 }}selector" id="{{ type.0 }}selectorNo" class="triValuedSelectorNo" value="no" {% ifequal value "no" %} checked {% endifequal %}/>
+										<label for="{{ type.0 }}selectorNo">&#10007;</label>
 									{% endwith %}
 								{% endwith %}
 							</div>
 						</td>
-					</tr>
-				{% endfor %}
-			</table>
-			<script>
-				{% for cat in categories %}
-					var {{ cat.0 }}selectorYes = document.getElementById('{{ cat.0 }}SelectorYes');
-					var {{ cat.0 }}selectorNo = document.getElementById('{{ cat.0 }}SelectorNo');
-					{{ cat.0 }}selectorYes.addEventListener("change", function(evt) {
-						{% for e in categories %}
-							{% if e.0 != cat.0 %}
-								{{ e.0 }}selectorNo.checked = true;
-							{% endif %}
-						{% endfor %}
-					})
-				{% endfor %}
-			</script>
+					{% endfor %}
+				</table>
+				<script>
+					{% for type in types %}
+						var {{ type.0 }}selectorYes = document.getElementById('{{ type.0 }}selectorYes');
+						var {{ type.0 }}selectorNo = document.getElementById('{{ type.0 }}selectorNo');
+						{{ type.0 }}selectorYes.addEventListener("change", function(evt) {
+							{% for t in types %}
+								{% if t.0 != type.0 %}
+									{{ t.0 }}selectorNo.checked = true;
+								{% endif %}
+							{% endfor %}
+						})
+					{% endfor %}
+				</script>
 
-			</div>
+				</div>
 
-			<div class="searchCell">
+				<div class="searchCell">
 
-			<table>
-				<tr>
-					<th colspan="6">Type of Data</th>
-				</tr>
-				{% for type in types %}
-					{% if forloop.counter0|divisibleby:3 %}
-						{% if forloop.counter0 == 0 %}
-							<tr>
-						{% else %}
-							</tr><tr>
-						{% endif %}
-					{% endif %}
-					<td><a href="{% url 'preflibapp:datatypes' %}#{{type.0}}" title="{{ type.1|title }}">{{ type.0 | upper }}</a></td>
-					<td>
-						<div class="triValuedSelector">
-							{% with type.0|add:"selector" as key %}
-								{% with request.POST|keyvalue:key as value %}
-									<input type="radio" name="{{ type.0 }}selector" id="{{ type.0 }}selectorYes" class="triValuedSelectorYes" value="yes" {% ifequal value "yes" %} checked {% endifequal %}/>
-									<label for="{{ type.0 }}selectorYes">&#10003;</label>
-									<input type="radio" name="{{ type.0 }}selector" id="{{ type.0 }}selectorIndef" class="triValuedSelectorIndef" value="indef" {% if request.POST %}{% ifequal value "indef" %} checked {% endifequal %}{% else %}checked{% endif %}/>
-									<label for="{{ type.0 }}selectorIndef"><span style="vertical-align: top; font-size: 0.6em;">&#10003;</span>/<span style="vertical-align: bottom; font-size: 0.6em;">&#10007;</span></label>
-									<input type="radio" name="{{ type.0 }}selector" id="{{ type.0 }}selectorNo" class="triValuedSelectorNo" value="no" {% ifequal value "no" %} checked {% endifequal %}/>
-									<label for="{{ type.0 }}selectorNo">&#10007;</label>
-								{% endwith %}
-							{% endwith %}
-						</div>
-					</td>
-				{% endfor %}
-			</table>
-			<script>
-				{% for type in types %}
-					var {{ type.0 }}selectorYes = document.getElementById('{{ type.0 }}selectorYes');
-					var {{ type.0 }}selectorNo = document.getElementById('{{ type.0 }}selectorNo');
-					{{ type.0 }}selectorYes.addEventListener("change", function(evt) {
-						{% for t in types %}
-							{% if t.0 != type.0 %}
-								{{ t.0 }}selectorNo.checked = true;
-							{% endif %}
-						{% endfor %}
-					})
-				{% endfor %}
-			</script>
+				{% regroup allMetadata by category as metadataPerCategories %}
 
-			</div>
+				{% with metadataPerCategories.2 as category %}
+					{% include 'includes/metadataCategorySearch.html' %}
+				{% endwith %}
 
-			<div class="searchCell">
-
-			{% regroup allMetadata by category as metadataPerCategories %}
-
-			{% with metadataPerCategories.2 as category %}
-				{% include 'includes/metadataCategorySearch.html' %}
-			{% endwith %}
-
-			</div>
+				</div>
 
 			</div>
 
 			<div class="searchGrid2" style="margin-top: 30px;">
 
-			<div class="searchCell">
+				<div class="searchCell">
 
-			{% with metadataPerCategories.0 as category %}
-				{% include 'includes/metadataCategorySearch.html' %}
-			{% endwith %}
+				{% with metadataPerCategories.0 as category %}
+					{% include 'includes/metadataCategorySearch.html' %}
+				{% endwith %}
+
+				</div>
+
+				<div class="searchCell">
+
+				{% with metadataPerCategories.1 as category %}
+					{% include 'includes/metadataCategorySearch.html' %}
+				{% endwith %}
+
+				</div>
 
 			</div>
 
-			<div class="searchCell">
-
-			{% with metadataPerCategories.1 as category %}
-				{% include 'includes/metadataCategorySearch.html' %}
-			{% endwith %}
-
-			</div>
-
-			</div>
-			
 			<p id="center_p">
 				<input id="submit_button" type="submit" value="Search" class="downloadButtons"/>
 			</p>
@@ -222,6 +222,10 @@
 
 	</div>
 
+</div>
+
+<div class="content">
+	<p>The search interface has been developped using the noUiSlider, distributed under MIT licence, a JavaScript a lightweight JavaScript range slider library with full multi-touch support and no dependencies. We want to thank Léon Gersen for developing it and making it available. For more informations, check out <a href="https://refreshless.com/nouislider/">this website</a> or the <a href="https://github.com/leongersen/noUiSlider">GitHub page</a>.
 </div>
 </body>
 

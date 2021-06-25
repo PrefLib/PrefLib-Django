@@ -148,8 +148,7 @@ def datapatch(request, datacategory, dataSetNum, dataPatchNum):
 					tmp2.append((m, DataProperty.objects.get(metadata = m, dataFile = file).getTypedValue()))
 			if len(tmp2) > 0:
 				tmp.append((category, tmp2))
-		if len(tmp) > 0:
-			filesAndMetadata.append((file, tmp))
+		filesAndMetadata.append((file, tmp))
 	
 	return my_render(request, os.path.join('preflib', 'datapatch.html'), locals())
 
@@ -161,7 +160,7 @@ def dataSearch(request):
 	types = copy.deepcopy(DATATYPES)
 	types.remove(('dat', 'extra data file'))
 	types.remove(('csv', 'comma-separated values'))
-	allMetadata = Metadata.objects.filter(isActive = True)
+	allMetadata = Metadata.objects.filter(isActive = True, isDisplayed = True)
 
 	metadataSliderValues = dict()
 	removeMetadata = []
@@ -221,7 +220,7 @@ def dataSearch(request):
 
 				allFiles = allFiles.exclude(dataproperty__in = models.Subquery(propretyQueryMax.values('pk')))
 
-	allFiles = allFiles.order_by('dataType', 'fileName')
+	allFiles = allFiles.order_by('fileName', 'dataType')
 	(paginator, dataFiles, page, pagesBefore, pagesAfter) = getPaginator(request, allFiles, pageSize = 40)
 	return my_render(request, os.path.join('preflib', 'datasearch.html'), locals())
 
