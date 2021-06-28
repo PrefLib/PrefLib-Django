@@ -70,12 +70,14 @@
 										var {{ metadata.shortName }}SliderValueMin = document.getElementById('{{ metadata.shortName }}SliderValueMin');
 										var {{ metadata.shortName }}SliderValueMax = document.getElementById('{{ metadata.shortName }}SliderValueMax');
 										{{ metadata.shortName }}Slider.noUiSlider.on('update', function (values, handle) {
-											{{ metadata.shortName }}SliderValueMin.value = values[0]
-											{{ metadata.shortName }}SliderValueMax.value = values[1]
+											{{ metadata.shortName }}SliderValueMin.value = values[0];
+											{{ metadata.shortName }}SliderValueMax.value = values[1];
 											{{ metadata.shortName }}SliderValueMin.style.width = {{ metadata.shortName }}SliderValueMin.value.length + "em";
 											{{ metadata.shortName }}SliderValueMax.style.width = {{ metadata.shortName }}SliderValueMax.value.length + "em";
 											{% for upperBounded in metadata.upperBounds.all %}
-													{% with metadataSliderValues|keyvalue:upperBounded as initValues %}
+												var {{ upperBounded.shortName }}Slider = document.getElementById('{{ upperBounded.shortName }}Slider');
+												{% with metadataSliderValues|keyvalue:upperBounded as initValues %}
+													if ({{upperBounded.shortName}}Slider !== null) {
 														if ({{upperBounded.shortName}}Slider.noUiSlider.options['range']['max'] > values[1]) {
 															{{ upperBounded.shortName }}Slider.noUiSlider.updateOptions({
 																range: {
@@ -98,15 +100,15 @@
 																}
 															});
 														}
-													{% endwith %}
+													}
+												{% endwith %}
 											{% endfor %}
 										});
-										{{ metadata.shortName }}SliderValueMin.addEventListener('change', function (evt) {
-											console.log("Lalala")
-											{{ metadata.shortName }}Slider.noUiSlider.set([this.value, null])
+										{{ metadata.shortName }}SliderValueMin.addEventListener('input', function (evt) {
+											{{ metadata.shortName }}Slider.noUiSlider.set([this.value, null]);
 										});
-										{{ metadata.shortName }}SliderValueMax.addEventListener('change', function (evt) {
-											{{ metadata.shortName }}Slider.noUiSlider.set([null, this.value])
+										{{ metadata.shortName }}SliderValueMax.addEventListener('input', function (evt) {
+											{{ metadata.shortName }}Slider.noUiSlider.set([null, this.value]);
 										});
 									</script>
 								{% endwith %}

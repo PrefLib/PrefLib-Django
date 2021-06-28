@@ -184,7 +184,7 @@ def dataSearch(request):
 			request.POST = request.session['searchDataFilesPOST']
 			request.method = 'POST'
 
-	allFiles = DataFile.objects.all()
+	allFiles = DataFile.objects.filter(dataType__in = [t[0] for t in types])
 	if request.method == 'POST':
 		request.session['searchDataFilesPOST'] = request.POST
 	
