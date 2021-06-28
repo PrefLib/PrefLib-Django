@@ -70,7 +70,6 @@
 										var {{ metadata.shortName }}SliderValueMin = document.getElementById('{{ metadata.shortName }}SliderValueMin');
 										var {{ metadata.shortName }}SliderValueMax = document.getElementById('{{ metadata.shortName }}SliderValueMax');
 										{{ metadata.shortName }}Slider.noUiSlider.on('update', function (values, handle) {
-											console.log(values[1])
 											{{ metadata.shortName }}SliderValueMin.value = values[0]
 											{{ metadata.shortName }}SliderValueMax.value = values[1]
 											{{ metadata.shortName }}SliderValueMin.style.width = {{ metadata.shortName }}SliderValueMin.value.length + "em";
@@ -98,12 +97,12 @@
 																	'max': {{ initValues.2 }}
 																}
 															});
-															console.log("{{ upperBounded.shortName }} No case", {{initValues.2}})
 														}
 													{% endwith %}
 											{% endfor %}
 										});
 										{{ metadata.shortName }}SliderValueMin.addEventListener('change', function (evt) {
+											console.log("Lalala")
 											{{ metadata.shortName }}Slider.noUiSlider.set([this.value, null])
 										});
 										{{ metadata.shortName }}SliderValueMax.addEventListener('change', function (evt) {

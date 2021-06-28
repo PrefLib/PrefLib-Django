@@ -824,7 +824,7 @@ Data search page
 
 .searchGrid3 {
 	display: grid;
-	grid-template-columns: 1fr 1fr 1fr;
+	grid-template-columns: 2fr 3fr 2fr;
 	grid-column-gap: 2%;
 	width: 100%;
 }
@@ -837,12 +837,15 @@ Data search page
 }
 
 .searchCell {
-	display: inline-grid;
+	display: flex;
 	text-align: center;
+	align-items: center;
+	justify-content: center;
 }
 
 .searchCell table {
 	border-collapse: collapse;
+	width: 100%;
 }
 
 .searchCell table th {
