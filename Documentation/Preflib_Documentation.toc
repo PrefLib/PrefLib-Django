@@ -1,11 +1,13 @@
 \babel@toc {english}{}
-\contentsline {section}{\numberline {1}Folder Structure}{1}{section.1}%
-\contentsline {section}{\numberline {2}Database Structure}{2}{section.2}%
-\contentsline {paragraph}{\textsc {DataFile}}{2}{section*.2}%
-\contentsline {paragraph}{\textsc {DataPatch}}{2}{section*.3}%
-\contentsline {paragraph}{\textsc {DataSet}}{2}{section*.4}%
-\contentsline {paragraph}{\textsc {DataProperty}}{2}{section*.5}%
-\contentsline {paragraph}{\textsc {Metadata}}{2}{section*.6}%
-\contentsline {paragraph}{\textsc {Paper}}{2}{section*.7}%
-\contentsline {paragraph}{\textsc {UserProfile}}{2}{section*.8}%
-\contentsline {paragraph}{\textsc {Log}}{3}{section*.9}%
+\contentsline {chapter}{\numberline {1}Developing PrefLib}{2}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Folder Structure}{2}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Database Structure}{5}{section.1.2}%
+\contentsline {paragraph}{\textsc {DataFile}}{5}{section*.17}%
+\contentsline {paragraph}{\textsc {DataPatch}}{5}{section*.18}%
+\contentsline {paragraph}{\textsc {DataSet}}{5}{section*.19}%
+\contentsline {paragraph}{\textsc {DataProperty}}{5}{section*.20}%
+\contentsline {paragraph}{\textsc {Metadata}}{5}{section*.21}%
+\contentsline {paragraph}{\textsc {Paper}}{5}{section*.22}%
+\contentsline {paragraph}{\textsc {UserProfile}}{6}{section*.23}%
+\contentsline {paragraph}{\textsc {Log}}{6}{section*.24}%
+\contentsline {chapter}{\numberline {2}Maintaining PrefLib}{7}{chapter.2}%

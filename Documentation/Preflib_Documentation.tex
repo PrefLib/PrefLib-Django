@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass{report}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{amsmath}
@@ -11,11 +11,13 @@
 \usepackage{graphicx}
 \usepackage{mathpazo}
 \usepackage{nicefrac}
+\usepackage{fontawesome}
+\usepackage{multicol}
 
 \usepackage[authoryear]{natbib}
 
 \usepackage{geometry}
-\geometry{vmargin = 3cm, hmargin = 3cm}
+\geometry{vmargin = 2.5cm, hmargin = 2.5cm}
 
 \usepackage{array}
 \newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
@@ -40,10 +42,145 @@
 	
 	\tableofcontents
 	
+	\chapter{Developing PrefLib}
+	
+	In this chapter, we detail the inner structure of PrefLib. We will first focus on the folder structure, explaining the role of each file. The second part of this chapter is devoted to the structure of the database. 
+	
+	The aim of this chapter is to provide all the necessary information to someone who would like to develop further the website. If you are only interested in maintaining the website and do some small changes, the second chapter might be more interesting to you.
+	
 	\section{Folder Structure}
 	
-	The folder structure of the project follows that of a typical Django project with one application. In the following we will go through the important files.
+	The folder structure of the project follows that of a typical Django project with one application. The overall Django project is called \texttt{preflib} and the main, and only, django application is called \texttt{preflibApp}. The overall folder structure can be found in Figure \ref{fig:folderStruct}. In what follows, we give an explanation for each folder and files.
 	
+	\begin{figure}
+		\begin{multicols}{2}
+			\begin{itemize}
+				\item[\faFolderO] preflib
+				\begin{itemize}
+					\item[\faFileO] settings.py
+					\item[\faFileO] urls.py
+					\item[\faFileO] wsgi.py
+				\end{itemize}
+				\item[\faFolderO] preflibApp
+				\begin{itemize}
+					\item [\faFolderO] management
+					\begin{itemize}
+						\item[\faFolderO] commands
+						\begin{itemize}
+							\item[\faFileO] adddataset.py
+							\item[\faFileO] generatezip.py
+							\item[\faFileO] initializedb.py
+							\item[\faFileO] updatemetadata.py
+							\item[\faFileO] updatepapers.py
+						\end{itemize}
+					\end{itemize}
+					\item[\faFolderO] preflibtools
+					\begin{itemize}
+						\item[\faFileO] drawing.py
+						\item[\faFileO] graph.py
+						\item[\faFileO] instance.py
+						\item[\faFileO] properties.py
+					\end{itemize}
+					\item[\faFolderO] static
+					\begin{itemize}
+						\item[\faFolderO] adminLogo
+						\begin{itemize}
+							\item[\faFilesO] images for the admin menu
+						\end{itemize}
+						\item[\faFolderO] css
+						\begin{itemize}
+							\item[\faFileO] nouislider.css
+							\item[\faFileO] style.css
+						\end{itemize}
+						\item[\faFolderO] js 
+						\begin{itemize}
+							\item[\faFileO] nouislider.js
+						\end{itemize}
+						\item[\faFolderO] types
+						\begin{itemize}
+							\item[\faFileO] dataTypesImages.tex
+							\item[\faFilesO] images to present the types
+						\end{itemize}
+						\item[\faFileO] crisner.png
+						\item[\faFileO] gitHublogo.png
+						\item[\faFileO] papers.bib
+						\item[\faFileO] preflibADTCite.txt
+						\item[\faFileO] preflibADTPaper.pdf
+						\item[\faFileO] preflibTrendsComSoCChapter.pdf
+						\item[\faFileO] preflibTrendsComSoCCite.txt
+					\end{itemize}
+					\item[\faFolderO] templates
+					\begin{itemize}
+						\item[\faFolderO] includes
+						\begin{itemize}
+							\item[\faFilesO] HTML files that can be included
+						\end{itemize}
+						\item[\faFolderO] preflib
+						\begin{itemize}
+							\item[\faFilesO] main HTML files
+						\end{itemize}
+						\item[\faFileO] 400.html
+						\item[\faFileO] 403.html
+						\item[\faFileO] 404.html
+						\item[\faFileO] 500.html
+					\end{itemize}
+					\item[\faFolderO] templatetags
+					\begin{itemize}
+						\item[\faFileO] extratags.py
+					\end{itemize}
+					\item[\faFileO] admin.py
+					\item[\faFileO] apps.py
+					\item[\faFileO] choices.py
+					\item[\faFileO] forms.py
+					\item[\faFileO] models.py
+					\item[\faFileO] scripts.py
+					\item[\faFileO] urls.py
+					\item[\faFileO] views.py
+				\end{itemize}
+			\end{itemize}
+		\end{multicols}
+		\caption{Folder Structure of the Project, some less relevant files have been omitted.}
+		\label{fig:folderStruct}
+	\end{figure}
+
+	\subsection*{\faFolderO{}  preflib}
+	
+	The \texttt{preflib} folder contains the files that have an impact on the entire project. This is the highest folder in the Django hierarchy. Files in there are mainly used to set up the global parameters of the project.
+	
+	\paragraph*{\faFileO{} settings.py} This is the main files for the global settings. Among other things, you will find there the settings for the database, the location of the static files, the debugging mode, the installed applications, ... Not that this file is not on the git for security reasons.
+	
+	\paragraph*{\faFileO{} urls.py} Use this file to set up the global rules for urls. Whenever a request passed over to Django, this file is used to decide where to send the request next. Handlers for the errors (404, 500, etc...) are also defined there.
+	
+	\paragraph*{\faFileO{} wsgi.py} This is only used to set up the connection between Django and whatever WSGI tool is used (uWSGI, Gunicorn, Passenger). If you did not understand the previous sentence, you will most likely never have to deal with this file.
+	
+	\subsection*{\faFolderO{} preflibApp/management/commands}
+	
+	The \texttt{management/commands} folder includes the user-defined commands that one can access using the Django's management tool. Each file in this folder contains a class \texttt{Command} which should contain some specific methods. Importantly, once defined and put in this folder, the command can be accessed as any other management command, for instance from the command line using: \texttt{python3 manage.py adddataset}.
+	
+	\paragraph*{\faFileO{} adddataset.py} This command is used to add datasets to the database. Only zip files located in the folder \texttt{static/datatoadd} can be retrieved by this command. Two arguments can be passed to the command, either \texttt{--file zipfilename} to add only a specific zip file, or \texttt{--all} to add all the zip files in the \texttt{static/datatoadd} folder to the database.
+	
+	When adding a dataset, the command unzip the archive in a temporary folder. It then goes through the files to find the info file used to get all the information for the dataset. Then, each file is added to the database, together with its datapatch (if needed). Note that the metadata are not computed when adding a dataset. 
+	
+	\paragraph*{\faFileO{} generatezip.py} This command is used to generate all the zip files served by the website. It first generates the zip files for the dataset, creating the info file with the entry in the database. In a second time, it generates the zip files per type of data.
+	
+	\paragraph*{\faFileO{} initializedb.py} This command is only run once, at the very beginning, to populate the database with the entries that are needed. It mainly sets up the metadata.
+	
+	\paragraph*{\faFileO{} updatemetada.py} This command computes the metadata for the data files. Two options can be passed to the command. When used with \texttt{--dataset datasetAbbreviation}, only the metadata for the given dataset will be computed. One can also use \texttt{--noDrawing} to avoid generating the images for the data file (which takes a lot of time).
+	
+	For each relevant data file, the command will go through all the \emph{active} metadata (see later what active mean here). Whenever an active metadata applies to the data type of the data file, the corresponding function is called to compute its value. If drawing is allowed, the relevant drawing method is also called.
+	
+	\paragraph*{\faFileO{} updatepapers.py} This command updates the list of papers that are using Preflib. It reads the bib file \texttt{static/papers.bib} and update the database accordingly.
+	
+	\subsection*{\faFolderO{} preflibApp/preflibtools}
+	
+	\subsection*{\faFolderO{} preflibApp/static}
+	
+	\subsection*{\faFolderO{} preflibApp/templates}
+	
+	\subsection*{\faFolderO{} preflibApp/templatetags}
+	
+	\subsection*{\faFolderO{} preflibApp}
+		
 	\begin{itemize}
 		\item preflib
 		\begin{itemize}
@@ -222,5 +359,7 @@
 			\end{tabular}};
 		\end{tikzpicture}}
 	\end{center}
+
+	\chapter{Maintaining PrefLib}
 	
 \end{document}
