@@ -92,6 +92,14 @@
 							\item[\faFileO] nouislider.css
 							\item[\faFileO] style.css
 						\end{itemize}
+						\item[\faFolderO] data
+						\begin{itemize}
+							\item[\faFolderO] CD
+							\item[\faFolderO] ED
+							\item[\faFolderO] MD
+							\item[\faFolderO] types
+						\end{itemize}
+						\item[\faFolderO] datatoadd
 						\item[\faFolderO] js 
 						\begin{itemize}
 							\item[\faFileO] nouislider.js
@@ -102,7 +110,7 @@
 							\item[\faFilesO] images to present the types
 						\end{itemize}
 						\item[\faFileO] crisner.png
-						\item[\faFileO] gitHublogo.png
+						\item[\faFileO] gitHubLogo.png
 						\item[\faFileO] papers.bib
 						\item[\faFileO] preflibADTCite.txt
 						\item[\faFileO] preflibADTPaper.pdf
@@ -171,9 +179,36 @@
 	
 	\paragraph*{\faFileO{} updatepapers.py} This command updates the list of papers that are using Preflib. It reads the bib file \texttt{static/papers.bib} and update the database accordingly.
 	
-	\subsection*{\faFolderO{} preflibApp/preflibtools}
+	\subsection*{\faFolderO{} preflibApp/preflibtools} This folder contains the tools that were developed around PrefLib to work with the data. Note that this version is far from what you can find in the PrefLibTools repository on GitHub. These tools are mainly used to analyze the data when computing the relevant metadata.
+	
+	\paragraph*{\faFileO{} drawing.py} This file contains all the functions that are used to draw the images representing the data. 
+	
+	\paragraph*{\faFileO{} graph.py} This file contains the definition of the \texttt{Graph} class that we use to represent graphs and access several useful methods for them.
+	
+	\paragraph*{\faFileO{} instance.py} This file contains the class used to represent PrefLib instances. The methods for parsing the data file are defined there.
+	
+	\paragraph*{\faFileO{} properties.py} This file contains a collection of functions used to check whether some properties hold for a given instance. This is the main file used to compute the metadata of the instances.
 	
 	\subsection*{\faFolderO{} preflibApp/static}
+	
+	The \texttt{static} folder contains all the static files that are used (unsurprisingly). This folder is the one considered by the \texttt{collecstatic} management command from Django.
+	
+	\paragraph*{\faFolderO{} adminLogo} The folder gathers all the images of the logo used for the admin menu. Note that it might disappear in some later versions.
+	
+	\paragraph*{\faFolderO{} css}
+	
+	\paragraph*{\faFolderO{} js}
+	
+	\paragraph*{\faFolderO{} types}
+	
+	\paragraph*{\faFileO{} crisner.png}
+	
+	\paragraph*{\faFileO{} gitHubLogo.png}
+	
+	\paragraph*{\faFileO{} papers.bib}
+	
+	\paragraph*{\faFilesO{} preflib citations}
+	
 	
 	\subsection*{\faFolderO{} preflibApp/templates}
 	
