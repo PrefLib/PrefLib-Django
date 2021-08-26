@@ -37,7 +37,7 @@
 
 \begin{document}
 	\title{Preflib 2.0}
-	\author{Simon Rey, Nick Mattei}
+	\author{Simon Rey}
 	\maketitle
 	
 	\tableofcontents
@@ -151,7 +151,11 @@
 		\label{fig:folderStruct}
 	\end{figure}
 
-	\subsection*{\faFolderO{}  preflib}
+	\medskip
+
+	We start by detailing the \texttt{preflib} folder.
+
+	\section*{\faFolderO{}  preflib}
 	
 	The \texttt{preflib} folder contains the files that have an impact on the entire project. This is the highest folder in the Django hierarchy. Files in there are mainly used to set up the global parameters of the project.
 	
@@ -161,7 +165,100 @@
 	
 	\paragraph*{\faFileO{} wsgi.py} This is only used to set up the connection between Django and whatever WSGI tool is used (uWSGI, Gunicorn, Passenger). If you did not understand the previous sentence, you will most likely never have to deal with this file.
 	
-	\subsection*{\faFolderO{} preflibApp/management/commands}
+	\medskip 
+	
+	Let us now move to the \texttt{preflibApp} folder.
+	
+	\section*{\faFolderO{} preflibApp}
+	
+	This folder contains all the files related to the \texttt{preflibApp} Django application. Because this is the only application we have, it thus contains the entire website. Let us first go through the Python files you can find there, sub-folders will be examined afterwards.
+	
+	\paragraph{\faFileO{} urls.py} This file sets the url patterns for the application. It is in there that the link between an URL and the corresponding view is made. It is also in there that the set of all acceptable URLs (that will not return a 404) is defined. When a request is passed over to Django, the URL is first filtered by the \texttt{urls.py} file in the \texttt{preflib} folder which then calls the url pattern defined in this file to know what view to call for.
+	
+	\paragraph{\faFileO{} views.py} In Django, a view is a function that takes an input a request and that return a rendered template (an HTML file). This files gathered all the views. This file is probably the most important one as it includes all the code that is run once a request arrives: updating the database, computing so stuff, filter the entries of the database, etc.
+	
+	\paragraph{\faFileO{} forms.py} Django offers a Python class to deal with forms that makes it easier to check whether they have been properly filled in etc... The forms are defined in this file. It, for instance, includes the search form, the login form, etc.
+	
+	\paragraph{\faFileO{} models.py} A model in Django is the corresponding Python class to a table in the database. In this files all the models are described in Python. Django then reads through this file and create the database accordingly. The entire database is thus defined in there.
+	
+	\paragraph{\faFileO{} choices.py} Choices are lists of constant values that are not meant to change often (they would be in the database otherwise). An example is the set of data category for instance. This files gathered them all.
+	
+	\paragraph{\faFileO{} admin.py} In this file, one can register the models so that they appear in the Django admin website.
+	
+	\paragraph{\faFileO{} scripts.py} This file defines few useful functions for management purposes.
+	
+	\paragraph{\faFileO{} apps.py} This is a file that is used by Django to know the application exists. Do not modify it.
+	
+	\medskip
+	
+	For the rest of this section, we will explore the sub-folders present in the \texttt{preflibApp} folder.
+	
+	
+	\section*{\faFolderO{} preflibApp/templates}
+	
+	In Django, a template is an HTML that can incorporate some Django tags in it. They are the main files containing the HTML code of the website. They all are gathered in the \texttt{templates} folder. It contains all the template to render the errors: \texttt{400.html}, \texttt{404.html}, etc. It also contains several sub-folders used to separate the templates based on their use.
+	
+	\paragraph*{\faFolderO{} includes} This folder gathers all the templates that can be included in some other templates using the \texttt{\{\% include `template' \%\}} Django tag. These files are:
+	\begin{itemize}
+		\item[\faFileO] footer.html: the footer displayed at the bottom of a page;
+		\item[\faFileO] header.html: the header displayed at the top of a page;
+		\item[\faFileO] htmlHeaderContent.html: the content of the HTML header that is shared with all pages;
+		\item[\faFileO] metadataCategorySearch.html: the code used to render a search widget in the search page;
+		\item[\faFileO] paginator.html: the code used to render a paginator in a page.
+	\end{itemize}
+	
+	\paragraph*{\faFolderO{} preflib} This folder gathers the templates used to render all the pages of the website. We list them below.
+	\begin{multicols}{2}
+		\begin{itemize}
+			\item[\faFileO] about.html: the about page
+			\item[\faFileO] admin.html: the admin menu
+			\item[\faFileO] adminadddataset.html: the admin page for adding datasets
+			\item[\faFileO] adminlog.html: the admin page for viewing logs
+			\item[\faFileO] adminpaper.html: the admin page for adding a paper
+			\item[\faFileO] adminzip.html: the amdin page for zipping the files
+			\item[\faFileO] data.html: the data page describing the structure of the data
+			\item[\faFileO] dataformat.html: the page explaining the format we use
+			\item[\faFileO] datametadata.html: the page describing the metadata
+			\item[\faFileO] datapatch.html: the template for rendering a datapatch
+			\item[\faFileO] datasearch.html: the search page
+			\item[\faFileO] dataset.html: the template for rendering a dataset
+			\item[\faFileO] datasetall.html: the template for rendering a category of data
+			\item[\faFileO] datatypes.html: the page describing the types
+			\item[\faFileO] index.html: the main page of the website
+			\item[\faFileO] toolscris.html: the Crisner tool page
+			\item[\faFileO] toolsivs.html: the Iterative Voting Simulator page
+			\item[\faFileO] toolsskdg.html: the Kidney Dataset Generator page
+			\item[\faFileO] userlogin.html: the login page
+			\item[\faFileO] usernewaccount.html: the page to create new account
+			\item[\faFileO] userprofile.html: the page displaying the profile of a user
+		\end{itemize}
+	\end{multicols}
+	
+	\section*{\faFolderO{} preflibApp/templatetags}
+	
+	The \texttt{templatetags} folder is used to describe user-defined tags that can then be used in the templates. It contains a single file---\texttt{extratags.py}---where the extra tags are defined.
+	
+	\section*{\faFolderO{} preflibApp/static}
+	
+	The \texttt{static} folder contains all the static files that are used (unsurprisingly). This folder is the one considered by the \texttt{collecstatic} management command from Django.
+	
+	\paragraph*{\faFolderO{} adminLogo} This folder gathers all the images of the logo used for the admin menu. Note that it might disappear in some later versions.
+	
+	\paragraph*{\faFolderO{} css} This folder gathers all the CSS files. There are currently two of them: \texttt{style.css} which is the main CSS file for the style of the website and \texttt{nouislider.css} that is used to render the sliders in the search page.
+	
+	\paragraph*{\faFolderO{} js} This folder gathers all the JavaScript files. The only file in there is used for the sliders in the search page.
+	
+	\paragraph*{\faFolderO{} types} This folder gathers the images used to present the types together with the TeX file generating some of them.
+	
+	\paragraph*{\faFileO{} crisner.png} This image illustrates the Crisner tool.
+	
+	\paragraph*{\faFileO{} gitHubLogo.png} This image is the GitHub logo displayed in the footer.
+	
+	\paragraph*{\faFileO{} papers.bib} This bib file is the one read by the management command \texttt{updatepapers}. It contains all the bib entries that are then put in the database as ``papers using PrefLib''.
+	
+	\paragraph*{\faFilesO{} preflib citations} For the ADT paper and the Trends in ComSoC chapter, the pdf and a txt file with the bib information are provided.
+	
+	\section*{\faFolderO{} preflibApp/management/commands}
 	
 	The \texttt{management/commands} folder includes the user-defined commands that one can access using the Django's management tool. Each file in this folder contains a class \texttt{Command} which should contain some specific methods. Importantly, once defined and put in this folder, the command can be accessed as any other management command, for instance from the command line using: \texttt{python3 manage.py adddataset}.
 	
@@ -179,7 +276,7 @@
 	
 	\paragraph*{\faFileO{} updatepapers.py} This command updates the list of papers that are using Preflib. It reads the bib file \texttt{static/papers.bib} and update the database accordingly.
 	
-	\subsection*{\faFolderO{} preflibApp/preflibtools} This folder contains the tools that were developed around PrefLib to work with the data. Note that this version is far from what you can find in the PrefLibTools repository on GitHub. These tools are mainly used to analyze the data when computing the relevant metadata.
+	\section*{\faFolderO{} preflibApp/preflibtools} This folder contains the tools that were developed around PrefLib to work with the data. Note that this version is far from what you can find in the PrefLibTools repository on GitHub. These tools are mainly used to analyze the data when computing the relevant metadata.
 	
 	\paragraph*{\faFileO{} drawing.py} This file contains all the functions that are used to draw the images representing the data. 
 	
@@ -189,66 +286,6 @@
 	
 	\paragraph*{\faFileO{} properties.py} This file contains a collection of functions used to check whether some properties hold for a given instance. This is the main file used to compute the metadata of the instances.
 	
-	\subsection*{\faFolderO{} preflibApp/static}
-	
-	The \texttt{static} folder contains all the static files that are used (unsurprisingly). This folder is the one considered by the \texttt{collecstatic} management command from Django.
-	
-	\paragraph*{\faFolderO{} adminLogo} This folder gathers all the images of the logo used for the admin menu. Note that it might disappear in some later versions.
-	
-	\paragraph*{\faFolderO{} css} This folder gathers all the css files. There are currently two of them: \texttt{style.css}
-	
-	\paragraph*{\faFolderO{} js}
-	
-	\paragraph*{\faFolderO{} types}
-	
-	\paragraph*{\faFileO{} crisner.png}
-	
-	\paragraph*{\faFileO{} gitHubLogo.png}
-	
-	\paragraph*{\faFileO{} papers.bib}
-	
-	\paragraph*{\faFilesO{} preflib citations}
-	
-	
-	\subsection*{\faFolderO{} preflibApp/templates}
-	
-	\subsection*{\faFolderO{} preflibApp/templatetags}
-	
-	\subsection*{\faFolderO{} preflibApp}
-		
-	\begin{itemize}
-		\item preflib
-		\begin{itemize}
-			\item settings.py: all the inner settings of the project, only change things there if you know what you're doing.
-			\item urls.py: general patterns for URL, since there only is one application the file is quite basic. Handlers for errors (500, 404, ...) also are defined there.
-			\item wsgi.py: used to link django to the http server, do not modify.
-		\end{itemize}
-		\item preflibApp
-		\begin{itemize}
-			\item management/commands
-			\begin{itemize}
-				\item adddataset.py: management command used to add a dataset to the database.
-				\item createmetadata.py: command to generate all the metadata for the datafile in the database.
-				\item generatezip.py: generates all the zip files.
-				\item initializedb.py: command to be run when setting up the website.
-				\item updatepapers.py: update the list of the papers using Preflib according the a bib file.
-			\end{itemize}
-			\item migrations: inner Django stuff, do not modify.
-			\item preflibtools: nothing to do with Django, all the tools used to deal with the data.
-			\item static: all the static files that are served by the website.
-			\item templates: a template is an html file which can incorporate some Django code to perform some computations in it. This folder contains the general html structure of the website, i.e., all its templates.
-			\item templatetags: custom tags that can be used in the templates.
-			\item admin.py: define which tables can be accessed on the Django admin page of the website.
-			\item apps.py: inner Django stuff, do not modify.
-			\item choices.py: several fields in the database have to be selected among a specific list. All the lists that are not worth putting in the database (because they never change for instance) are defined here.
-			\item forms.py: the Django representation of the html forms that are used in the website. It is for instance, the login form, some administrative forms...
-			\item models.py: all Danjgo objects representing the tables in the database. This is an important file that describes the entire database structure.
-			\item scripts.py: some useful scripts, mainly used for management purposes.
-			\item urls.py: the URL pattern for the pages available through this app.
-			\item views.py: the most important file. The views are functions that are called to render the page requested by the user. This is where all the computations that are done at runtime are described.
-		\end{itemize}
-		\item manage.py: Python file to run local functions
-	\end{itemize}
 	
 	\section{Database Structure}
 	
@@ -278,122 +315,124 @@
 	
 	The following figure summarizes the links between the different tables and presents all the elements present in the tables.
 	
-	\begin{center}
+	\begin{figure}
 		\resizebox{\linewidth}{!}{
-		\begin{tikzpicture}
-			\node[] (dataset) at (0, 0) {\begin{tabular}{|rl|}
-					\hline
-					\multicolumn{2}{|c|}{\textsc{DataSet}} \\
-					\hline
-					\textbf{name} & Name of the dataset \\
-					\textbf{abbreviation} & Abbreviation of the dataset\\
-					\textbf{extension} & Extension of the dataset \\
-					\textbf{seriesNumber} & Series number of the dataset\\
-					\textbf{description} & Few sentences about the dataset \\
-					\textbf{requiredCitations} & Papers to cite when using the dataset \\
-					\textbf{selectedStudies} & Works related to the dataset \\
-					\textbf{publicationDate} & Date at which the dataset has been added \\
-					\textbf{modificationDate} & Last time the dataset has been modified \\
-					\hline
-			\end{tabular}};
+		\begin{tikzpicture}[shorten > = 5pt, shorten < = 5pt]
+			\node[draw, rounded corners = 4pt, thick = 2pt, anchor = north east] (dataset) at (0, 0) {
+				\begin{tikzpicture}
+					\node[label = above:{\large \textsc{DataSet}}] {\begin{tabular}{rl}
+						\textbf{name} & Name of the dataset \\
+						\textbf{abbreviation} & Abbreviation of the dataset\\
+						\textbf{extension} & Extension of the dataset \\
+						\textbf{seriesNumber} & Series number of the dataset\\
+						\textbf{description} & Few sentences about the dataset \\
+						\textbf{requiredCitations} & Papers to cite when using \\& the dataset \\
+						\textbf{selectedStudies} & Works related to the dataset \\
+						\textbf{publicationDate} & Date at which the dataset \\& has been added \\
+						\textbf{modificationDate} & Last time the dataset \\& has been modified
+				\end{tabular}};
+			\end{tikzpicture}};
 			
-			\node[] (datapatch) at (0, -5) {\begin{tabular}{|rl|}
-					\hline
-					\multicolumn{2}{|c|}{\textsc{DataPatch}} \\
-					\hline
+			\node[draw, rounded corners = 4pt, thick = 2pt, below = 1cm of dataset] (datapatch) {
+				\begin{tikzpicture}
+					\node[label = above:{\large \textsc{DataPatch}}] {\begin{tabular}{rl}
 					\textbf{dataSet} & Foreign key on the dataset \\
 					\textbf{name} & Name of the datapatch \\
 					\textbf{description} & Description of the datapatch \\
 					\textbf{seriesNumber} & Series number of the datapatch \\
-					\textbf{publicationDate} & Date at which the datapatch has been added \\
-					\textbf{modificationDate} & Last time the datapatch has been modified\\
-					\hline
-			\end{tabular}};
+					\textbf{publicationDate} & Date at which the datapatch \\& has been added \\
+					\textbf{modificationDate} & Last time the datapatch \\& has been modified
+				\end{tabular}};
+			\end{tikzpicture}};
 			
-			\node[] at (6, -10) (datafile) {\begin{tabular}{|rl|}
-					\hline
-					\multicolumn{2}{|c|}{\textsc{DataFile}} \\
-					\hline
+			\node[draw, rounded corners = 4pt, thick = 2pt, below = 1cm of datapatch] (datafile) {
+				\begin{tikzpicture}
+					\node[label = above:{\large \textsc{DataFile}}] {\begin{tabular}{rl}
 					\textbf{dataPatch} & Foreign key on the datapatch \\
 					\textbf{dataType} & Type of the datafile\\
 					\textbf{modificationType} & Modificaton type of the datafile\\
 					\textbf{fileName} & Name of the file  \\
 					\textbf{fileSize} & Size of the file \\
-					\textbf{publicationDate} & Date at which the datafile has been added \\
-					\textbf{modificationDate} & Last time the datafile has been modified\\
-					\hline
-			\end{tabular}};
+					\textbf{publicationDate} & Date at which the datafile \\& has been added \\
+					\textbf{modificationDate} & Last time the datafile \\& has been modified \\
+					\textbf{shortName()} & Method that returns the \\& shortname of the file
+				\end{tabular}};
+			\end{tikzpicture}};
 		
-			\node[] (metadata) at (12, 0) {\begin{tabular}{|rl|}
-					\hline
-					\multicolumn{2}{|c|}{\textsc{Metadata}} \\
-					\hline
+			\node[draw, rounded corners = 4pt, thick = 2pt, anchor = north west] (metadata) at (1, 0) {
+				\begin{tikzpicture}
+					\node[label = above:{\large \textsc{Metadata}}] {\begin{tabular}{rl}
 					\textbf{name} & Name of the metadata \\
+					\textbf{shortname} & Shortname of the metadata \\
 					\textbf{category} & Category of the metadata \\
 					\textbf{description} & Description of the metadata \\
-					\textbf{isActive} & Should the metadata be displayed \\
+					\textbf{isActive} & Should the metadata be computed \\
+					\textbf{isDisplayed} & Should the metadata be displayed \\
+					\textbf{appliesTo} & Set of data type the metadata applies to \\
+					\textbf{upperBounds} & Set of metadata upperbounded \\& by this metadata\\
 					\textbf{innerModule} & Python module to compute the metadata \\
 					\textbf{innerFunction} &  Python function to compute the metadata \\
 					\textbf{innerType} & Python type of the metadata \\
 					\textbf{searchWidget} & Widget to use in the search page\\
-					\hline
-			\end{tabular}};
+					\textbf{searchQuestion} & Question displayed in the search page\\
+					\textbf{searchResName} & Header of the result table in \\& the search page\\
+					\textbf{orderPriority} & Used to display the metadata \\& in the correct order\\
+					\textbf{getAppliesToList()} & Method that returns appliesTo as a list
+				\end{tabular}};
+			\end{tikzpicture}};
 			
-			\node[] (dataprop) at (12, -5) {
-				\begin{tabular}{|rl|}
-					\hline
-					\multicolumn{2}{|c|}{\textsc{DataProperty}} \\
-					\hline
+			\node[draw, rounded corners = 4pt, thick = 2pt, below = 1cm of metadata] (dataprop) {
+				\begin{tikzpicture}
+					\node[label = above:{\large \textsc{DataProperty}}] {\begin{tabular}{rl}
 					\textbf{dataFile} & Foreign key on the datafile \\
 					\textbf{metadata} & Foreign key on the metadata \\
 					\textbf{value} & Value of the property \\
-					\hline
-			\end{tabular}};
+					\textbf{getTypedValue()} & Method that returns the value \\& cast to the correct Python type 
+				\end{tabular}};
+			\end{tikzpicture}};
 		
 			\draw[->] (dataset) edge (datapatch);
 			\draw[->] (datapatch) edge (datafile);
 			\draw[->] (metadata) edge (dataprop);
 			\draw[->] (dataprop) edge (datafile);
 			
-			\node[] (paper) at (0, -15) {\begin{tabular}{|rl|}
-					\hline
-					\multicolumn{2}{|c|}{\textsc{Paper}} \\
-					\hline
+			\node[draw, rounded corners = 4pt, thick = 2pt, below = 1cm of datafile] (paper) {
+				\begin{tikzpicture}
+					\node[label = above:{\large \textsc{Paper}}] {\begin{tabular}{rl}
 					\textbf{name} & Identifier of the paper \\
 					\textbf{title} & Title of the paper \\
 					\textbf{authors} & Authors of the paper \\
-					\textbf{publisher} & Journal, conference... of the publication \\
+					\textbf{publisher} & Where the paper \\& has been published \\
 					\textbf{year} & Year of publication \\
 					\textbf{url} &  Link to the paper \\
-					\textbf{publicationDate} & Date at which the paper has been added \\
-					\hline
-			\end{tabular}};
+					\textbf{publicationDate} & Date at which the \\& paper has been added
+				\end{tabular}};
+			\end{tikzpicture}};
 		
-			\node[] (userprofile) at (12, -15) {\begin{tabular}{|rl|}
-					\hline
-					\multicolumn{2}{|c|}{\textsc{UserProfile}} \\
-					\hline
+			\node[draw, rounded corners = 4pt, thick = 2pt, below = 1cm of dataprop] (user) {
+				\begin{tikzpicture}
+					\node[label = above:{\large \textsc{UserProfile}}] {\begin{tabular}{rl}
 					\textbf{user} & Foreign key on the Django user \\
 					\textbf{firstname} & First name of the user \\
 					\textbf{lastname} & Last name of the user \\
 					\textbf{email} & Email of the user \\
 					\textbf{affiliation} & Affiliation of the user \\
-					\textbf{personnalURL} &  Link to the user's personnal page \\
-					\hline
-			\end{tabular}};
+					\textbf{personnalURL} &  Link to the user's personnal page
+				\end{tabular}};
+			\end{tikzpicture}};
 			
-			\node[] (Log) at (6, -20) {\begin{tabular}{|rl|}
-					\hline
-					\multicolumn{2}{|c|}{\textsc{Log}} \\
-					\hline
+			\node[draw, rounded corners = 4pt, thick = 2pt, below = 1cm of user] (log) {
+				\begin{tikzpicture}
+					\node[label = above:{\large \textsc{Log}}] {\begin{tabular}{rl}
 					\textbf{log} & Content of the log \\
 					\textbf{logType} & Type of log \\
 					\textbf{logNum} & Number of log of the given type \\
-					\textbf{publicationDate} & Date at which the paper has been added \\
-					\hline
-			\end{tabular}};
+					\textbf{publicationDate} & Date at which the paper has been added
+				\end{tabular}};
+			\end{tikzpicture}};
 		\end{tikzpicture}}
-	\end{center}
+		\caption{Structure of the database}
+	\end{figure}
 
 	\chapter{Maintaining PrefLib}
 	
