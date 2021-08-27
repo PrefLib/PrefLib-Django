@@ -289,150 +289,255 @@
 	
 	\section{Database Structure}
 	
-	In the following, we provide more details about the structure of the database behind Preflib.
-	
-	\medskip
-	
-	Let us first go through all the tables present in the database.
-	
-	\paragraph{\textsc{DataFile}} The most fundamental entity for Preflib is the datafile. The \textsc{DataFile} table contains a reference to all the datafiles that are in Preflib. The table does not contain the data in itself---it is stored in a file and not in the database---but all the relevant information about it: some basic details and datapatch in which the file is.
-	
-	\paragraph{\textsc{DataPatch}} The datapatch is the first level of classification of the datafile. It contains several datafile of different datatype. All the datafiles are based on the same preferences but the representation, the datatype, is different.
-	
-	\paragraph{\textsc{DataSet}} A dataset is a collection of datapatches. The datapatches will typically represent different years of the same election.
-	
-	\paragraph{\textsc{DataProperty}} A dataproperty is an additional information about a given datafile. It can have to do about the general properties of the data (number of candidates...) or about some more specific structure of the data (single-peakedness...).
-	
-	\paragraph{\textsc{Metadata}} The \textsc{Metadata} table stores all the different metadata available in the system. Their values are in the \textsc{DataProperty} table.
-	
-	\paragraph{\textsc{Paper}} This table stores the information about the papers which are using Preflib.
-	
-	\paragraph{\textsc{UserProfile}} All the informations about the users that are not in the Django User class are present in this table.
-	
-	\paragraph{\textsc{Log}} Logs of what is happening in the inside are gathers in this table.
-	
-	\medskip
-	
-	The following figure summarizes the links between the different tables and presents all the elements present in the tables.
+	We now turn to the database used behind the website to organize the datafiles. In igure \ref{fig:database} you will find a complete schematic representation of the database. In what follows, we will give more explanations for each table and row.
 	
 	\begin{figure}
 		\resizebox{\linewidth}{!}{
-		\begin{tikzpicture}[shorten > = 5pt, shorten < = 5pt]
-			\node[draw, rounded corners = 4pt, thick = 2pt, anchor = north east] (dataset) at (0, 0) {
-				\begin{tikzpicture}
-					\node[label = above:{\large \textsc{DataSet}}] {\begin{tabular}{rl}
-						\textbf{name} & Name of the dataset \\
-						\textbf{abbreviation} & Abbreviation of the dataset\\
-						\textbf{extension} & Extension of the dataset \\
-						\textbf{seriesNumber} & Series number of the dataset\\
-						\textbf{description} & Few sentences about the dataset \\
-						\textbf{requiredCitations} & Papers to cite when using \\& the dataset \\
-						\textbf{selectedStudies} & Works related to the dataset \\
-						\textbf{publicationDate} & Date at which the dataset \\& has been added \\
-						\textbf{modificationDate} & Last time the dataset \\& has been modified
-				\end{tabular}};
-			\end{tikzpicture}};
-			
-			\node[draw, rounded corners = 4pt, thick = 2pt, below = 1cm of dataset] (datapatch) {
-				\begin{tikzpicture}
-					\node[label = above:{\large \textsc{DataPatch}}] {\begin{tabular}{rl}
-					\textbf{dataSet} & Foreign key on the dataset \\
-					\textbf{name} & Name of the datapatch \\
-					\textbf{description} & Description of the datapatch \\
-					\textbf{seriesNumber} & Series number of the datapatch \\
-					\textbf{publicationDate} & Date at which the datapatch \\& has been added \\
-					\textbf{modificationDate} & Last time the datapatch \\& has been modified
-				\end{tabular}};
-			\end{tikzpicture}};
-			
-			\node[draw, rounded corners = 4pt, thick = 2pt, below = 1cm of datapatch] (datafile) {
-				\begin{tikzpicture}
-					\node[label = above:{\large \textsc{DataFile}}] {\begin{tabular}{rl}
-					\textbf{dataPatch} & Foreign key on the datapatch \\
-					\textbf{dataType} & Type of the datafile\\
-					\textbf{modificationType} & Modificaton type of the datafile\\
-					\textbf{fileName} & Name of the file  \\
-					\textbf{fileSize} & Size of the file \\
-					\textbf{publicationDate} & Date at which the datafile \\& has been added \\
-					\textbf{modificationDate} & Last time the datafile \\& has been modified \\
-					\textbf{shortName()} & Method that returns the \\& shortname of the file
-				\end{tabular}};
-			\end{tikzpicture}};
-		
-			\node[draw, rounded corners = 4pt, thick = 2pt, anchor = north west] (metadata) at (1, 0) {
-				\begin{tikzpicture}
-					\node[label = above:{\large \textsc{Metadata}}] {\begin{tabular}{rl}
-					\textbf{name} & Name of the metadata \\
-					\textbf{shortname} & Shortname of the metadata \\
-					\textbf{category} & Category of the metadata \\
-					\textbf{description} & Description of the metadata \\
-					\textbf{isActive} & Should the metadata be computed \\
-					\textbf{isDisplayed} & Should the metadata be displayed \\
-					\textbf{appliesTo} & Set of data type the metadata applies to \\
-					\textbf{upperBounds} & Set of metadata upperbounded \\& by this metadata\\
-					\textbf{innerModule} & Python module to compute the metadata \\
-					\textbf{innerFunction} &  Python function to compute the metadata \\
-					\textbf{innerType} & Python type of the metadata \\
-					\textbf{searchWidget} & Widget to use in the search page\\
-					\textbf{searchQuestion} & Question displayed in the search page\\
-					\textbf{searchResName} & Header of the result table in \\& the search page\\
-					\textbf{orderPriority} & Used to display the metadata \\& in the correct order\\
-					\textbf{getAppliesToList()} & Method that returns appliesTo as a list
-				\end{tabular}};
-			\end{tikzpicture}};
-			
-			\node[draw, rounded corners = 4pt, thick = 2pt, below = 1cm of metadata] (dataprop) {
-				\begin{tikzpicture}
-					\node[label = above:{\large \textsc{DataProperty}}] {\begin{tabular}{rl}
-					\textbf{dataFile} & Foreign key on the datafile \\
-					\textbf{metadata} & Foreign key on the metadata \\
-					\textbf{value} & Value of the property \\
-					\textbf{getTypedValue()} & Method that returns the value \\& cast to the correct Python type 
-				\end{tabular}};
-			\end{tikzpicture}};
-		
-			\draw[->] (dataset) edge (datapatch);
-			\draw[->] (datapatch) edge (datafile);
-			\draw[->] (metadata) edge (dataprop);
-			\draw[->] (dataprop) edge (datafile);
-			
-			\node[draw, rounded corners = 4pt, thick = 2pt, below = 1cm of datafile] (paper) {
-				\begin{tikzpicture}
-					\node[label = above:{\large \textsc{Paper}}] {\begin{tabular}{rl}
-					\textbf{name} & Identifier of the paper \\
-					\textbf{title} & Title of the paper \\
-					\textbf{authors} & Authors of the paper \\
-					\textbf{publisher} & Where the paper \\& has been published \\
-					\textbf{year} & Year of publication \\
-					\textbf{url} &  Link to the paper \\
-					\textbf{publicationDate} & Date at which the \\& paper has been added
-				\end{tabular}};
-			\end{tikzpicture}};
-		
-			\node[draw, rounded corners = 4pt, thick = 2pt, below = 1cm of dataprop] (user) {
-				\begin{tikzpicture}
-					\node[label = above:{\large \textsc{UserProfile}}] {\begin{tabular}{rl}
-					\textbf{user} & Foreign key on the Django user \\
-					\textbf{firstname} & First name of the user \\
-					\textbf{lastname} & Last name of the user \\
-					\textbf{email} & Email of the user \\
-					\textbf{affiliation} & Affiliation of the user \\
-					\textbf{personnalURL} &  Link to the user's personnal page
-				\end{tabular}};
-			\end{tikzpicture}};
-			
-			\node[draw, rounded corners = 4pt, thick = 2pt, below = 1cm of user] (log) {
-				\begin{tikzpicture}
-					\node[label = above:{\large \textsc{Log}}] {\begin{tabular}{rl}
-					\textbf{log} & Content of the log \\
-					\textbf{logType} & Type of log \\
-					\textbf{logNum} & Number of log of the given type \\
-					\textbf{publicationDate} & Date at which the paper has been added
-				\end{tabular}};
-			\end{tikzpicture}};
+			\begin{tikzpicture}[shorten > = 5pt, shorten < = 5pt]
+				\node[draw, rounded corners = 4pt, thick = 2pt, anchor = north east] (dataset) at (0, 0) {
+					\begin{tikzpicture}
+						\node[label = above:{\large \textsc{DataSet}}] {\begin{tabular}{rl}
+								\textbf{name} & Name of the dataset \\
+								\textbf{abbreviation} & Abbreviation of the dataset\\
+								\textbf{category} & Extension of the dataset \\
+								\textbf{seriesNumber} & Series number of the dataset\\
+								\textbf{description} & Few sentences about the dataset \\
+								\textbf{requiredCitations} & Papers to cite when using \\& the dataset \\
+								\textbf{selectedStudies} & Works related to the dataset \\
+								\textbf{publicationDate} & Date at which the dataset \\& has been added \\
+								\textbf{modificationDate} & Last time the dataset \\& has been modified
+						\end{tabular}};
+				\end{tikzpicture}};
+				
+				\node[draw, rounded corners = 4pt, thick = 2pt, below = 1cm of dataset] (datapatch) {
+					\begin{tikzpicture}
+						\node[label = above:{\large \textsc{DataPatch}}] {\begin{tabular}{rl}
+								\textbf{dataSet} & Foreign key on the dataset \\
+								\textbf{name} & Name of the datapatch \\
+								\textbf{description} & Description of the datapatch \\
+								\textbf{seriesNumber} & Series number of the datapatch \\
+								\textbf{publicationDate} & Date at which the datapatch \\& has been added \\
+								\textbf{modificationDate} & Last time the datapatch \\& has been modified
+						\end{tabular}};
+				\end{tikzpicture}};
+				
+				\node[draw, rounded corners = 4pt, thick = 2pt, below = 1cm of datapatch] (datafile) {
+					\begin{tikzpicture}
+						\node[label = above:{\large \textsc{DataFile}}] {\begin{tabular}{rl}
+								\textbf{dataPatch} & Foreign key on the datapatch \\
+								\textbf{dataType} & Type of the datafile\\
+								\textbf{modificationType} & Modificaton type of the datafile\\
+								\textbf{fileName} & Name of the file  \\
+								\textbf{fileSize} & Size of the file \\
+								\textbf{publicationDate} & Date at which the datafile \\& has been added \\
+								\textbf{modificationDate} & Last time the datafile \\& has been modified \\
+								\textbf{shortName()} & Method that returns the \\& shortname of the file
+						\end{tabular}};
+				\end{tikzpicture}};
+				
+				\node[draw, rounded corners = 4pt, thick = 2pt, anchor = north west] (metadata) at (1, 0) {
+					\begin{tikzpicture}
+						\node[label = above:{\large \textsc{Metadata}}] {\begin{tabular}{rl}
+								\textbf{name} & Name of the metadata \\
+								\textbf{shortname} & Shortname of the metadata \\
+								\textbf{category} & Category of the metadata \\
+								\textbf{description} & Description of the metadata \\
+								\textbf{isActive} & Should the metadata be computed \\
+								\textbf{isDisplayed} & Should the metadata be displayed \\
+								\textbf{appliesTo} & Set of data type the metadata applies to \\
+								\textbf{upperBounds} & Set of metadata upperbounded \\& by this metadata\\
+								\textbf{innerModule} & Python module to compute the metadata \\
+								\textbf{innerFunction} &  Python function to compute the metadata \\
+								\textbf{innerType} & Python type of the metadata \\
+								\textbf{searchWidget} & Widget to use in the search page\\
+								\textbf{searchQuestion} & Question displayed in the search page\\
+								\textbf{searchResName} & Header of the result table in \\& the search page\\
+								\textbf{orderPriority} & Used to display the metadata \\& in the correct order\\
+								\textbf{getAppliesToList()} & Method that returns appliesTo as a list
+						\end{tabular}};
+				\end{tikzpicture}};
+				
+				\node[draw, rounded corners = 4pt, thick = 2pt, below = 1cm of metadata] (dataprop) {
+					\begin{tikzpicture}
+						\node[label = above:{\large \textsc{DataProperty}}] {\begin{tabular}{rl}
+								\textbf{dataFile} & Foreign key on the datafile \\
+								\textbf{metadata} & Foreign key on the metadata \\
+								\textbf{value} & Value of the property \\
+								\textbf{getTypedValue()} & Method that returns the value \\& cast to the correct Python type 
+						\end{tabular}};
+				\end{tikzpicture}};
+				
+				\draw[->] (dataset) edge (datapatch);
+				\draw[->] (datapatch) edge (datafile);
+				\draw[->] (metadata) edge (dataprop);
+				\draw[->] (dataprop) edge (datafile);
+				
+				\node[draw, rounded corners = 4pt, thick = 2pt, below = 1cm of datafile] (paper) {
+					\begin{tikzpicture}
+						\node[label = above:{\large \textsc{Paper}}] {\begin{tabular}{rl}
+								\textbf{name} & Identifier of the paper \\
+								\textbf{title} & Title of the paper \\
+								\textbf{authors} & Authors of the paper \\
+								\textbf{publisher} & Where the paper \\& has been published \\
+								\textbf{year} & Year of publication \\
+								\textbf{url} &  Link to the paper \\
+								\textbf{publicationDate} & Date at which the \\& paper has been added
+						\end{tabular}};
+				\end{tikzpicture}};
+				
+				\node[draw, rounded corners = 4pt, thick = 2pt, below = 1cm of dataprop] (user) {
+					\begin{tikzpicture}
+						\node[label = above:{\large \textsc{UserProfile}}] {\begin{tabular}{rl}
+								\textbf{user} & Foreign key on the Django user \\
+								\textbf{firstname} & First name of the user \\
+								\textbf{lastname} & Last name of the user \\
+								\textbf{email} & Email of the user \\
+								\textbf{affiliation} & Affiliation of the user \\
+								\textbf{personnalURL} &  Link to the user's personnal page
+						\end{tabular}};
+				\end{tikzpicture}};
+				
+				\node[draw, rounded corners = 4pt, thick = 2pt, below = 1cm of user] (log) {
+					\begin{tikzpicture}
+						\node[label = above:{\large \textsc{Log}}] {\begin{tabular}{rl}
+								\textbf{log} & Content of the log \\
+								\textbf{logType} & Type of log \\
+								\textbf{logNum} & Number of log of the given type \\
+								\textbf{publicationDate} & Date at which the paper has been added
+						\end{tabular}};
+				\end{tikzpicture}};
 		\end{tikzpicture}}
 		\caption{Structure of the database}
+		\label{fig:database}
 	\end{figure}
+	
+	\subsection*{\faDatabase{} \textsc{DataFile}}
+	
+	The most fundamental entity for Preflib is the datafile. The \textsc{DataFile} table contains a reference to all the datafiles that are in Preflib. The table does not contain the data in itself---it is stored in a file and not in the database---but all the relevant information about it: some basic details and datapatch in which the file is.
+	
+	In what follows, we provide more details on each of the columns of this table:
+	\begin{itemize}
+		\item \textbf{dataPatch}: this is a foreign key on a datapatch entry. It indicates the datapatch in which the datafile is.
+		\item \textbf{dataType}: the type of the datafile, it should be one of soc, soi, toc, toi, tog, mjg, wmg, pwg, wmd, dat, csv. This field is linked to the \texttt{DATATYPES} choice list to get a consistent database.
+		\item \textbf{modificationType}: the modification type of the datafile, it should be one of original, induced, imbued, synthetic. This is linked to the \texttt{MODIFICATIONTYPES} choice list to get a consistent database.
+		\item \textbf{fileName}: the name of the file containing the actual data.
+		\item \textbf{fileSize}: the size of the file containing the actual data.
+		\item \textbf{publicationDate}: the date at which the file has been added to the database.
+		\item \textbf{modificationDate}: the date at which the file has been last modified.
+	\end{itemize}
+	
+	The Python class also introduces a method called \texttt{shortName()} which can be used to get the shortname of a datafile. This method is used for the name of the datafiles in the result table of the search page. Note that this is a method of the Python class and not a column of the table in the database.
+	
+	\subsection*{\faDatabase{} \textsc{DataPatch}}
+	
+	The datapatch is the first level of classification of the datafile. It contains several datafile of different datatype. All the datafiles are based on the same preferences but the representation, the datatype, is different.
+	
+	In what follows, we provide more details on each of the columns of this table:
+	\begin{itemize}
+		\item \textbf{dataSet}: this is a foreign key on a dataset entry. It indicates the dataset in which the datapatch is.
+		\item \textbf{name}: the name of the datapatch.
+		\item \textbf{description}: a short description of the datapatch. It usually indicates the exact content of the patch with respect to the full dataset. For instance in the Irish elections dataset, it could be ``Dublin 2006''.
+		\item \textbf{seriesNumber}: the identifier of the datapatch, this is a 8 digits number.
+		\item \textbf{publicationDate}: the date at which the datapatch has been added to the database.
+		\item \textbf{modificationDate}: the date at which the datapatch has been last modified.
+	\end{itemize}
+	
+	\subsection*{\faDatabase{} \textsc{DataSet}}
+	
+	A dataset is a collection of datapatches. The datapatches will typically represent different years of the same election, all gathered in a unique dataset.
+	
+	In what follows, we provide more details on each of the columns of this table:
+	\begin{itemize}
+		\item \textbf{name}: the name of the dataset
+		\item \textbf{abbreviation}: the abbreviation of the dataset. That will be the name of the zip archive containing the dataset for instance.
+		\item \textbf{category}: the category of the dataset, it should be one of ED, MD, CD. This field is linked to the \texttt{DATACATEGORY} choice list to get a consistent database.
+		\item \textbf{seriesNumber}: the identifier of the dataset, this is a five digit number.
+		\item \textbf{description}: a brief description of the dataset, usually a paragraph. It is rendered as HTML code so any HTML tags can be used there.
+		\item \textbf{requiredCitations}: a list of papers that are to be cited if this dataset is used in a publication.
+		\item \textbf{selectedStudies}: a set of papers that are relevant for this dataset, typically showing examples of what have been done with it.
+		\item \textbf{publicationDate}: the date at which the dataset has been added to the database.
+		\item \textbf{modificationDate}: the date at which the dataset has been last modified.
+	\end{itemize}
+	
+	\subsection*{\faDatabase{} \textsc{DataProperty}}
+	
+	A dataproperty is an additional information about a given datafile. It can have to do about the general properties of the data (number of candidates...) or about some more specific structure of the data (single-peakedness...).
+	
+	In what follows, we provide more details on each of the columns of this table:
+	\begin{itemize}
+		\item \textbf{dataFile}: a foreign key on a datafile entry. It indicates the datafile the dataproperty is about.
+		\item \textbf{metadata}: a foreign key on a metadata entry. It indicates the type of metadata the dataproperty is about.
+		\item \textbf{value}: the actual value of the metadata for the given datafile. It can be of many types, most likely it will be either a number or a boolean.
+	\end{itemize}
+
+	The Python class also introduces the method \texttt{getTypedValue()} which returns the value of the dataproperty but cast in the correct Python type (it is otherwise a string). This method is mainly used to filter the datafiles in the search tool. Note that this is a method of the Python class and not a column of the table in the database.
+	
+	\subsection*{\faDatabase{} \textsc{Metadata}}
+	
+	A metadata is a type of information about a datafile. The actual value of the datafile for a given metadata is stored in \textsc{DataProperty} table.
+	
+	In what follows, we provide more details on each of the columns of this table:
+	\begin{itemize}
+		\item \textbf{name}: the name of the metadata
+		\item \textbf{shortname}: the shortname of the metadata, it should not contain any space character. It is used in the internal of the search tool.
+		\item \textbf{category}: the category of the metadata, it should be one of general, preference, ballot. This filed is linked to the \texttt{METADATACATEGORIES} choice list to get a consistent database.
+		\item \textbf{description}: the description of the metadata as displayed in the metadata page.
+		\item \textbf{isActive}: a boolean value indicating whether the metadata should be considered when computing the dataproperties through the \texttt{updatemetadata} management command.
+		\item \textbf{isDisplayed}: a boolean value indicating whether the metadata should be displayed in the website. Some metadata can be interesting for sanity checks but not as a search field for instance.
+		\item \textbf{appliesTo}: a string representing all the type of data the metadata applies to. The types should be separated by a coma ``,'' and without spaces, e.g., ``toi,toc,soi,toc''
+		\item \textbf{upperBounds}: a many-to-many relationship on metadata entries. Any metadata in the many-to-many set is upper-bounded by the current metadata. It of course only applies to metadata with numeric values. It is used in the search page to synchronize the sliders of some metadata.
+		\item \textbf{innerModule}: the internal Python module used to compute the value of the metadata. This is how the \texttt{updatemetadata} command knows in which module the function to call to create a dataproperty entry is.
+		\item \textbf{innerFunction}: the internal Python function used to compute the value of the metadata. This is how the \texttt{updatemetadata} command knows which function to call to create a dataproperty entry.
+		\item \textbf{innerType}: the internal Python type of the metadata. That type is used to cast the value correctly when using the \texttt{getTypedValue()} method of a dataproperty object.
+		\item \textbf{searchWidget}: the widget used to display the corresponding field in the search page form. It should be one of ternary, range. This filed is linked to the \texttt{SEARCHWIDGETS} choice list to get a consistent database.
+		\item \textbf{searchQuestion}: the question displayed together with the widget on the search page.
+		\item \textbf{searchResName}: the header of the corresponding column used in the result table of the search page.
+		\item \textbf{orderPriority}: a integer value that is used to order the metadata in a fixed way. This is used to fix the order of the metadata page for instance. 
+	\end{itemize}
+
+	The Python class also defined the \texttt{getAppliesToList()} method which returns the appliesTo field but as a list of string instead of just one full string. Note that this is a method of the Python class and not a column of the table in the database.
+
+	\subsection*{\faDatabase{} \textsc{Paper}}
+	
+	This table stores the information about the papers that are using Preflib displayed on the front page.
+	
+	In what follows, we provide more details on each of the columns of this table:
+	\begin{itemize}
+		\item \textbf{name}: identifier of the paper, typically the bib identifier in the bib file.
+		\item \textbf{title}: the title of the paper.
+		\item \textbf{authors}: the authors of the paper, just the initial of the first name, without a dot, and the family name afterwards.
+		\item \textbf{publisher}: the conference, journal, venue... in which the paper has bee published.
+		\item \textbf{year}: the year of publication of the paper.
+		\item \textbf{url}: a URL linking the to paper.
+		\item \textbf{publicationDate}: the data at which the paper has been added to the database.
+	\end{itemize}
+
+	\subsection*{\faDatabase{} \textsc{UserProfile}}
+	
+	All the information about the users that are not in the Django User class are present in this table. Note that for the moment this is not used.
+	
+	In what follows, we provide more details on each of the columns of this table:
+	\begin{itemize}
+		\item \textbf{user}: a foreign key on the Django user entry.
+		\item \textbf{firstname}: the first name of the user.
+		\item \textbf{lastname}: the last name the user.
+		\item \textbf{email}: the email of the user.
+		\item \textbf{affiliation}: the affiliation of the user.
+		\item \textbf{personnalURL}: a URL linking to the website of the user.
+	\end{itemize}
+	
+	\subsection*{\faDatabase{} \textsc{Log}}
+	
+	Logs of what is happening in the inside are gathers in this table.
+	
+	In what follows, we provide more details on each of the columns of this table:
+	\begin{itemize}
+		\item \textbf{log}: the actual content of the log. It is rendered as HTML code so any tag in there will be rendered accordingly.
+		\item \textbf{logType}: the type of the log.
+		\item \textbf{logNum}: the identifier of the log inside its category of log.
+		\item \textbf{publicationDate}: the data at which the log has been added to the database.
+	\end{itemize}
+
 
 	\chapter{Maintaining PrefLib}
 	
