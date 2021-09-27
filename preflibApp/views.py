@@ -8,6 +8,7 @@ from django.db.models.functions import Cast
 from django.core.paginator import Paginator
 from django.core import management
 from django.utils import timezone
+from django.conf import settings
 
 from subprocess import Popen
 from math import floor, ceil
@@ -137,7 +138,7 @@ def datapatch(request, datacategory, dataSetNum, dataPatchNum):
 	dataSet = get_object_or_404(DataSet, category = datacategory, seriesNumber = dataSetNum)
 	dataPatch = get_object_or_404(DataPatch, dataSet = dataSet, seriesNumber = dataPatchNum)
 	dataFiles = DataFile.objects.filter(dataPatch = dataPatch).order_by('-modificationType')
-	metadataPerCategories = [(c[1], Metadata.objects.filter(isActive = True, category = c[0])) for c in METADATACATEGORIES]
+	metadataPerCategories = [(c[1], Metadata.objects.filter(isActive = True, isDisplayed = True, category = c[0])) for c in METADATACATEGORIES]
 	filesAndMetadata = []
 	for file in dataFiles:
 		tmp = []
