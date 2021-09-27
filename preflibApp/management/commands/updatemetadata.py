@@ -93,7 +93,7 @@ class Command(BaseCommand):
 				pass
 			preflibInstance.draw(os.path.join(folder, 'img', dataFile.fileName.replace('.', '_') + '.png'))
 			# NEXT LINE IS TERRIBLE!!!
-			os.system(settings.CONVERT_PATH + os.path.join(folder, 'img', dataFile.fileName.replace('.', '_') + '.png') + 
+			os.system(settings.CONVERT_PATH + " " + os.path.join(folder, 'img', dataFile.fileName.replace('.', '_') + '.png') + 
 			" -trim " + os.path.join(folder, 'img', dataFile.fileName.replace('.', '_') + '.png'))
 			dataFile.image = dataFile.fileName.replace('.', '_') + '.png'
 		dataFile.save()
