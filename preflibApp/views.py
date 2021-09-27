@@ -8,7 +8,6 @@ from django.db.models.functions import Cast
 from django.core.paginator import Paginator
 from django.core import management
 from django.utils import timezone
-from django.conf import settings
 
 from subprocess import Popen
 from math import floor, ceil
