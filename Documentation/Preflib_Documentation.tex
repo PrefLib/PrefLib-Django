@@ -541,4 +541,65 @@
 
 	\chapter{Maintaining PrefLib}
 	
+	We now turn to the more practical ways of maintaining PrefLib. The chapter is organized in terms of actions, each corresponding section explaining how to perform the given action. Reading the previous chapter will be helpful to understand what is going on in what follows, but not required.
+	
+	Before moving to some specific actions, let me discuss some generalities about the current implementation on the server. Whenever an HTTP request is sent to the server, it is received by the Apache web-server. This server is configured to listen to some specific ports and to serve the request by matching the requested URL to the corresponding rule. Theses rules are defined on the DreamHost settings and will likely never be changed (or the person doing it will know what she's doing). For PrefLib, the request is sent to a second web-server, called Passenger, that makes the link between the Apache server and the Django project. Passenger is also configured via DreamHost, and most likely will not need maintenance. Finally, Passenger sends the request to the Django project that returns an HTTP response defined by the corresponding view. 
+	
+	One important thing to keep in mind is that Passenger is the tool that launches the Django project. Therefore, whenever some changes have been made to the Django project, one needs to restart Passenger to take this changes into account. This is done by updating the last modification date (using the command \texttt{touch}) of the file \texttt{tmp/restart.txt}. So assuming some changes have been made and that one has a terminal opened in the suitable folder, one should run:
+	
+	\begin{center}
+		\texttt{touch tmp/restart.txt}
+	\end{center}
+
+	Inside the folder corresponding to the website, there is a folder called \texttt{PrefLib-Django}. This folder is where the Django project is located. This folder is linked to the git repository and so pulling from the git should be done within this project. One important file there is \texttt{manage.py} which is a python script used to run all maintenance commands for the Django project. We will see several usage of that file in what follows.
+	
+	To keep things clean, all the required Python library are installed in a virtual environment. What that means is that to run any of the commands mentioned in this chapter, one has to activate the virtual environment first. To do so, run the following command from the \texttt{PrefLib-Django} folder.
+	
+	\begin{center}
+		source ../preflibvenv/bin/activate
+	\end{center}
+
+	\noindent The prompt of the terminal should change, to indicate the virtual environment is active. Once, you are done, exist the virtual environment with the following command (from any folder).
+	
+	\begin{center}
+		\texttt{deactivate}
+	\end{center}
+	
+	\section{Creating a Super-User}
+	
+	A super user is a user that has all the rights, to create one simply run the following command.
+	
+	\begin{center}
+		python3 manage.py createsuperuser
+	\end{center}
+	
+	\section{Updating Static Files}
+	
+	The static files (images, datafile, etc...) are served differently than other requests. To do so, Django collects all the static files of the projects in a specific folder (whose location is defined in the \texttt{preflib/settings.py} file). If a static file has been modified, or if a new one has been added, it will be served only if it is present in the static folder (not the one from the Django project, but the one defined in \texttt{preflib/settings.py}). To copy the static files into the correct folder, run the following command (from the \texttt{PrefLib-Django} folder).
+	
+	\begin{center}
+		\texttt{python3 manage.py collectstatic}
+	\end{center}
+	
+	\section{Updating HTML Files}
+	
+	As explained in the previous chapter, HTML filed are called ``templates'' in Django and can be found in the folder \texttt{preflibApp/templates}. To update the HTML code of a page, simply edit the corresponding template file. Please note that this files are HTML files, but also contain Django language. Once your are done editing the files, do not forget to restart Passenger.
+	
+	\section{Modifying the Database Structure}
+	
+	The structure of the database is described in the file \texttt{preflibApp/models.py}. If you want to make changes to the database (to add a field or a table for instance), simply make those changes in the file \texttt{preflibApp/models.py}. Once you are done with the edits, you need to run two commands. First, run the command
+	
+	\begin{center}
+		\texttt{python3 manage.py makemigrations}
+	\end{center}
+
+	\noindent that will check for changes in the models are create the corresponding Python script to update the database. Second, run the command
+	
+	\begin{center}
+		\texttt{python3 manage.py migrate}
+	\end{center}
+
+	\noindent that will actually apply the migrations and make the changes to the database.
+	
+	
 \end{document}
