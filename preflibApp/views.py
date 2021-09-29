@@ -97,7 +97,7 @@ def main(request):
 		totalSize = round(totalSize / 1000000000, 2)
 	nbDataType = DataFile.objects.values('dataType').distinct().count()
 	
-	filesWithImages = DataFile.objects.filter(image__isnull = False)
+	filesWithImages = DataFile.objects.filter(image__isnull = False, dataType__in = ['soc', 'soi', 'toc', 'toi', 'tog', 'mjg', 'wmg', 'pwg', 'wmd'])
 	if filesWithImages.exists():
 		randomFileWithImage = random.choice(filesWithImages)
 	
