@@ -15,3 +15,9 @@
 \contentsline {section}{\numberline {2.2}Updating Static Files}{13}{section.2.2}%
 \contentsline {section}{\numberline {2.3}Updating HTML Files}{13}{section.2.3}%
 \contentsline {section}{\numberline {2.4}Modifying the Database Structure}{13}{section.2.4}%
+\contentsline {section}{\numberline {2.5}Initializing the Database}{13}{section.2.5}%
+\contentsline {section}{\numberline {2.6}Adding Dataset(s)}{13}{section.2.6}%
+\contentsline {section}{\numberline {2.7}Generate Zip Files}{14}{section.2.7}%
+\contentsline {section}{\numberline {2.8}Updating the Metadata}{14}{section.2.8}%
+\contentsline {section}{\numberline {2.9}Updating the List of Papers Using PrefLib}{14}{section.2.9}%
+\contentsline {section}{\numberline {2.10}A Comprehensive Example}{14}{section.2.10}%

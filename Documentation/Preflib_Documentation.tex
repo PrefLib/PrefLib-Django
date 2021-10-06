@@ -556,7 +556,7 @@
 	To keep things clean, all the required Python library are installed in a virtual environment. What that means is that to run any of the commands mentioned in this chapter, one has to activate the virtual environment first. To do so, run the following command from the \texttt{PrefLib-Django} folder.
 	
 	\begin{center}
-		source ../preflibvenv/bin/activate
+		\texttt{source ../preflibvenv/bin/activate}
 	\end{center}
 
 	\noindent The prompt of the terminal should change, to indicate the virtual environment is active. Once, you are done, exist the virtual environment with the following command (from any folder).
@@ -570,7 +570,7 @@
 	A super user is a user that has all the rights, to create one simply run the following command.
 	
 	\begin{center}
-		python3 manage.py createsuperuser
+		\texttt{python3 manage.py createsuperuser}
 	\end{center}
 	
 	\section{Updating Static Files}
@@ -601,5 +601,142 @@
 
 	\noindent that will actually apply the migrations and make the changes to the database.
 	
+	\section{Initializing the Database}
+	
+	When the website is installed for the first time, one has to initialize the database, that is done by running the following command:
+	
+	\begin{center}
+		\texttt{python3 manage.py initializedb}
+	\end{center}
+	
+	\section{Adding Dataset(s)}
+	
+	To add a dataset to the website, one has to have it in a zip archive already formatted in the PrefLib format. In particular in this archive there should be all the datafile and an \texttt{info.txt} file describing the datafile. The easiest to see what is expected is to download on of the zip file of a dataset from the website and see what is in there (\href{https://www.preflib.org/static/data/ED/irish/irish.zip}{here} for instance).
+	
+	To add a unique dataset, one can run the command:
+	
+	\begin{center}
+		\texttt{python3 manage.py adddataset --file zipFilePath}
+	\end{center}
+
+	\noindent where \texttt{zipFilePath} is the path to find the zip file of the new dataset.
+	
+	There is also a way to add several datasets in one go by running the command:
+	
+	\begin{center}
+		\texttt{python3 manage.py adddataset --all}
+	\end{center}
+	
+	\noindent in which case all the zip files in the folder \texttt{preflibApp/static/datatoadd} are added to the website.
+	
+	Note that static are automatically collected at the end of the procedure, no need to do it manually. However several actions have to be performed after adding a dataset: generating the zip files and updating the metadata. These are described below.
+	
+	\section{Generate Zip Files}
+	
+	The website serves some pre-compiled zip files, namely the zip files of each datasets and the zip files for each datatype. To re-generate these files, run the command:
+	
+	\begin{center}
+		\texttt{python3 manage.py generatezip}
+	\end{center}
+
+	This command has to be run after adding a dataset for instance, the static files are however automatically collected.
+	
+	\section{Updating the Metadata}
+	
+	The new website collects a bunch of metadata about the datafile, those are computed by running a specific command. This also is the command used to generate the visualization of the data. The command can be run over all datasets, using the following:
+	
+	\begin{center}
+		\texttt{python3 manage.py updatemetadata}
+	\end{center}
+
+	\noindent It can also be run for a specific dataset by running:
+	
+	\begin{center}
+		\texttt{python3 manage.py updatemetadata --dataset datasetAbbreviation}
+	\end{center}
+
+	\noindent where \texttt{datasetAbbreviation} is the abbreviation (such as \texttt{irish} or \texttt{f1}) of a dataset.
+	
+	This command can take a lot of time (several hours), it is thus recommended to run it in a \texttt{tmux} environment. The most time consuming task at the moment is the generation of the images for the datafiles, this task can be disable by passing the argument \texttt{--noDrawing} to the command.
+	
+	\section{Updating the List of Papers Using PrefLib}
+	
+	We maintain a list of papers that are using PrefLib (displayed on the front page of the website). The entries in the database are read from the bib file \texttt{preflibApp/static/papers.bib}. To match the entries in the database to the bib file, run the following command:
+	
+	\begin{center}
+		\texttt{python3 manage.py updatepapers}
+	\end{center}
+
+	\section{A Comprehensive Example}
+	
+	Let us now go through a comprehensive example to show how things work. Consider that you have a terminal opened, already on the server and in the folder \texttt{preflib.org}.
+	
+	The first thing to do is to activate the virtual environment
+	
+	\begin{center}
+		\texttt{source preflibvenv/bin/activate}
+	\end{center}
+
+	Then, let's move to the Django project folder
+	
+	\begin{center}
+		\texttt{cd PrefLib-Django/}
+	\end{center}
+
+	Assume the website has just been set up. We then initialize the database
+	
+	\begin{center}
+		\texttt{python3 manange.py initializedb}
+	\end{center}
+	
+	We also create a superuser that will have access to the admin website
+	
+	\begin{center}
+		\texttt{python3 manage.py createsuperuser}
+	\end{center}
+
+	We create the entries in the database for the papers that are using PrefLib
+	
+	\begin{center}
+		\texttt{python3 manage.py updatepapers}
+	\end{center}
+
+	We now copy all the datasets we want to add to the website in the folder \texttt{preflibApp/static/datatoadd}. We check with just one that everything is working
+	
+	\begin{center}
+		\texttt{python3 manage.py adddataset --file preflibApp/static/datatoadd irish.zip}
+	\end{center}
+	
+	Everything worked, so we add them all
+	
+	\begin{center}
+		\texttt{python3 manage.py adddataset --all}
+	\end{center}
+
+	Now that the datasets have been added, we compute the metadata for them. We first check that it is working for one dataset
+	
+	\begin{center}
+		\texttt{python3 manage.py updatemetadata --dataset irish}
+	\end{center}
+
+	Everything worked so we do it for all datasets
+	
+	\begin{center}
+		\texttt{python3 manage.py updatemetadata}
+	\end{center}
+
+	We also generate the static zip files that are served
+	
+	\begin{center}
+		\texttt{python3 manage.py generatezip}
+	\end{center}
+
+	The website is now good to go, we deactivate the virtual environment
+	
+	\begin{center}
+		\texttt{deactivate}
+	\end{center}
+
+	We are now done.
 	
 \end{document}
