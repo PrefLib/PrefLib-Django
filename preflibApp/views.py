@@ -71,7 +71,7 @@ def my_render(request, template, args = dict([])):
 	return render(request, template, args)
 
 def error_render(request, template, status):
-	args = []
+	args = dict([])
 	args['DATACATEGORY'] = DATACATEGORY
 	args['DATATYPES'] = DATATYPES
 	return render(request, template, args, status = status)
