@@ -100,7 +100,7 @@ def main(request):
 		totalSize = round(totalSize / 1000000000, 2)
 	nbDataType = DataFile.objects.values('dataType').distinct().count()
 	
-	filesWithImages = DataFile.objects.filter(image__isnull = False)
+	filesWithImages = DataFile.objects.filter(image__isnull = False, dataType__in = ['soc', 'soi', 'toc', 'toi', 'tog', 'mjg', 'wmg', 'pwg', 'wmd'])
 	if filesWithImages.exists():
 		randomFileWithImage = random.choice(filesWithImages)
 	
@@ -140,7 +140,7 @@ def datapatch(request, datacategory, dataSetNum, dataPatchNum):
 	dataSet = get_object_or_404(DataSet, category = datacategory, seriesNumber = dataSetNum)
 	dataPatch = get_object_or_404(DataPatch, dataSet = dataSet, seriesNumber = dataPatchNum)
 	dataFiles = DataFile.objects.filter(dataPatch = dataPatch).order_by('-modificationType')
-	metadataPerCategories = [(c[1], Metadata.objects.filter(isActive = True, category = c[0])) for c in METADATACATEGORIES]
+	metadataPerCategories = [(c[1], Metadata.objects.filter(isActive = True, isDisplayed = True, category = c[0])) for c in METADATACATEGORIES]
 	filesAndMetadata = []
 	for file in dataFiles:
 		tmp = []
