@@ -43,11 +43,11 @@
 								<div class="triValuedSelector">
 									{% with cat.0|add:"selector" as key %}
 										{% with request.POST|keyvalue:key as value %}
-											<input type="radio" name="{{ cat.0 }}selector" id="{{ cat.0 }}SelectorYes" class="triValuedSelectorYes" value="yes" {% ifequal value "yes" %} checked {% endifequal %}/>
+											<input type="radio" name="{{ cat.0 }}selector" id="{{ cat.0 }}SelectorYes" class="triValuedSelectorYes" value="yes" {% if value == "yes" %} checked {% endif %}/>
 											<label for="{{ cat.0 }}SelectorYes">&#10003;</label>
-											<input type="radio" name="{{ cat.0 }}selector" id="{{ cat.0 }}SelectorIndef" class="triValuedSelectorIndef" value="indef" {% if request.POST %}{% ifequal value "indef" %} checked {% endifequal %}{% else %}checked{% endif %}/>
+											<input type="radio" name="{{ cat.0 }}selector" id="{{ cat.0 }}SelectorIndef" class="triValuedSelectorIndef" value="indef" {% if request.POST %}{% if value == "indef" %} checked {% endif %}{% else %}checked{% endif %}/>
 											<label for="{{ cat.0 }}SelectorIndef"><span style="vertical-align: top; font-size: 0.6em;">&#10003;</span>/<span style="vertical-align: bottom; font-size: 0.6em;">&#10007;</span></label>
-											<input type="radio" name="{{ cat.0 }}selector" id="{{ cat.0 }}SelectorNo" class="triValuedSelectorNo" value="no" {% ifequal value "no" %} checked {% endifequal %}/>
+											<input type="radio" name="{{ cat.0 }}selector" id="{{ cat.0 }}SelectorNo" class="triValuedSelectorNo" value="no" {% if value == "no" %} checked {% endif %}/>
 											<label for="{{ cat.0 }}SelectorNo">&#10007;</label>
 										{% endwith %}
 									{% endwith %}
@@ -91,11 +91,11 @@
 							<div class="triValuedSelector">
 								{% with type.0|add:"selector" as key %}
 									{% with request.POST|keyvalue:key as value %}
-										<input type="radio" name="{{ type.0 }}selector" id="{{ type.0 }}selectorYes" class="triValuedSelectorYes" value="yes" {% ifequal value "yes" %} checked {% endifequal %}/>
+										<input type="radio" name="{{ type.0 }}selector" id="{{ type.0 }}selectorYes" class="triValuedSelectorYes" value="yes" {% if value == "yes" %} checked {% endif %}/>
 										<label for="{{ type.0 }}selectorYes">&#10003;</label>
-										<input type="radio" name="{{ type.0 }}selector" id="{{ type.0 }}selectorIndef" class="triValuedSelectorIndef" value="indef" {% if request.POST %}{% ifequal value "indef" %} checked {% endifequal %}{% else %}checked{% endif %}/>
+										<input type="radio" name="{{ type.0 }}selector" id="{{ type.0 }}selectorIndef" class="triValuedSelectorIndef" value="indef" {% if request.POST %}{% if value == "indef" %} checked {% endif %}{% else %}checked{% endif %}/>
 										<label for="{{ type.0 }}selectorIndef"><span style="vertical-align: top; font-size: 0.6em;">&#10003;</span>/<span style="vertical-align: bottom; font-size: 0.6em;">&#10007;</span></label>
-										<input type="radio" name="{{ type.0 }}selector" id="{{ type.0 }}selectorNo" class="triValuedSelectorNo" value="no" {% ifequal value "no" %} checked {% endifequal %}/>
+										<input type="radio" name="{{ type.0 }}selector" id="{{ type.0 }}selectorNo" class="triValuedSelectorNo" value="no" {% if value == "no" %} checked {% endif %}/>
 										<label for="{{ type.0 }}selectorNo">&#10007;</label>
 									{% endwith %}
 								{% endwith %}
