@@ -13,7 +13,7 @@
 
 <div class="content">
 
-<h1>Data Patch: {{ dataPatch.name }} ({{ dataPatch.description }})</h1>
+<h1>Data Patch: {{ dataPatch.name }} ({{ dataPatch.dataSet.name }}) <br> {{ dataPatch.description }}</h1>
 
 <p><a href="{% url 'preflibapp:dataset' dataSet.category dataSet.seriesNumber %}">Return to the data set.</a></p>
 
