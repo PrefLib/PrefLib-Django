@@ -3,3 +3,7 @@ preflib/settings.py
 preflibApp/static/data/
 __pycache__/
 migrations
+Documentation/*.aux
+Documentation/*.log
+Documentation/*.gz
+Documentation/*.toc
