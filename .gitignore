@@ -7,3 +7,4 @@ Documentation/*.aux
 Documentation/*.log
 Documentation/*.gz
 Documentation/*.toc
+preflib.db
