@@ -1,5 +1,6 @@
 import os
 
+## Write the settings.py file that we do not git for security reasons
 with open("preflib/settings.py", "w") as f:
 	f.write("""
 \"\"\"
@@ -122,6 +123,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
+STATIC_ROOT = "static/"
+
 STATIC_URL = '/static/'
 
 LOGIN_URL = '/login'
@@ -134,6 +137,9 @@ CONVERT_PATH = 'convert'
 """)
 	f.close()
 
+
+## Create the migration folder and run the initial migration to set up the 
+## database (a simple SQLlite db here since it should be only use to play around).
 try:
 	os.makedirs(os.path.join("preflibApp", "migrations"))
 except:
@@ -144,3 +150,15 @@ with open(os.path.join("preflibApp", "migrations", "__init__.py"), "w") as f:
 
 os.system("python3 manage.py makemigrations")
 os.system("python3 manage.py migrate")
+
+
+## Initialize the website
+os.system("python3 manage.py initializedb")
+os.system("python3 manage.py updatepapers")
+os.system("python3 manage.py collectstatic")
+
+## Set everything up to add data
+try:
+    os.makedirs(os.path.join("preflibApp", "static", "datatoadd"))
+except:
+    pass
