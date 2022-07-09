@@ -17,7 +17,7 @@ This script creates all the required folders and files. Note that you might need
 * **AGH course selection**: `https://www.preflib.org/static/data/ED/agh/agh.zip <https://www.preflib.org/static/data/ED/agh/agh.zip>`_
 * **Aspen election data**: `https://www.preflib.org/static/data/ED/aspen/aspen.zip <https://www.preflib.org/static/data/ED/aspen/aspen.zip>`_
 
-The zip files should be place in `preflibApp/static/datatoadd`. Once you have put all the zip files in the folder, run the following command:
+The zip files should be place in :code:`preflibApp/static/datatoadd`. Once you have put all the zip files in the folder, run the following command:
 
 .. code-block:: bash
 
