@@ -104,6 +104,11 @@ Header menu
 	transition: all linear 0.1s;
 }
 
+#toggle-menu {
+	display: block;
+	padding: 10px 0;
+}
+
 #menu > ul > li > a, #toggle-menu, #account-wrap > ul > li > a {
 	text-shadow: 0px 1px 0px black;
 	font-weight: bold;
@@ -206,6 +211,11 @@ Header menu
 }
 
 @media only screen and (max-width: 1100px) {
+	.title p {
+		font-size: 200%;
+		margin: 20px 0;
+	}
+
 	#menu li {
 		border-bottom: 2px solid var(--color-blue1);
 		background: var(--color-blue2);
@@ -239,6 +249,14 @@ Header menu
 
 	#menu > ul > li > a {
 		font-weight: normal;
+	}
+
+	.menu-wrap {
+		display: block;
+	}
+
+	#menu .main-menu {
+		display: none;
 	}
 
 	.sub-menu li {
