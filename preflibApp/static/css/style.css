@@ -785,6 +785,44 @@ Index page
 }
 
 /* =========
+All datasets page
+========= */
+
+.data-patch-list .data-patch {
+	font-size: 80%;
+	background-color: var(--color-blue3);
+	box-shadow: 0px 0px 1px 0px var(--color-blue1);
+	padding: 2px 3px;
+	border-radius: 3px;
+}
+
+.data-patch-list .data-patch a {
+	color: black;
+	font-style: normal;
+}
+
+.button-row {
+	display: flex;
+	justify-content: center;
+	margin-top: 10px;
+	gap: 10px;
+}
+
+.button-row a {
+	font-style: normal;
+	color: white;
+	font-size: 90%;
+	background-color: var(--color-blue2);
+	box-shadow: 0px 0px 1px 0px var(--color-blue1);
+	padding: 4px;
+	border-radius: 5px;
+}
+
+.button-row a:hover {
+	background-color: var(--color-blue1);
+}
+
+/* =========
 Dataset page
 ========= */
 

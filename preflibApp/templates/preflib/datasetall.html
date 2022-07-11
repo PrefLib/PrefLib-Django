@@ -19,28 +19,45 @@
 
 	<p>Here is a list of all the data sets in the {{ title }} category, showing 20 per page.</p>
 	
+	<ul>
+		{% for ds in datasets %}
+			<li>
+				<a href="#{{ds.category}}{{ds.seriesNumber}}">{{ ds.name }}</a>
+			</li>
+		{% endfor %}
+	</ul>
+
 	{% include 'includes/paginator.html' %}
 	
-	{% for ds in datasets %}
-		<h2> <a href="{% url 'preflibapp:dataset' ds.category ds.seriesNumber %}"> {{ ds.name }} </a></h2>
+	{% for dsinfo in datasetInfo %}
+	{% with dsinfo.ds as ds %}
+		<h2><a href="{% url 'preflibapp:dataset' ds.category ds.seriesNumber %}" id="{{ds.category}}{{ds.seriesNumber}}"> {{ ds.name }} </a></h2>
 
 		{% autoescape off %}
 		<p> {{ ds.description }} </p>
 		{% endautoescape %}
 
-		<p> Want to have more details, see <a href="{% url 'preflibapp:dataset' ds.category ds.seriesNumber %}"> this page</a>.</p>
+		<p class="data-patch-list">
+			Consists of {{ dsinfo.nbPatches }} data patch{{ dsinfo.nbPatches|pluralize:"es" }}:
+			{% for patch in dsinfo.patches %}
+				<span class="data-patch"><a href="{% url 'preflibapp:datapatch' ds.category ds.seriesNumber patch.seriesNumber %}">{{ patch.description }}</a></span>
+			{% endfor %}
+			{% if dsinfo.nbPatchesNotShown > 0 %}
+				and {{ dsinfo.nbPatchesNotShown }} more.
+			{% endif %}
+		</p>
 
-		{% with 'data/'|add:ds.category|add:'/'|add:ds.abbreviation|add:'/'|add:ds.abbreviation|add:'.zip' as zip_static %}
-			<p id="center_p">
-				<a href="{% static zip_static %}" id="downloadButton">Click here to download the dataset</a>
-			</p>
-		{% endwith %}
+		<p class="button-row">
+			<a href="{% url 'preflibapp:dataset' ds.category ds.seriesNumber %}" class="details-button">Details</a>
+			<a href="{% static dsinfo.zipFile %}" class="downloadButton">Download [zip, {{dsinfo.zipFileSize|filesizeformat}}]</a>
+		</p>
+	{% endwith %}
 	{% endfor %}
 
 	{% include 'includes/paginator.html' %}
 	
 {% else %}
-	<p> There are no such dataset right now, do you want to contribute ? </p>
+	<p> There are no such dataset right now, do you want to contribute? </p>
 {% endif %}
 
 </div>
