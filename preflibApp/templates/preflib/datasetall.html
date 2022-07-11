@@ -19,14 +19,6 @@
 
 	<p>Here is a list of all the data sets in the {{ title }} category, showing 20 per page.</p>
 	
-	<ul>
-		{% for ds in datasets %}
-			<li>
-				<a href="#{{ds.category}}{{ds.seriesNumber}}">{{ ds.name }}</a>
-			</li>
-		{% endfor %}
-	</ul>
-
 	{% include 'includes/paginator.html' %}
 	
 	{% for dsinfo in datasetInfo %}
