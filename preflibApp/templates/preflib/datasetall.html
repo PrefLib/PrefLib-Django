@@ -35,7 +35,7 @@
 				<span class="data-patch"><a href="{% url 'preflibapp:datapatch' ds.category ds.seriesNumber patch.seriesNumber %}">{{ patch.description }}</a></span>
 			{% endfor %}
 			{% if dsinfo.nbPatchesNotShown > 0 %}
-				and {{ dsinfo.nbPatchesNotShown }} more.
+				and <a href="{% url 'preflibapp:dataset' ds.category ds.seriesNumber %}">{{ dsinfo.nbPatchesNotShown }} more</a>.
 			{% endif %}
 		</p>
 
