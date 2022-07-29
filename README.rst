@@ -23,7 +23,7 @@ The zip files should be place in :code:`preflibApp/static/datatoadd`. Once you h
 
 	python3 manage.py adddataset --all
 
-You are now almost done, just run two more scripts all you will have a fully functional website.
+You are now almost done, just run two more scripts and you will have a fully functional website.
 
 .. code-block:: bash
 
