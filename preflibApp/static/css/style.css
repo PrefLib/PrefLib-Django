@@ -397,8 +397,13 @@ li li {
 
 a {
 	font-style: italic;
-	color: var(--color-blue2);
+	/* color: var(--color-blue2); */
+	color: #607fb9;
 	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
 }
 
 .content {
@@ -788,6 +793,40 @@ Index page
 All datasets page
 ========= */
 
+ul#dataset-list {
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+}
+
+ul#dataset-list li {
+	border-top: 1px solid #ddd;
+	padding-top: 0;
+	font-size: 100%;
+}
+
+ul#dataset-list .dataset-title {
+	margin-top: 0.5em;
+	margin-bottom: 0;
+	font-size: 135%;
+}
+
+ul#dataset-list .dataset-number {
+	font-size: 100%;
+	margin-top: 0;
+	color: #444;
+}
+
+ul#dataset-list .dataset-description {
+	border-left: 6px solid var(--color-blue3);
+	padding-left: 10px;
+}
+
+.data-patch-list {
+	line-height: 1.4;
+	margin-bottom: 0;
+}
+
 .data-patch-list .data-patch {
 	font-size: 80%;
 	background-color: var(--color-blue3);
@@ -803,7 +842,7 @@ All datasets page
 
 .button-row {
 	display: flex;
-	justify-content: center;
+	/* justify-content: center; */
 	margin-top: 10px;
 	gap: 10px;
 }
@@ -820,6 +859,44 @@ All datasets page
 
 .button-row a:hover {
 	background-color: var(--color-blue1);
+}
+
+nav#dataset-menu {
+	display: none;
+}
+
+@media screen and (min-width: 1100px) {
+	#section-datasets {
+		display: grid;
+    	grid-template-columns: 320px 1fr;
+	}
+
+	nav#dataset-menu {
+		display: block;
+	}
+
+	nav#dataset-menu ul {
+		position: sticky;
+		top: 1em;
+		list-style-type: none;
+		padding: 0;
+		margin: 0;
+		margin-left: -5px;
+		overflow-y: scroll;
+		max-height: 100vh;
+		font-size: 90%;
+	}
+
+	nav#dataset-menu ul li {
+		border-left: 3px solid transparent;
+		padding-left: 5px;
+		margin: 6px 0 0 0;
+	}
+
+	nav#dataset-menu ul li.current {
+		font-weight: bold;
+		border-left: 3px solid var(--color-blue2);
+	}
 }
 
 /* =========

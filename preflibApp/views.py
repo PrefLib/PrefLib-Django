@@ -120,7 +120,8 @@ def dataMetadata(request):
 	return my_render(request, os.path.join('preflib', 'datametadata.html'), locals())
 
 def alldatasets(request, datacategory):
-	(paginator, datasets, page, pagesBefore, pagesAfter) = getPaginator(request, DataSet.objects.filter(category = datacategory).order_by('name'))
+	# (paginator, datasets, page, pagesBefore, pagesAfter) = getPaginator(request, DataSet.objects.filter(category = datacategory).order_by('name'))
+	datasets = DataSet.objects.filter(category = datacategory).order_by('name')
 	title = findChoiceValue(DATACATEGORY, datacategory)
 	datasetInfo = []
 	for dataset in datasets:
