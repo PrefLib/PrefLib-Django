@@ -827,9 +827,18 @@ ul#dataset-list {
 }
 
 ul#dataset-list li {
-	border-top: 1px solid #ddd;
 	padding-top: 0;
+	margin-top: 0;
 	font-size: 100%;
+}
+
+ul#dataset-list li:not(:first-child) {
+	border-top: 1px solid #ddd;
+	margin-top: 20px;
+}
+
+ul#dataset-list li:first-child .dataset-title {
+	margin-top: 0px;
 }
 
 ul#dataset-list .dataset-title {
