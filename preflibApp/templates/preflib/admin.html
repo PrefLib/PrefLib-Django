@@ -30,10 +30,11 @@
 		<h4><a href="{% url 'preflibapp:adminPaper' %}">Add a paper</a></h4>
 		<div class="adminMenuContent">
 				<a href="{% url 'preflibapp:adminPaper' %}"><img src="{% static 'adminLogo/scholar.png' %}" width="100%"></a>
-				<p>Use this form to add a paper that has been published and which uses PrefLib, it will appear on the <a href="{% url 'preflibapp:papers' %}">Papers page</a>.</p>
+				<p>Use this form to add a paper that has been published and which uses PrefLib, it will appear on the <a href="{% url 'preflibapp:main' %}">main page</a> of the website.</p>
 			</div>
 		</div>
 
+	{% comment %}
 	<div class="adminTab">
 		<h4><a href="{% url 'preflibapp:createUser' %}">Create an user</a></h4>
 		<div class="adminMenuContent">
@@ -41,6 +42,7 @@
 			<p> Use this form to create an user, you will be able to decide whether he or she should be a superuser or not.</p>
 		</div>
 	</div>
+	{% endcomment %}
 </div>
 
 <div class="adminMenu">

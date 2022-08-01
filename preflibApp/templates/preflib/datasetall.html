@@ -17,30 +17,141 @@
 
 {% if datasets %}
 
-	<p>Here is a list of all the data sets in the {{ title }} category, showing 20 per page.</p>
-	
-	{% include 'includes/paginator.html' %}
-	
-	{% for ds in datasets %}
-		<h2> <a href="{% url 'preflibapp:dataset' ds.category ds.seriesNumber %}"> {{ ds.name }} </a></h2>
+	<p>Here is a list of all data sets in the <em>{{ title }}</em> category.</p>
 
+	<p>Sort by: <a href="javascript:sortByName()" id="sort-name" style="font-weight: bold;">Dataset name (A-Z)</a> &middot; <a href="javascript:sortByNew()" id="sort-new">Newest first</a> &middot; <a href="javascript:sortByOld()" id="sort-old">Oldest first</a></p>
+	
+	<section id="section-datasets">
+	<nav id="dataset-menu">
+		<ul>
+			{% for ds in datasets %}
+				<li data-number="{{ds.seriesNumber}}" data-name="{{ds.name}}"><a href="#{{ds.category}}-{{ds.seriesNumber}}">{{ ds.name }}</a></li>
+			{% endfor %}
+		</ul>
+	</nav>
+	
+	<ul id="dataset-list">
+	{% for dsinfo in datasetInfo %}
+	{% with dsinfo.ds as ds %}
+	<li 
+	id="{{ds.category}}-{{ds.seriesNumber}}" 
+	data-number="{{ds.seriesNumber}}" data-name="{{ds.name}}">
+		<p class="dataset-title"><strong><a href="{% url 'preflibapp:dataset' ds.category ds.seriesNumber %}" id="{{ds.category}}{{ds.seriesNumber}}">{{ ds.name }}</a></strong></p>
+
+		<p class="dataset-number">{{ds.category}}-{{ds.seriesNumber}}</p>
+
+		<div class="dataset-description">
 		{% autoescape off %}
-		<p> {{ ds.description }} </p>
+			{{ ds.description }}
 		{% endautoescape %}
+		</div>
 
-		<p> Want to have more details, see <a href="{% url 'preflibapp:dataset' ds.category ds.seriesNumber %}"> this page</a>.</p>
+		<p class="data-patch-list">
+			Consists of {{ dsinfo.nbPatches }} data patch{{ dsinfo.nbPatches|pluralize:"es" }}:
+			{% for patch in dsinfo.patches %}
+				<span class="data-patch"><a href="{% url 'preflibapp:datapatch' ds.category ds.seriesNumber patch.seriesNumber %}">{{ patch.description }}</a></span>
+			{% endfor %}
+			{% if dsinfo.nbPatchesNotShown > 0 %}
+				and <a href="{% url 'preflibapp:dataset' ds.category ds.seriesNumber %}">{{ dsinfo.nbPatchesNotShown }} more</a>.
+			{% endif %}
+		</p>
 
-		{% with 'data/'|add:ds.category|add:'/'|add:ds.abbreviation|add:'/'|add:ds.abbreviation|add:'.zip' as zip_static %}
-			<p id="center_p">
-				<a href="{% static zip_static %}" id="downloadButton">Click here to download the dataset</a>
-			</p>
-		{% endwith %}
+		<p class="button-row">
+			<a href="{% url 'preflibapp:dataset' ds.category ds.seriesNumber %}" class="details-button">Details</a>
+			<a href="{% static dsinfo.zipFile %}" class="downloadButton">Download [zip, {{dsinfo.zipFileSize|filesizeformat}}]</a>
+		</p>
+	</li>
+	{% endwith %}
 	{% endfor %}
+	</ul>
+	</section>
 
-	{% include 'includes/paginator.html' %}
-	
+	<script>
+		// sorting
+		var list = document.querySelector('#dataset-list');
+		var menu = document.querySelector('#dataset-menu ul');
+
+		function bolden(id) {
+			for (link of ["#sort-name", "#sort-new", "#sort-old"]) {
+				if (link == id) {
+					document.querySelector(link).style.fontWeight = "bold";
+				} else {
+					document.querySelector(link).style.fontWeight = "normal";
+				}
+			}
+		}
+
+		function sortByName() {
+			[...list.children]
+			.sort((a,b)=>a.dataset.name.localeCompare(b.dataset.name))
+			.forEach(node=>list.appendChild(node));
+			[...menu.children]
+			.sort((a,b)=>a.dataset.name.localeCompare(b.dataset.name))
+			.forEach(node=>menu.appendChild(node));
+			bolden("#sort-name");
+		}
+		function sortByNew() {
+			[...list.children]
+			.sort((a,b)=>b.dataset.number.localeCompare(a.dataset.number))
+			.forEach(node=>list.appendChild(node));
+			[...menu.children]
+			.sort((a,b)=>b.dataset.number.localeCompare(a.dataset.number))
+			.forEach(node=>menu.appendChild(node));
+			bolden("#sort-new");
+		}
+		function sortByOld() {
+			[...list.children]
+			.sort((a,b)=>a.dataset.number.localeCompare(b.dataset.number))
+			.forEach(node=>list.appendChild(node));
+			[...menu.children]
+			.sort((a,b)=>a.dataset.number.localeCompare(b.dataset.number))
+			.forEach(node=>menu.appendChild(node));
+			bolden("#sort-old");
+		}
+
+		// menu updates
+		function debounce(func, timeout = 300) {
+			let timer;
+			return (...args) => {
+				clearTimeout(timer);
+				timer = setTimeout(() => {
+				func.apply(this, args);
+				}, timeout);
+			};
+		}
+
+		function updateDatasetMenu() {
+			var current = "NOTHING";
+
+			// figure out where we are
+			document.querySelectorAll("#dataset-list li").forEach((section) => {
+				const sectionTop = section.offsetTop;
+				if (scrollY >= sectionTop - 122) {
+					current = section.dataset.number;
+					console.log(current);
+				}
+			});
+
+			// show current element in menu
+			document.querySelectorAll("#dataset-menu ul li").forEach((li) => {
+				li.classList.remove("current");
+				if (li.dataset.number == current) {
+					li.classList.add("current");
+					li.scrollIntoView({ block: "nearest" });
+				}
+			});
+		}
+
+		document.addEventListener("DOMContentLoaded", (event) => {
+			window.onscroll = () => {
+				debounce(updateDatasetMenu, 75)();
+			};
+		});
+
+	</script>
+
 {% else %}
-	<p> There are no such dataset right now, do you want to contribute ? </p>
+	<p> There are no datasets in the <em>{{ title }}</em> category yet. Do you want to contribute? </p>
 {% endif %}
 
 </div>

@@ -120,8 +120,27 @@ def dataMetadata(request):
 	return my_render(request, os.path.join('preflib', 'datametadata.html'), locals())
 
 def alldatasets(request, datacategory):
-	(paginator, datasets, page, pagesBefore, pagesAfter) = getPaginator(request, DataSet.objects.filter(category = datacategory).order_by('name'))
+	# (paginator, datasets, page, pagesBefore, pagesAfter) = getPaginator(request, DataSet.objects.filter(category = datacategory).order_by('name'))
+	datasets = DataSet.objects.filter(category = datacategory).order_by('name')
 	title = findChoiceValue(DATACATEGORY, datacategory)
+	datasetInfo = []
+	for dataset in datasets:
+		patches = DataPatch.objects.filter(dataSet = dataset)
+		zipFilePath = os.path.join('data', datacategory, str(dataset.abbreviation), str(dataset.abbreviation) + '.zip')
+		staticDir = finders.find(zipFilePath)
+		if staticDir != None:
+			zipFileSize = os.path.getsize(staticDir)
+		else:
+			zipFileSize = 0
+		show_how_many_patches = 7
+		datasetInfo.append({
+			"ds": dataset, 
+			"patches": patches[:show_how_many_patches], 
+			"nbPatches": patches.count(),
+			"nbPatchesNotShown": max(0, patches.count() - show_how_many_patches),
+			"zipFile": zipFilePath,
+			"zipFileSize": zipFileSize
+		})
 	return my_render(request, os.path.join('preflib', 'datasetall.html'), locals())
 
 def dataset(request, datacategory, dataSetNum):
