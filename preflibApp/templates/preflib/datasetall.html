@@ -124,11 +124,10 @@
 			var current = "NOTHING";
 
 			// figure out where we are
-			document.querySelectorAll("#dataset-list li").forEach((section) => {
+			document.querySelectorAll("#dataset-list > li").forEach((section) => {
 				const sectionTop = section.offsetTop;
 				if (scrollY >= sectionTop - 122) {
 					current = section.dataset.number;
-					console.log(current);
 				}
 			});
 
