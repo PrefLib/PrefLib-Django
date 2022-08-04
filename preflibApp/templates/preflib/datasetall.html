@@ -124,11 +124,10 @@
 			var current = "NOTHING";
 
 			// figure out where we are
-			document.querySelectorAll("#dataset-list li").forEach((section) => {
+			document.querySelectorAll("#dataset-list > li").forEach((section) => {
 				const sectionTop = section.offsetTop;
 				if (scrollY >= sectionTop - 122) {
 					current = section.dataset.number;
-					console.log(current);
 				}
 			});
 
@@ -137,7 +136,7 @@
 				li.classList.remove("current");
 				if (li.dataset.number == current) {
 					li.classList.add("current");
-/*					li.scrollIntoView({ block: "nearest" });*/
+					li.scrollIntoView({ block: "nearest" });
 				}
 			});
 		}
