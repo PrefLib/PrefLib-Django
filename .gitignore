@@ -8,3 +8,4 @@ Documentation/*.gz
 Documentation/*.toc
 preflib.db
 local_settings.py
+/cache/
