@@ -1,4 +1,3 @@
-from itertools import permutations, combinations, combinations_with_replacement
 from django.core.management.base import BaseCommand
 from django.contrib.staticfiles import finders
 from django.core import management

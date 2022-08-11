@@ -29,7 +29,7 @@ class UserProfile(models.Model):
 
 class DataSet(models.Model):
 	name = models.CharField(max_length = 1000)
-	abbreviation = models.CharField(max_length = 100)
+	abbreviation = models.CharField(max_length = 100, unique = True)
 	category = models.CharField(choices = DATACATEGORY, max_length = 5)
 	seriesNumber = models.SlugField()
 	description = models.TextField()
