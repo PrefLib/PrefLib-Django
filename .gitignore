@@ -1,5 +1,4 @@
 /static/
-preflib/settings.py
 preflibApp/static/data/
 __pycache__/
 migrations
@@ -8,3 +7,4 @@ Documentation/*.log
 Documentation/*.gz
 Documentation/*.toc
 preflib.db
+local_settings.py
