@@ -23,6 +23,14 @@ DATABASES = {
     }
 }
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(BASE_DIR, 'cache/'),
+        'TIMEOUT': str(60 * 60 * 12)
+    }
+}
+
 STATIC_ROOT = "static/"
 
 # Path to the unix convert command for the image handling
