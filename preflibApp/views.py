@@ -27,6 +27,7 @@ from .choices import *
 # ========================
 
 CACHE_TIME = 60 * 60 * 12
+# CACHE_TIME = 0
 
 # Returns a nice paginator of the iterable for a give window size around the current page 
 def getPaginator(request, iterable, pageSize = 20, windowSize = 3, maxNumberPages = 15):
@@ -169,18 +170,25 @@ def datapatch(request, datacategory, dataSetNum, dataPatchNum):
 	dataPatch = get_object_or_404(DataPatch, dataSet = dataSet, seriesNumber = dataPatchNum)
 	dataFiles = DataFile.objects.filter(dataPatch = dataPatch).order_by('-modificationType')
 	metadataPerCategories = [(c[1], Metadata.objects.filter(isActive = True, isDisplayed = True, category = c[0])) for c in METADATACATEGORIES]
-	filesAndMetadata = []
+	number_alt_meta = Metadata.objects.get(shortName = "numAlt")
+	filesMetaPreview = []
 	for file in dataFiles:
-		tmp = []
+		metaCat = []
 		for (category, metadata) in metadataPerCategories:
-			tmp2 = []
+			metaInsideCat = []
 			for m in metadata:
 				if DataProperty.objects.filter(metadata = m, dataFile = file).exists():
-					tmp2.append((m, DataProperty.objects.get(metadata = m, dataFile = file).getTypedValue()))
-			if len(tmp2) > 0:
-				tmp.append((category, tmp2))
-		filesAndMetadata.append((file, tmp))
-	
+					metaInsideCat.append((m, DataProperty.objects.get(metadata = m, dataFile = file).getTypedValue()))
+			if len(metaInsideCat) > 0:
+				metaCat.append((category, metaInsideCat))
+		# Getting the first few lines of the file
+		number_alt = DataProperty.objects.get(metadata = number_alt_meta, dataFile = file).getTypedValue()
+		number_lines = min(25, number_alt + 2 + 10)
+		f = open(finders.find(os.path.join("data", dataSet.category, dataSet.abbreviation, file.fileName)), "r")
+		lines = f.readlines()[:number_lines]
+		lines = [(i + 1, lines[i]) for i in range(len(lines))]
+		f.close
+		filesMetaPreview.append((file, metaCat, lines))
 	return my_render(request, os.path.join('preflib', 'datapatch.html'), locals())
 
 @cache_page(CACHE_TIME)

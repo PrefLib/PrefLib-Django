@@ -18,7 +18,7 @@
 <p><a href="{% url 'preflibapp:dataset' dataSet.category dataSet.seriesNumber %}">Return to the data set.</a></p>
 
 <div class="patchGrid">
-	{% for file in filesAndMetadata %}
+	{% for file in filesMetaPreview %}
 		<div class="patchCell">
 			<h2>{{ file.0.fileName }}</h2>
 			<div class="patchCellContent">
@@ -77,6 +77,20 @@
 									{% endfor %}
 								{% endfor %}
 							{% endif %}
+						</table>
+					</div>
+
+					<div class='codebox' style="margin-top: 20px;">
+						<table>
+							<tbody>
+								<td colspan="2" class='lineContent' style="text-align: center; font-size: 120%; font-weight: bold;">Preview of the File</td>
+								{% for line in file.2 %}
+									<tr>
+										<td class='lineNumber'>{{ line.0 }}</td>
+										<td class='lineContent'>{{ line.1 }}</td>
+									</tr>
+								{% endfor %}
+							</tbody>
 						</table>
 					</div>
 				</div>

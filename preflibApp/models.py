@@ -62,7 +62,7 @@ class DataPatch(models.Model):
 
 class Metadata(models.Model):
 	name = models.CharField(max_length = 100, unique = True)
-	shortName = models.CharField(max_length = 100)
+	shortName = models.CharField(max_length = 100, unique = True)
 	category = models.CharField(choices = METADATACATEGORIES, max_length = 100)
 	description = models.TextField()
 	isActive = models.BooleanField()
