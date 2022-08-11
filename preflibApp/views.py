@@ -2,6 +2,7 @@ from django.contrib.auth import authenticate, login, logout, update_session_auth
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, Http404
+from django.views.decorators.cache import cache_page
 from django.db.models import Sum, Max, Min, Count
 from django.contrib.staticfiles import finders
 from django.db.models.functions import Cast
@@ -24,6 +25,8 @@ from .choices import *
 # ========================
 #   Auxiliary functions
 # ========================
+
+CACHE_TIME = 60 * 60 * 12
 
 # Returns a nice paginator of the iterable for a give window size around the current page 
 def getPaginator(request, iterable, pageSize = 20, windowSize = 3, maxNumberPages = 15):
@@ -109,16 +112,20 @@ def main(request):
 	return my_render(request, os.path.join('preflib', 'index.html'), locals())
 
 # Data views
+@cache_page(CACHE_TIME)
 def data(request):
 	return my_render(request, os.path.join('preflib', 'data.html'))
 
+@cache_page(CACHE_TIME)
 def dataFormat(request):
 	return my_render(request, os.path.join('preflib', 'dataformat.html'))
 
+@cache_page(CACHE_TIME)
 def dataMetadata(request):
 	metadataPerCategories = [(c[1], Metadata.objects.filter(isActive = True, category = c[0])) for c in METADATACATEGORIES]
 	return my_render(request, os.path.join('preflib', 'datametadata.html'), locals())
 
+@cache_page(CACHE_TIME)
 def alldatasets(request, datacategory):
 	# (paginator, datasets, page, pagesBefore, pagesAfter) = getPaginator(request, DataSet.objects.filter(category = datacategory).order_by('name'))
 	datasets = DataSet.objects.filter(category = datacategory).order_by('name')
@@ -143,6 +150,7 @@ def alldatasets(request, datacategory):
 		})
 	return my_render(request, os.path.join('preflib', 'datasetall.html'), locals())
 
+@cache_page(CACHE_TIME)
 def dataset(request, datacategory, dataSetNum):
 	dataset = get_object_or_404(DataSet, category = datacategory, seriesNumber = dataSetNum)
 	(paginator, patches, page, pagesBefore, pagesAfter) = getPaginator(request, DataPatch.objects.filter(dataSet = dataset).order_by("name"))
@@ -155,6 +163,7 @@ def dataset(request, datacategory, dataSetNum):
 	zipfilepath = os.path.join('data', datacategory, str(dataset.abbreviation), str(dataset.abbreviation) + '.zip')
 	return my_render(request, os.path.join('preflib', 'dataset.html'), locals())
 
+@cache_page(CACHE_TIME)
 def datapatch(request, datacategory, dataSetNum, dataPatchNum):
 	dataSet = get_object_or_404(DataSet, category = datacategory, seriesNumber = dataSetNum)
 	dataPatch = get_object_or_404(DataPatch, dataSet = dataSet, seriesNumber = dataPatchNum)
@@ -174,6 +183,7 @@ def datapatch(request, datacategory, dataSetNum, dataPatchNum):
 	
 	return my_render(request, os.path.join('preflib', 'datapatch.html'), locals())
 
+@cache_page(CACHE_TIME)
 def datatypes(request):
 	return my_render(request, os.path.join('preflib', 'datatypes.html'))
 
@@ -247,31 +257,38 @@ def dataSearch(request):
 	return my_render(request, os.path.join('preflib', 'datasearch.html'), locals())
 
 # About views
+@cache_page(CACHE_TIME)
 def about(request):
 	return my_render(request, os.path.join('preflib', 'about.html'))
 
 # Tools views
+@cache_page(CACHE_TIME)
 def tools(request):
 	return my_render(request, os.path.join('preflib', 'tools.html'))
 
 # Tools views
+@cache_page(CACHE_TIME)
 def toolsIVS(request):
 	return my_render(request, os.path.join('preflib', 'toolsivs.html'))
 
 # Tools views
+@cache_page(CACHE_TIME)
 def toolsKDG(request):
 	return my_render(request, os.path.join('preflib', 'toolskdg.html'))
 
 # Tools views
+@cache_page(CACHE_TIME)
 def toolsCRIS(request):
 	return my_render(request, os.path.join('preflib', 'toolscris.html'))
 
 # Paper views
+@cache_page(CACHE_TIME)
 def papersView(request):
 	(paginator, papers, page, pagesBefore, pagesAfter) = getPaginator(request, Paper.objects.all(), pageSize = 30)
 	return my_render(request, os.path.join('preflib', 'papers.html'), locals())
 
 # Archive views
+@cache_page(CACHE_TIME)
 def archive(request):
 	return my_render(request, os.path.join('preflib', 'archive.html'))
 
