@@ -3,6 +3,8 @@ import os
 ## Write the settings.py file that we do not git for security reasons
 with open("preflib/local_settings.py", "w") as f:
 	f.write("""
+import os
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'thisissecret'
 
