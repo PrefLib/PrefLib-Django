@@ -36,7 +36,7 @@
 	<li 
 	id="{{ds.category}}-{{ds.seriesNumber}}" 
 	data-number="{{ds.seriesNumber}}" data-name="{{ds.name}}">
-		<p class="dataset-title"><strong><a href="{% url 'preflibapp:dataset' ds.category ds.seriesNumber %}" id="{{ds.category}}{{ds.seriesNumber}}">{{ ds.name }}</a></strong></p>
+		<h2 class="dataset-title"><a href="{% url 'preflibapp:dataset' ds.category ds.seriesNumber %}" id="{{ds.category}}{{ds.seriesNumber}}">{{ ds.name }}</a></h2>
 
 		<p class="dataset-number">{{ds.category}}-{{ds.seriesNumber}}</p>
 
