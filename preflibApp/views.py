@@ -97,6 +97,7 @@ def error_500_view(request):
 #   Views
 # =========
 
+@cache_page(CACHE_TIME)
 def main(request):
 	nbDataSet = DataSet.objects.count()
 	nbDataFile = DataFile.objects.count()

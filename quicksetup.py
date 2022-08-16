@@ -31,6 +31,8 @@ CACHES = {
     }
 }
 
+CACHE_TIME = 0
+
 STATIC_ROOT = "static/"
 
 # Path to the unix convert command for the image handling
