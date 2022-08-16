@@ -169,7 +169,7 @@ class Paper(models.Model):
 		ordering = ['-year', 'title']
 
 	def __str__(self):
-		return self.authors.split(' ')[1] + "_" + self.year
+		return self.authors.split(' ')[1] + "_" + str(self.year)
 
 # ==============================
 #    Logs for the admin tasks   
