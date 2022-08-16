@@ -10,6 +10,8 @@ from django.core.paginator import Paginator
 from django.core import management
 from django.utils import timezone
 
+from django.conf import settings
+
 from subprocess import Popen
 from math import floor, ceil
 
@@ -26,8 +28,7 @@ from .choices import *
 #   Auxiliary functions
 # ========================
 
-CACHE_TIME = 60 * 60 * 12
-# CACHE_TIME = 0
+CACHE_TIME = settings.CACHE_TIME
 
 # Returns a nice paginator of the iterable for a give window size around the current page 
 def getPaginator(request, iterable, pageSize = 20, windowSize = 3, maxNumberPages = 15):
