@@ -28,7 +28,7 @@ from .choices import *
 #   Auxiliary functions
 # ========================
 
-CACHE_TIME = settings.CACHE_TIME
+CACHE_TIME = 60 * 60 * 24
 
 # Returns a nice paginator of the iterable for a give window size around the current page 
 def getPaginator(request, iterable, pageSize = 20, windowSize = 3, maxNumberPages = 15):
