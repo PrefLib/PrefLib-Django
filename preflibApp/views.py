@@ -205,7 +205,7 @@ def datapatch(request, datacategory, dataSetNum, dataPatchNum):
 				tmplines = f.readlines()
 				lines = [(i + 1, tmplines[i]) for i in range(12)]
 				lines.append(("...", ""))
-				lines += [(i + 1, tmplines[i][:45] + "...") for i in range(number_alt + 1, min(number_alt + 12, len(tmplines)))]
+				lines += [(i + 1, tmplines[i][:45] + ("..." if len(tmplines[i]) > 45 else "")) for i in range(number_alt + 1, min(number_alt + 12, len(tmplines)))]
 			f.close
 			filesMetaPreview.append((file, metaCat, lines))
 		except DataProperty.DoesNotExist:
