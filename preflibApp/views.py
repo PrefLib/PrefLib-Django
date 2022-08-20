@@ -157,6 +157,14 @@ def alldatasets(request, datacategory):
 def dataset(request, datacategory, dataSetNum):
 	dataset = get_object_or_404(DataSet, category = datacategory, seriesNumber = dataSetNum)
 	(paginator, patches, page, pagesBefore, pagesAfter) = getPaginator(request, DataPatch.objects.filter(dataSet = dataset).order_by("name"))
+	number_alt_meta = Metadata.objects.get(shortName = "numAlt")
+	number_vot_meta = Metadata.objects.get(shortName = "numVot")
+	patch_num_vot_alt = {}
+	for patch in patches:
+		if patch.representative.dataType in number_alt_meta.appliesTo:
+			number_alt = DataProperty.objects.get(metadata = number_alt_meta, dataFile = patch.representative).getTypedValue()
+			number_vot = DataProperty.objects.get(metadata = number_vot_meta, dataFile = patch.representative).getTypedValue()
+			patch_num_vot_alt[patch] = (number_alt, number_vot)
 	allFiles = DataFile.objects.filter(dataPatch__dataSet = dataset)
 	nbFiles = allFiles.count()
 	totalSize = allFiles.aggregate(Sum('fileSize'))['fileSize__sum']
@@ -185,10 +193,16 @@ def datapatch(request, datacategory, dataSetNum, dataPatchNum):
 				metaCat.append((category, metaInsideCat))
 		# Getting the first few lines of the file
 		number_alt = DataProperty.objects.get(metadata = number_alt_meta, dataFile = file).getTypedValue()
-		number_lines = min(25, number_alt + 2 + 10)
 		f = open(finders.find(os.path.join("data", dataSet.category, dataSet.abbreviation, file.fileName)), "r")
-		lines = f.readlines()[:number_lines]
-		lines = [(i + 1, lines[i]) for i in range(len(lines))]
+		if number_alt <= 12:
+			lines = f.readlines()
+			lines = lines[:min(number_alt + 2 + 10, len(lines))]
+			lines = [(i + 1, lines[i]) for i in range(len(lines))]
+		else:
+			tmplines = f.readlines()
+			lines = [(i + 1, tmplines[i]) for i in range(12)]
+			lines.append(("...", ""))
+			lines += [(i + 1, tmplines[i][:45] + "...") for i in range(number_alt + 1, min(number_alt + 12, len(tmplines)))]
 		f.close
 		filesMetaPreview.append((file, metaCat, lines))
 	return my_render(request, os.path.join('preflib', 'datapatch.html'), locals())

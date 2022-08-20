@@ -57,7 +57,7 @@
 		</p>
 
 		<p class="button-row">
-			<a href="{% url 'preflibapp:dataset' ds.category ds.seriesNumber %}" class="details-button">Details</a>
+			<a href="{% url 'preflibapp:dataset' ds.category ds.seriesNumber %}" class="downloadButton">Details</a>
 			<a href="{% static dsinfo.zipFile %}" class="downloadButton">Download [zip, {{dsinfo.zipFileSize|filesizeformat}}]</a>
 		</p>
 	</li>

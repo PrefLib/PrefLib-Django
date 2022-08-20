@@ -573,18 +573,18 @@ Pagination
 Download button 
 ============ */
 
-#downloadButton {
-	background-color: #33A70D;
-	border-radius: 4px;
-	padding: 4px;
-	margin: 2px;
+.downloadButton {
+	font-style: normal;
 	color: white;
+	font-size: 90%;
+	background-color: var(--color-blue2);
+	box-shadow: 0px 0px 1px 0px var(--color-blue1);
+	padding: 4px;
+	border-radius: 5px;
 }
 
-#downloadButton a {
-	color: white;
-	text-decoration: none;
-	font-style: normal;
+.downloadButton:hover {
+	background-color: var(--color-blue1);
 }
 
 /* ========
@@ -873,20 +873,6 @@ ul#dataset-list .dataset-description {
 	gap: 10px;
 }
 
-.button-row a {
-	font-style: normal;
-	color: white;
-	font-size: 90%;
-	background-color: var(--color-blue2);
-	box-shadow: 0px 0px 1px 0px var(--color-blue1);
-	padding: 4px;
-	border-radius: 5px;
-}
-
-.button-row a:hover {
-	background-color: var(--color-blue1);
-}
-
 nav#dataset-menu {
 	display: none;
 }
@@ -930,9 +916,13 @@ nav#dataset-menu {
 Dataset page
 ========= */
 
-#datasettable {
+.patchtable-header {
 	padding: 10px 20px;
 	border-bottom: 1px solid #ddd;
+}
+
+.patchtable tr:nth-child(2) td {
+	padding-top: 10px;
 }
 
 /* ===========

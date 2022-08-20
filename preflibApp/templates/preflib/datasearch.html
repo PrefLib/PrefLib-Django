@@ -204,7 +204,7 @@
 					{% endfor %}
 					<td>
 						{% with 'data/'|add:file.dataPatch.dataSet.category|add:'/'|add:file.dataPatch.dataSet.abbreviation|add:'/'|add:file.fileName as f %}
-							<span id="downloadButton"><a href="{% static f %}">Download</a></span>
+							<a href="{% static f %}">Download</a>
 						{% endwith %}
 					</td>
 				</tr>

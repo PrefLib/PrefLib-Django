@@ -47,6 +47,7 @@ class DataSet(models.Model):
 
 class DataPatch(models.Model):
 	dataSet = models.ForeignKey(DataSet, on_delete = models.CASCADE)
+	representative = models.ForeignKey("DataFile", on_delete = models.CASCADE)
 	name = models.CharField(max_length = 1000)
 	description = models.CharField(max_length = 1000)
 	seriesNumber = models.SlugField()
@@ -98,7 +99,6 @@ class DataFile(models.Model):
 	modificationDate = models.DateTimeField(auto_now = True)
 
 	class Meta:
-		unique_together = ('dataPatch', 'fileName')
 		ordering = ['fileName']
 
 	def shortName(self):
@@ -124,34 +124,6 @@ class DataProperty(models.Model):
 	def __str__(self):
 		return self.dataFile.__str__() + " - " + self.metadata.name
 
-# class DataProp(models.Model):
-# 	dataFile = models.OneToOneField(DataFile, on_delete = models.CASCADE, related_name = "proptofile")
-# 	image = models.CharField(max_length = 1000, null = True)
-# 	text = models.TextField(null = True)
-# 	nbAlternatives = models.IntegerField(null = True)
-# 	nbVoters = models.IntegerField(null = True)
-# 	nbSumVoters = models.IntegerField(null = True)
-# 	nbDifferentOrders = models.IntegerField(null = True)
-# 	largestBallot = models.IntegerField(null = True)
-# 	smallestBallot = models.IntegerField(null = True)
-# 	maxNbIndif = models.IntegerField(null = True)
-# 	minNbIndif = models.IntegerField(null = True)
-# 	largestIndif = models.IntegerField(null = True)
-# 	smallestIndif = models.IntegerField(null = True)
-# 	isSinglePeaked = models.BooleanField(null = True)
-# 	minNumPeaks = models.IntegerField(null = True)
-# 	isSingleCrossed = models.BooleanField(null = True)
-# 	isApproval = models.BooleanField(null = True)
-# 	isStrict = models.BooleanField(null = True)
-# 	isComplete = models.BooleanField(null = True)
-# 	hasCondorcet = models.BooleanField(null = True)
-# 	graphEqClass = models.CharField(max_length = 30, null = True)
-
-# 	class Meta:
-# 		ordering = ["dataFile"]
-
-# 	def __str__(self):
-# 		return "MetaData for " + self.dataFile.fileName
 
 # ===================================
 #    Papers that are using PrefLib     

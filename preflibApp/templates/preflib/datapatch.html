@@ -32,7 +32,7 @@
 					{% endif %}
 
 					{% with 'data/'|add:dataSet.category|add:'/'|add:dataSet.abbreviation|add:'/'|add:file.0.fileName as f %}
-						<p><span id="downloadButton"><a href="{% static f %}">Download</a></span></p>
+						<p><a href="{% static f %}" class="downloadButton">Download</a></p>
 					{% endwith %}
 
 					<div class="patchCellContentFlex">
@@ -46,7 +46,7 @@
 							</tr>
 							<tr>
 								<td>Size of the File</td>
-								<td>{{ file.0.fileSize }}b.</td>
+								<td>{{ file.0.fileSize|filesizeformat }}</td>
 							</tr>
 							<tr>
 								<td>Publication Date</td>

@@ -1,4 +1,5 @@
 {% load static %}
+{% load extratags %}
 
 <!DOCTYPE html>
 <html>
@@ -68,28 +69,42 @@
 			<div class="patchCellContent">
 
 				{% with patch.datafile_set.all|dictsortreversed:"dataType"|dictsortreversed:"modificationType" as sortedFiles %}
+
+					{% with patch_num_vot_alt|keyvalue:patch as num_vot_alt %}
+						{% if num_vot_alt %}
+							<table align="center" class="patchtable">
+								<tr>
+									<th class="patchtable-header">#Voters</th>
+									<th class="patchtable-header">#Alternatives</th>
+								</tr>
+								<tr>
+									<td>{{ num_vot_alt.1 }}</td>
+									<td>{{ num_vot_alt.0 }}</td>
+								</tr>
+							</table>
+						{% endif %}
+					{% endwith %}
+
 					<p>
-						{% with 'data/'|add:dataset.category|add:'/'|add:dataset.abbreviation|add:'/img/'|add:sortedFiles.0.image as imgFile %}
+						{% with 'data/'|add:dataset.category|add:'/'|add:dataset.abbreviation|add:'/img/'|add:patch.representative.image as imgFile %}
 							{% if imgFile %}
 								<a href="{% url 'preflibapp:datapatch' dataset.category dataset.seriesNumber patch.seriesNumber %}"><img src="{% static imgFile %}"></a>
 							{% endif %}
 						{% endwith %}
 					</p>
 
-					<table align="center">
+					<table align="center" class="patchtable">
 						<tr>
-							<th id="datasettable">Modification</th>
-							<th id="datasettable">Type</th>
-							<th id="datasettable">File Size</th>
-							<th id="datasettable"></th>
+							<th class="patchtable-header">Modification</th>
+							<th class="patchtable-header">Type</th>
+							<th class="patchtable-header"></th>
 						</tr>
 						{% for file in sortedFiles %}
 							<tr>
-							<td><a href="{% url 'preflibapp:dataFormat'%}#modification">{{ file.modificationType }}</a></td>
-							<td><a href="{% url 'preflibapp:datatypes'%}#{{file.dataType}}">{{ file.dataType }}</a></td>
-							<td>{{ file.fileSize }} bytes</td>
+								<td><a href="{% url 'preflibapp:dataFormat'%}#modification">{{ file.modificationType }}</a></td>
+								<td><a href="{% url 'preflibapp:datatypes'%}#{{file.dataType}}">{{ file.dataType }}</a></td>
 								{% with 'data/'|add:dataset.category|add:'/'|add:dataset.abbreviation|add:'/'|add:file.fileName as f %}
-									<td><span id="downloadButton"><a href="{% static f %}">Download</a></span></td>
+									<td><a href="{% static f %}" class="downloadButton">Download [{{ file.fileSize|filesizeformat }}]</a></td>
 								{% endwith %}
 							</tr>
 						{% endfor %}

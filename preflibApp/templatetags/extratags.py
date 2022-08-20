@@ -3,8 +3,8 @@ from django import template
 register = template.Library()
 
 @register.filter
-def keyvalue(dict, key):    
-	return dict.get(key)
+def keyvalue(d, key):    
+	return d.get(key)
 
 @register.filter
 def getPropFromFile(querySet, metadata):
