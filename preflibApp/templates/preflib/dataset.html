@@ -95,14 +95,14 @@
 
 					<table align="center" class="patchtable">
 						<tr>
-							<th class="patchtable-header">Modification</th>
 							<th class="patchtable-header">Type</th>
+							<th class="patchtable-header">Modification</th>
 							<th class="patchtable-header"></th>
 						</tr>
 						{% for file in sortedFiles %}
 							<tr>
-								<td><a href="{% url 'preflibapp:dataFormat'%}#modification">{{ file.modificationType }}</a></td>
 								<td><a href="{% url 'preflibapp:datatypes'%}#{{file.dataType}}">{{ file.dataType }}</a></td>
+								<td><a href="{% url 'preflibapp:dataMetadata'%}#modification">{{ file.modificationType }}</a></td>
 								{% with 'data/'|add:dataset.category|add:'/'|add:dataset.abbreviation|add:'/'|add:file.fileName as f %}
 									<td><a href="{% static f %}" class="downloadButton">Download [{{ file.fileSize|filesizeformat }}]</a></td>
 								{% endwith %}
