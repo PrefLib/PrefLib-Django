@@ -874,11 +874,26 @@ ul#dataset-list .dataset-description {
 	font-style: normal;
 }
 
+.dataset-tags .data-tag {
+	font-size: 80%;
+	background-color: var(--color-blue3);
+	box-shadow: 0px 0px 1px 0px var(--color-blue1);
+	padding: 2px 3px;
+	border-radius: 3px;
+
+}
+
 .button-row {
-	display: flex;
-	/* justify-content: center; */
-	margin-top: 10px;
+	margin-top: 20px;
 	gap: 10px;
+}
+
+.button-row a:nth-child(1) {
+	display: inline-block;
+}
+
+.button-row a:nth-child(2) {
+	float: right;
 }
 
 nav#dataset-menu {

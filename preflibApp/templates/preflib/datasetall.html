@@ -40,7 +40,13 @@
 
 				<p class="dataset-number">{{ds.category}}-{{ds.seriesNumber}}</p>
 
-				<p class="dataset-number">{{ds.get_tag_list}}</p>
+				{% if ds.tags %}
+					<p class="dataset-tags">
+						{% for tag in ds.tags.all %}
+							<span class="data-tag">{{ tag.name }}</span>
+						{% endfor %}
+					</p>
+				{% endif %}
 
 				<div class="dataset-description">
 				{% autoescape off %}
@@ -58,10 +64,10 @@
 					{% endif %}
 				</p>
 
-				<p class="button-row">
+				<div class="button-row">
 					<a href="{% url 'preflibapp:dataset' ds.category ds.seriesNumber %}" class="downloadButton">Details</a>
 					<a href="{% static dsinfo.zipFile %}" class="downloadButton">Download [zip, {{dsinfo.zipFileSize|filesizeformat}}]</a>
-				</p>
+				</div>
 			</li>
 		{% endwith %}
 	{% endfor %}
