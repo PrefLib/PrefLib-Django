@@ -171,7 +171,7 @@ def dataset(request, datacategory, dataSetNum):
 	nbFiles = allFiles.count()
 	totalSize = allFiles.aggregate(Sum('fileSize'))['fileSize__sum']
 	if totalSize != None:
-		totalSize = round(totalSize / 1000, 2)
+		totalSize = totalSize
 	allTypes = allFiles.order_by('dataType').values_list('dataType').distinct()
 	zipfilepath = os.path.join('data', datacategory, str(dataset.abbreviation), str(dataset.abbreviation) + '.zip')
 	return my_render(request, os.path.join('preflib', 'dataset.html'), locals())

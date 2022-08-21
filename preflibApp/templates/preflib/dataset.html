@@ -33,14 +33,14 @@
 			{% endautoescape %}
 		{% endif %}
 
-		<p id="center_p"><a href="{% static zipfilepath %}" id="downloadButton">Click here to download the all data files</a></p>
+		<p id="center_p" style="margin-top: 30px;"><a href="{% static zipfilepath %}" class="downloadButton">Download the dataset [zip, {{ totalSize|filesizeformat }}]</a></p>
 	</div>
 
 	<div class="indexRightContent">
 		<h2>Details</h2>
 		<ul>
 			<li> Number of files: {{ nbFiles }}</li>
-			<li> Total size: {{ totalSize }} Mb.</li>
+			<li> Total size: {{ totalSize|filesizeformat }}</li>
 			<li> Data types:
 				{% for dataType in allTypes %}
 					{% if forloop.last %}
