@@ -2,6 +2,7 @@ from django.contrib import admin
 
 from .models import *
 
+admin.site.register(DataTag)
 admin.site.register(DataSet)
 admin.site.register(DataPatch)
 admin.site.register(DataFile)

@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand
 from datetime import datetime
 from django.apps import apps
 
-from preflibApp.models import Metadata 
+from preflibApp.models import Metadata, DataTag
 from preflibApp.choices import *
 
 import traceback
@@ -13,7 +13,58 @@ class Command(BaseCommand):
 	help = "Initializes the database, to be run once at the beginning"
 
 	def handle(self, *args, **options):
+		self.initialize_tags()
 		self.initializeMetadata()
+
+	def initialize_tags(self):
+
+		election_tag = DataTag.objects.update_or_create(
+			name = "Election",
+			defaults = {
+				"description": "The preferences apply to scenario in which some alternatives are to be selected",
+				"parent": None
+			}
+		)
+
+		sport_tag = DataTag.objects.update_or_create(
+			name = "Sport",
+			defaults = {
+				"description": "The preferences apply to scenario in which some alternatives are to be selected",
+				"parent": election_tag[0]
+			}
+		)
+
+		politics_tag = DataTag.objects.update_or_create(
+			name = "Politics",
+			defaults = {
+				"description": "The preferences apply to political scenario",
+				"parent": election_tag[0]
+			}
+		)
+
+		matching_tag = DataTag.objects.update_or_create(
+			name = "Matching",
+			defaults = {
+				"description": "The preferences apply to scenario in which alternatives are to be matched",
+				"parent": None
+			}
+		)
+
+		ratings_tag = DataTag.objects.update_or_create(
+			name = "Ratings",
+			defaults = {
+				"description": "The preferences express ratings about the alternatives",
+				"parent": None
+			}
+		)
+
+		combi_tag = DataTag.objects.update_or_create(
+			name = "Combinatorial",
+			defaults = {
+				"description": "The data represent combinatorial preferences about the alternatives.",
+				"parent": None
+			}
+		)
 
 	def initializeMetadata(self):
 

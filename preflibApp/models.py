@@ -10,7 +10,8 @@ from .choices import *
 # ===========================
 
 class UserProfile(models.Model):
-	user = models.OneToOneField(User, on_delete = models.CASCADE)
+	user = models.OneToOneField(User, 
+		on_delete = models.CASCADE)
 	firstname = models.CharField(max_length = 100)
 	lastname = models.CharField(max_length = 100)
 	email = models.EmailField()
@@ -27,16 +28,39 @@ class UserProfile(models.Model):
 #    Models related to the data  
 # ================================
 
+class DataTag(models.Model):
+	name = models.CharField(max_length = 30, 
+		unique = True)
+	description = models.TextField()
+	parent = models.ForeignKey('DataTag', 
+		on_delete = models.CASCADE, 
+		null = True, 
+		blank = True, 
+		related_name = "children")
+
+	class Meta:
+		ordering = ['name',]
+
+	def __str__(self):
+		return self.name
+
 class DataSet(models.Model):
 	name = models.CharField(max_length = 1000)
-	abbreviation = models.CharField(max_length = 100, unique = True)
-	category = models.CharField(choices = DATACATEGORY, max_length = 5)
+	abbreviation = models.CharField(max_length = 100, 
+		unique = True)
+	category = models.CharField(choices = DATACATEGORY, 
+		max_length = 5)
 	seriesNumber = models.SlugField()
 	description = models.TextField()
+	tags = models.ManyToManyField(DataTag,
+		blank = True)
 	requiredCitations = models.TextField()
 	selectedStudies = models.TextField()
 	publicationDate = models.DateTimeField(auto_now = True)
 	modificationDate = models.DateTimeField(auto_now = True)
+
+	def get_tag_list(self):
+		return ', '.join([str(tag) for tag in self.tags.all()])
 
 	class Meta:
 		ordering = ('category', 'seriesNumber')
@@ -46,8 +70,10 @@ class DataSet(models.Model):
 		return self.category + "-" + self.seriesNumber + " - " + self.name
 
 class DataPatch(models.Model):
-	dataSet = models.ForeignKey(DataSet, on_delete = models.CASCADE)
-	representative = models.ForeignKey("DataFile", on_delete = models.CASCADE)
+	dataSet = models.ForeignKey(DataSet, 
+		on_delete = models.CASCADE)
+	representative = models.ForeignKey("DataFile", 
+		on_delete = models.CASCADE)
 	name = models.CharField(max_length = 1000)
 	description = models.CharField(max_length = 1000)
 	seriesNumber = models.SlugField()
@@ -62,18 +88,25 @@ class DataPatch(models.Model):
 		return self.name
 
 class Metadata(models.Model):
-	name = models.CharField(max_length = 100, unique = True)
-	shortName = models.CharField(max_length = 100, unique = True)
-	category = models.CharField(choices = METADATACATEGORIES, max_length = 100)
+	name = models.CharField(max_length = 100, 
+		unique = True)
+	shortName = models.CharField(max_length = 100, 
+		unique = True)
+	category = models.CharField(choices = METADATACATEGORIES, 
+		max_length = 100)
 	description = models.TextField()
 	isActive = models.BooleanField()
 	isDisplayed = models.BooleanField()
 	appliesTo = models.CharField(max_length = 1000)
-	upperBounds = models.ManyToManyField('self', symmetrical = False, related_name = "upperBoundedBy", blank = True)
+	upperBounds = models.ManyToManyField('self', 
+		symmetrical = False, 
+		related_name = "upperBoundedBy", 
+		blank = True)
 	innerModule = models.CharField(max_length = 100)
 	innerFunction = models.CharField(max_length = 100)
 	innerType = models.CharField(max_length = 100)
-	searchWidget = models.CharField(choices = SEARCHWIDGETS, max_length = 100)
+	searchWidget = models.CharField(choices = SEARCHWIDGETS,
+		max_length = 100)
 	searchQuestion = models.CharField(max_length = 1000)
 	searchResName = models.CharField(max_length = 100)
 	orderPriority = models.IntegerField()
@@ -88,11 +121,16 @@ class Metadata(models.Model):
 		return self.name
 
 class DataFile(models.Model):
-	dataPatch = models.ForeignKey(DataPatch, on_delete = models.CASCADE)
-	dataType = models.CharField(choices = DATATYPES, max_length = 5)
-	metadatas = models.ManyToManyField(Metadata, through = "DataProperty")
-	modificationType = models.CharField(choices = MODIFICATIONTYPES, max_length = 20)
-	fileName = models.CharField(max_length = 255, unique = True)
+	dataPatch = models.ForeignKey(DataPatch, 
+		on_delete = models.CASCADE)
+	dataType = models.CharField(choices = DATATYPES, 
+		max_length = 5)
+	metadatas = models.ManyToManyField(Metadata, 
+		through = "DataProperty")
+	modificationType = models.CharField(choices = MODIFICATIONTYPES, 
+		max_length = 20)
+	fileName = models.CharField(max_length = 255, 
+		unique = True)
 	fileSize = models.FloatField(default = 0)
 	image = models.CharField(max_length = 1000, null = True)
 	publicationDate = models.DateTimeField(auto_now = True)
@@ -108,8 +146,10 @@ class DataFile(models.Model):
 		return self.fileName
 
 class DataProperty(models.Model):
-	dataFile = models.ForeignKey(DataFile, on_delete = models.CASCADE)
-	metadata = models.ForeignKey(Metadata, on_delete = models.CASCADE)
+	dataFile = models.ForeignKey(DataFile, 
+		on_delete = models.CASCADE)
+	metadata = models.ForeignKey(Metadata, 
+		on_delete = models.CASCADE)
 	value = models.CharField(max_length = 1000)
 
 	def getTypedValue(self):
@@ -130,7 +170,8 @@ class DataProperty(models.Model):
 # ===================================
 
 class Paper(models.Model):
-	name = models.CharField(max_length = 50, unique = True)
+	name = models.CharField(max_length = 50, 
+		unique = True)
 	title = models.CharField(max_length = 1000)
 	authors = models.CharField(max_length = 1000)
 	publisher = models.CharField(max_length = 1000)
