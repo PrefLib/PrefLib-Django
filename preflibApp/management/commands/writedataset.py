@@ -111,9 +111,9 @@ class Command(BaseCommand):
 			f.write("Required Citations: {}\n\n".format(dataset.requiredCitations))
 			f.write("Selected Studies: {}\n\n".format(dataset.selectedStudies))
 
-			# Patch Section
-			f.write("patch_name, description, series number, publication date, representative\n")
-			write_file_str = "\npatch_number, file_name, modification type, publication date\n"
+			# Patch Section (Building the file section at the same time)
+			f.write("patch_name, description, series_number, publication_date, representative\n")
+			write_file_str = "\npatch_number, file_name, modification_type, publication_date\n"
 			for data_patch in dataset.datapatch_set.all():
 				f.write("{}, {}, {}, {}, {}\n".format(data_patch.name, data_patch.description, data_patch.seriesNumber, 
 					data_patch.publicationDate, data_patch.representative.fileName))
@@ -124,4 +124,5 @@ class Command(BaseCommand):
 			
 			# File Section
 			f.write(write_file_str)
+
 			f.close()

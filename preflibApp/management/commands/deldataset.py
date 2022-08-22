@@ -55,6 +55,8 @@ class Command(BaseCommand):
 				# Delete the DB entry
 				dataset.delete()
 
+				print("Dataset {} has been deleted".format(abbreviation))
+
 			# Finalizing the log
 			log.append("</ul>\n<p>The datasets have been successfully deleted in ")
 			log.append(str((timezone.now() - startTime).total_seconds() / 60))

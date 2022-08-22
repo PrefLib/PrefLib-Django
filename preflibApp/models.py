@@ -39,7 +39,7 @@ class DataTag(models.Model):
 		related_name = "children")
 
 	class Meta:
-		ordering = ['name',]
+		ordering = ['name']
 
 	def __str__(self):
 		return self.name
@@ -57,7 +57,7 @@ class DataSet(models.Model):
 	requiredCitations = models.TextField(blank = True, 
 		null = True)
 	selectedStudies = models.TextField()
-	publicationDate = models.DateField(auto_now = True)
+	publicationDate = models.DateField()
 	modificationDate = models.DateField(auto_now = True)
 
 	def get_tag_list(self):
@@ -73,12 +73,14 @@ class DataSet(models.Model):
 class DataPatch(models.Model):
 	dataSet = models.ForeignKey(DataSet, 
 		on_delete = models.CASCADE)
-	representative = models.ForeignKey("DataFile", 
-		on_delete = models.CASCADE)
+	seriesNumber = models.SlugField()
 	name = models.CharField(max_length = 1000)
 	description = models.CharField(max_length = 1000)
-	seriesNumber = models.SlugField()
-	publicationDate = models.DateField(auto_now = True)
+	representative = models.ForeignKey("DataFile",
+		on_delete = models.CASCADE,
+		blank = True,
+		null = True)
+	publicationDate = models.DateField()
 	modificationDate = models.DateField(auto_now = True)
 
 	class Meta:
@@ -124,17 +126,17 @@ class Metadata(models.Model):
 class DataFile(models.Model):
 	dataPatch = models.ForeignKey(DataPatch, 
 		on_delete = models.CASCADE)
+	fileName = models.CharField(max_length = 255, 
+		unique = True)
 	dataType = models.CharField(choices = DATATYPES, 
 		max_length = 5)
 	metadatas = models.ManyToManyField(Metadata, 
 		through = "DataProperty")
 	modificationType = models.CharField(choices = MODIFICATIONTYPES, 
 		max_length = 20)
-	fileName = models.CharField(max_length = 255, 
-		unique = True)
 	fileSize = models.FloatField(default = 0)
 	image = models.CharField(max_length = 1000, null = True)
-	publicationDate = models.DateField(auto_now = True)
+	publicationDate = models.DateField()
 	modificationDate = models.DateField(auto_now = True)
 
 	class Meta:

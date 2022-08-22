@@ -102,8 +102,6 @@ def main(request):
 	nbDataSet = DataSet.objects.count()
 	nbDataFile = DataFile.objects.count()
 	totalSize = DataFile.objects.aggregate(Sum('fileSize'))['fileSize__sum']
-	if totalSize != None:
-		totalSize = round(totalSize / 1000000000, 2)
 	nbDataType = DataFile.objects.values('dataType').distinct().count()
 	
 	filesWithImages = DataFile.objects.filter(image__isnull = False, dataType__in = ['soc', 'soi', 'toc', 'toi', 'tog', 'mjg', 'wmg', 'pwg', 'wmd'])
