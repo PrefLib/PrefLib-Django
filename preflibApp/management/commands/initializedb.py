@@ -29,7 +29,7 @@ class Command(BaseCommand):
 		sport_tag = DataTag.objects.update_or_create(
 			name = "Sport",
 			defaults = {
-				"description": "The preferences apply to scenario in which some alternatives are to be selected",
+				"description": "The data represent sport tournaments, interpreted as elections",
 				"parent": election_tag[0]
 			}
 		)

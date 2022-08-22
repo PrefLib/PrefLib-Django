@@ -33,7 +33,7 @@ class Command(BaseCommand):
 
 		try:
 			# Initializing the log
-			newLogNum = Log.objects.filter(logType = "dataset").aggregate(Max('logNum'))['logNum__max']
+			newLogNum = Log.objects.filter(logType = "add_dataset").aggregate(Max('logNum'))['logNum__max']
 			if newLogNum == None:
 				newLogNum = 0
 			else:
@@ -112,7 +112,7 @@ class Command(BaseCommand):
 			os.remove(os.path.join(dataToAddDir, "dataset.lock"))
 			Log.objects.create(
 				log = ''.join(log),
-				logType = "dataset", 
+				logType = "add_dataset", 
 				logNum = newLogNum,
 				publicationDate = timezone.now())
 

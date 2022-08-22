@@ -54,10 +54,11 @@ class DataSet(models.Model):
 	description = models.TextField()
 	tags = models.ManyToManyField(DataTag,
 		blank = True)
-	requiredCitations = models.TextField()
+	requiredCitations = models.TextField(blank = True, 
+		null = True)
 	selectedStudies = models.TextField()
-	publicationDate = models.DateTimeField(auto_now = True)
-	modificationDate = models.DateTimeField(auto_now = True)
+	publicationDate = models.DateField(auto_now = True)
+	modificationDate = models.DateField(auto_now = True)
 
 	def get_tag_list(self):
 		return ', '.join([str(tag) for tag in self.tags.all()])
@@ -77,8 +78,8 @@ class DataPatch(models.Model):
 	name = models.CharField(max_length = 1000)
 	description = models.CharField(max_length = 1000)
 	seriesNumber = models.SlugField()
-	publicationDate = models.DateTimeField(auto_now = True)
-	modificationDate = models.DateTimeField(auto_now = True)
+	publicationDate = models.DateField(auto_now = True)
+	modificationDate = models.DateField(auto_now = True)
 
 	class Meta:
 		unique_together = ('dataSet', 'seriesNumber')
@@ -133,8 +134,8 @@ class DataFile(models.Model):
 		unique = True)
 	fileSize = models.FloatField(default = 0)
 	image = models.CharField(max_length = 1000, null = True)
-	publicationDate = models.DateTimeField(auto_now = True)
-	modificationDate = models.DateTimeField(auto_now = True)
+	publicationDate = models.DateField(auto_now = True)
+	modificationDate = models.DateField(auto_now = True)
 
 	class Meta:
 		ordering = ['fileName']

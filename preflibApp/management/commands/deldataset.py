@@ -1,10 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.contrib.staticfiles import finders
-from django.core import management
 from django.utils import timezone
-from django.conf import settings
 from django.db.models import Max
-from django.apps import apps
 
 from preflibApp.choices import *
 from preflibApp.models import *
@@ -18,13 +15,14 @@ class Command(BaseCommand):
 
 	def add_arguments(self, parser):
 		parser.add_argument('--abb', nargs = '*', type = str)
+		parser.add_argument('--all', action = 'store_true')
 
 
 	def handle(self, *args, **options):
 
 		try:
 			# Initializing the log
-			newLogNum = Log.objects.filter(logType = "dataset").aggregate(Max('logNum'))['logNum__max']
+			newLogNum = Log.objects.filter(logType = "del_dataset").aggregate(Max('logNum'))['logNum__max']
 			if newLogNum == None:
 				newLogNum = 0
 			else:
@@ -41,8 +39,12 @@ class Command(BaseCommand):
 				log.append("\n<p><strong>There is no data folder in the static folder, that is weird...</strong></p>")
 
 			# Starting the real stuff
-			log.append("<p>Adding datasets</p>\n<ul>\n")
+			log.append("<p>Deleting datasets</p>\n<ul>\n")
 			startTime = timezone.now()
+
+			if options['all']:
+				options['abb'] = DataSet.objects.values_list('abbreviation', flat=True)
+
 			for abbreviation in options['abb']:
 				# Get the dataset
 				dataset = DataSet.objects.get(abbreviation = abbreviation)
@@ -54,7 +56,7 @@ class Command(BaseCommand):
 				dataset.delete()
 
 			# Finalizing the log
-			log.append("</ul>\n<p>The datasets have been successfully added in ")
+			log.append("</ul>\n<p>The datasets have been successfully deleted in ")
 			log.append(str((timezone.now() - startTime).total_seconds() / 60))
 			log.append(" minutes.</p>")
 
@@ -66,6 +68,6 @@ class Command(BaseCommand):
 		finally:
 			Log.objects.create(
 				log = ''.join(log),
-				logType = "dataset", 
+				logType = "del_dataset", 
 				logNum = newLogNum,
 				publicationDate = timezone.now())
