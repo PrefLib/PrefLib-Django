@@ -49,7 +49,7 @@
 								{% with metadata_slider_values|key_value:metadata as init_values %}
 									<script>
 										var {{ metadata.short_name }}_slider = document.getElementById('{{ metadata.short_name }}_slider');
-										noUiSlider.create({{ metadata.short_name }}Slider, {
+										noUiSlider.create({{ metadata.short_name }}_slider, {
 											start: [{% if request.POST %} {{previous_min_value}}, {{previous_max_value}} {% else %} {{ init_values.0 }}, {{ init_values.2 }} {% endif %}],
 											step: 1,
 											connect: true,

@@ -231,6 +231,7 @@ def datatypes(request):
 
 
 def data_search(request):
+    print(request.POST)
     categories = copy.deepcopy(DATACATEGORY)
     types = copy.deepcopy(DATATYPES)
     types.remove(('dat', 'extra data file'))
@@ -253,6 +254,8 @@ def data_search(request):
                 remove_metadata.append(m)
     for m in remove_metadata:
         metadatas = metadatas.exclude(pk=m.pk)
+
+    print(metadatas)
 
     # This is to save the POST data when we change to a different page of the results
     if request.method != 'POST' and 'page' in request.GET:
@@ -292,13 +295,14 @@ def data_search(request):
                     all_files = all_files.filter(dataproperty__in=models.Subquery(property_query.values('pk')))
 
             elif m.search_widget == "range":
+                print(m.short_name)
                 property_query_min = DataProperty.objects.filter(metadata=m).annotate(
                     float_value=Cast('value', models.FloatField())).filter(
-                    float_value__lt=float(request.POST.get(m.short_name + '_slider_value_min')))
+                        float_value__lt=float(request.POST.get(m.short_name + '_slider_value_min')))
                 all_files = all_files.exclude(dataproperty__in=models.Subquery(property_query_min.values('pk')))
                 property_query_max = DataProperty.objects.filter(metadata=m).annotate(
                     float_value=Cast('value', models.FloatField())).filter(
-                    float_value__gt=float(request.POST.get(m.short_name + '_slider_value_max')))
+                        float_value__gt=float(request.POST.get(m.short_name + '_slider_value_max')))
 
                 all_files = all_files.exclude(dataproperty__in=models.Subquery(property_query_max.values('pk')))
 

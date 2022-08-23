@@ -25,7 +25,7 @@ DATABASES = {
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',  ## To be changed if you actually want to cache
         'LOCATION': os.path.join(BASE_DIR, 'cache/'),
         'TIMEOUT': str(60 * 60 * 12)
     }
