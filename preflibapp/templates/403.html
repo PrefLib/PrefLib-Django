@@ -1,0 +1,27 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	{% include 'includes/htmlheadercontent.html' %}
+	<title>Preflib</title>
+</head>
+
+<body>
+
+{% include 'includes/header.html' %}
+
+<div class="content">
+
+<h1>Error 403: Access forbidden</h1>
+
+<p>This is impossible...</p>
+
+<p id="center_p"><img src="{% static 'Condorcet.png'%}"></p>
+
+</div>
+</body>
+
+{% include 'includes/footer.html' %}
+
+</html>

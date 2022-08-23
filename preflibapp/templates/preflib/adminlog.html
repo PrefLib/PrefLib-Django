@@ -1,0 +1,31 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	{% include 'includes/htmlheadercontent.html' %}
+	<title>Preflib</title>
+</head>
+
+<body>
+
+{% include 'includes/header.html' %}
+
+<div id="content">
+
+<h1> {{ title }} log #{{ log.logNum }} - {{ log.publication_date }} </h1>
+
+<div id="news">
+
+{% autoescape off %}
+{{ log.log }}
+{% endautoescape %}
+
+</div>
+
+</div>
+</body>
+
+{% include 'includes/footer.html' %}
+
+</html>

@@ -1,5 +1,5 @@
 /static/
-preflibApp/static/data/
+preflibapp/static/data/
 __pycache__/
 migrations
 Documentation/*.aux

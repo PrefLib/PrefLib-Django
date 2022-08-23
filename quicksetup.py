@@ -41,10 +41,10 @@ CONVERT_PATH = 'convert'
 ## Create the migration folder and run the initial migration to set up the
 ## database (a simple SQLlite db here since it should be only use to play around).
 try:
-    os.makedirs(os.path.join("preflibApp", "migrations"))
+    os.makedirs(os.path.join("preflibapp", "migrations"))
 except:
     pass
-with open(os.path.join("preflibApp", "migrations", "__init__.py"), "w") as f:
+with open(os.path.join("preflibapp", "migrations", "__init__.py"), "w") as f:
     f.write("")
     f.close()
 
@@ -58,6 +58,6 @@ os.system("python3 manage.py collectstatic")
 
 ## Set everything up to add data
 try:
-    os.makedirs(os.path.join("preflibApp", "static", "datatoadd"))
+    os.makedirs(os.path.join("preflibapp", "static", "datatoadd"))
 except:
     pass

@@ -17,12 +17,12 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls import handler400, handler403, handler404, handler500
 
-handler400 = 'preflibApp.views.error_400_view'
-handler403 = 'preflibApp.views.error_403_view'
-handler404 = 'preflibApp.views.error_404_view'
-handler500 = 'preflibApp.views.error_500_view'
+handler400 = 'preflibapp.views.error_400_view'
+handler403 = 'preflibapp.views.error_403_view'
+handler404 = 'preflibapp.views.error_404_view'
+handler500 = 'preflibapp.views.error_500_view'
 
 urlpatterns = [
     path('djangoadmin/', admin.site.urls),
-    path('', include('preflibApp.urls'))
+    path('', include('preflibapp.urls'))
 ]

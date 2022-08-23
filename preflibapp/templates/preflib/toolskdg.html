@@ -1,0 +1,69 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	{% include 'includes/htmlheadercontent.html' %}
+	<title>Preflib</title>
+</head>
+
+<body>
+
+{% include 'includes/header.html' %}
+
+<div class="content">
+
+<h1>Kidney Exchange</h1>
+
+<p>Kidney failure is a life-threatening health issue that affects hundreds of thousands of people worldwide. In the US alone, the waitlist for a kidney transplant has over 100,000 patients. This list is growing: demand far outstrips supply.This codebase includes: structural elements of kidney exchange like "pools", "hospitals", and "pairs", a couple of kidney exchange graph generators, a couple of kidney exchange solvers (max weight, failure-aware, fairness-aware, individually rational), and a dynamic kidney exchange simulator.</p>
+
+<h3>Versions and History</h3>
+<p><ul>
+	<li>All code and data for this project, along with more detailed documentation can be fond on the <a href="https://github.com/JohnDickerson/KidneyExchange">Kidney Exchange GitHub Page</a>.</li>
+</ul></p>
+
+<h2>What is kidney exchange?</h2>
+
+<p>Kidney failure is a life-threatening health issue that affects hundreds of thousands of people worldwide. In the US alone, the waitlist for a kidney transplant has over 100,000 patients. This list is growing: demand far outstrips supply.</p>
+
+<p>A recent innovation, kidney exchange, allows patients to bring an (incompatible) donor to a large pool where they can swap donors with other patients. As of 2012–2013, roughly 10% of US kidney transplants occurred through a variety of kidney exchanges. Outside of the US, many countries (the UK, the Netherlands, Portugal, Israel, ...) are fielding exchanges.</p>
+
+<h2>What is this code?</h2>
+
+<p>This codebase includes: structural elements of kidney exchange like "pools", "hospitals", and "pairs", a couple of kidney exchange graph generators, a couple of kidney exchange solvers (max weight, failure-aware, fairness-aware, individually rational), and a dynamic kidney exchange simulator.</p>
+
+<p>If you use this codebase, please cite one of our recent papers like:</p>
+<ul>
+	<li>John P. Dickerson, Ariel D. Procaccia, and Tuomas Sandholm. 2014. Price of Fairness in Kidney Exchange. In _Proceedings of the 2014 International Conference on Autonomous Agents and Multi-agent Systems_ (AAMAS-2014). Paris, France (pp. 1013–1020).</li>
+</ul>
+
+<p>**NOTE:** This is _not_ the code used in the <a href="https://unos.org/transplant/kidney-paired-donation/">UNOS Kidney Paired Donation Pilot Program (KPDPP)</a>. The solvers here are meant to be accessible research code for the community and do not use branch-and-price, hopefully resulting in greater ease of use (at the cost of scalability). Forks and pull requests welcome!</p>
+
+<h2>External Dependencies</h2>
+
+<p>To use any of the solvers that inherit from CPLEXSolver, you will need to add cplex.jar to lib/. This will allow compilation; to run, you'll also need a VM argument like:</p>
+<ul>
+	<li>Djava.library.path=/path/to/CPLEX_Studio/cplex/bin/your-architecture/</li>
+</ul>
+
+<p>IBM offers a free academic license for CPLEX as well as a 90-day free trial available on their website.</p>
+
+<h2>Related Research</h2>
+<p><ul>
+	<li>FutureMatch: Combining Human Value Judgments and Machine Learning to Match in Dynamic Environments. John P. Dickerson and Tuomas Sandholm.</li>
+	<li><a href="http://jpdickerson.com/pubs/dickerson14multi.pdf">Multi-Organ Exchange: The Whole is Greater than the Sum of its Parts. John P. Dickerson and Tuomas Sandholm. AAAI-2014.</li>
+	<li><a href="http://jpdickerson.com/pubs/dickerson14price.pdf">The Price of Fairness in Kidney Exchange</a>. John P. Dickerson, Ariel D. Procaccia, Tuomas Sandholm. AAMAS-2014.</li>
+	<li><a href="http://jpdickerson.com/pubs/dickerson14empirical.pdf">The Empirical Price of Fairness in Failure-Aware Kidney Exchange</a>. John P. Dickerson, Ariel D. Procaccia, Tuomas Sandholm. AAMAS-2014 Workshop on Healthcare and Algorithmic Game Theory.</li>
+	<li><a href="http://www.cs.cmu.edu/~sandholm/failure-aware%20kidney%20exchange.ec13.pdf">Failure-Aware Kidney Exchange</a>. John P. Dickerson, Ariel D. Procaccia, Tuomas Sandholm. EC-2013.</li>
+	<li>Dynamic Matching via Weighted Myopia with Application to Kidney Exchange. John P. Dickerson, Ariel D. Procaccia, Tuomas Sandholm. AAAI-2012.</li>
+	<li>Optimizing Kidney Exchange with Transplant Chains: Theory and Reality. John P. Dickerson, Ariel D. Procaccia, Tuomas Sandholm. AAMAS-2012.</li>
+	<li><a href="http://www.cs.cmu.edu/~dabraham/papers/abs07.pdf">Clearing Algorithms for Barter Exchange Markets: Enabling Nationwide Kidney Exchanges</a>. David J. Abraham, Avrim Blum, Tuomas Sandholm. EC-2007.</li>
+	<li>Increasing the Opportunity of Live Kidney Donation by Matching for Two and Three Way Exchanges. S. L. Saidman, Alvin Roth, Tayfun Sönmez, Utku Ünver, Frank Delmonico. Transplantation, 2006.</li>
+</ul></a>
+
+</div>
+</body>
+
+{% include 'includes/footer.html' %}
+
+</html>

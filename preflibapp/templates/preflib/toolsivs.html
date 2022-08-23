@@ -1,0 +1,100 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	{% include 'includes/htmlheadercontent.html' %}
+	<title>Preflib</title>
+</head>
+
+<body>
+
+{% include 'includes/header.html' %}
+
+<div class="content">
+
+<h1>Iterative Voting Simulator</h1>
+
+<p>This is a voting simulator built for the paper <a href="https://arxiv.org/abs/1404.4688">A Local-Dominance Theory of Voting Equilibria</a>. We are releasing its source code to be expanded and enhanced by the community. However, it is quite versatile in its current construction, and can be used for various simulations "as is".</p>
+
+<h3>Versions and History</h3>
+<p><ul>
+	<li><a href="https://github.com/omerl/IterativeVotingSimulator">Version 1.0</a>: Initial Release. Code and files hosted on GitHub.</li>
+</ul></p>
+
+<h2>Basic Model</h2>
+
+<p>The simulator deals with iterative voting schemes, i.e., voters which announce every turn whether they wish to change their votes. Once it has the voter preferences and requested settings (see below), it runs each game several times, each time stopping once an equilibrium has been reached or if a cycle has been found. It repeats this run again (usually reaching a different equilibrium), outputting finally statistics on each game it has run.</p>
+
+<p>The current version implements only best response voters, as well as voters using the local-dominance framework introduced in A Local-Dominance Theory of Voting Equilibria. It also supports truth and lazy biased voters in the same framework.</p>
+
+<h2>How to use it out of the box</h2>
+
+<p>I warn that as we did not use it in this manner, the file handler is probably the most-error-prone area of the code. Bear with us as we slowly fix the problems. The first argument, if it is a directory, is used to save the specific output files for each run (it's quite detailed, so can simply be omitted, and they won't be saved; End the directory name with a "/"), while the output analyzing each scenario would be saved in the same directory as the scenario description file, which is the 2nd (or 1st, if there is no need for the run-specific output) argument for the program, defining how and what it should run.</p>
+
+<h2>Without PrefLib Files</h2>
+
+<p>The following syntax should be used:
+<ul>
+	<li>cands:&lt;number&gt; Number of candidates.</li>
+	<li>step:&lt;number&gt; The maximal number of steps in a game, before it is halted.</li>
+	<li>rounds:&lt;number&gt; Number of times each preference list would be simulated. Remember that due to the iterative process, several rounds of the same situation need to be run to gather several Nash equilibria states.</li>
+	<li>game:&lt;number&gt; Number of different games (different sets of preference orders) that should be run. This is relevant when the games are extracted from a distribution, not when there are fixed preference orders that are used.</li>
+</ul></p>
+
+<h3>Voter types</h3>
+
+<p>The local dominance model uses a radius of uncertainty as well as, optionally, a radius of "hopelessness" (beyond which truth/lazy bias strategies come into play) which can use an additive or multiplicative metric. The simulator uses multiplicative values for radii, so a radius of 1 means an additive radius of n, the number of voters. By default, the simulator uses "basic" voters (i.e., not truth/lazy biased) with an l1 additive metric uncertainty value of 0, and hopelessness value of 1 for all voters, but this can be changed by adding to the file the following information:</p>
+
+<ul>
+	<li>voter type:&lt;text&gt; If the word "lazy" appears on the line, the voter would be lazy biased. If the word "truth" is there, the voter would be truth biased. If the word "mult" appears there, the voter's metric function will not be additive, but multiplicative.</li>
+	<li>r:&lt;number&gt; The local dominance radius for all voters. The scenario will be run again, with the different r values. To run it with several different values of r, separate r values with ",".</li>
+	<li>k:&lt;number&gt; The truth/lazy radius for all voters. The scenario will be run again, with the different k values. To run it with several different values of k, separate k values with ",". Every r value will be run with all valid k values (e.g. r:1/n,2/n; k:1/n,2/n,3/n: the value sets (1/n,2/n), (1/n,3/n), (2/n,3/n) will be run).</li>
+	<li>(r,k):&lt;number&gt; The local-dominance + truth/lazy radius for all voters. The scenario will be run again, with the different (r,k) values.</li>
+	<li>dist:&lt;text&gt; The distribution for the votes (if their preference orders are not specified in the file). Currently the options here are "Uniform", "Peaked" (for single peaked), "Curved" (for single-curve), "Urn2" (for Polya-Eggenberger 2-urn model), "Urn3" (for Polya-Eggenberger 3-urn model), "Riffle" and "Luce" (for Placket-Luce). You can write several (they will run one after another) or just "all", for everything.</li>
+</ul>
+
+<p>Note the different ways of inputing radii are not mutually exclusive—all scenarios will be run.</p>
+
+<h3>Voters</h3>
+
+<p><ul>
+    <li>voters:&lt;number&gt; Number of voters.</li>
+</ul></p>
+
+<p>In addition to setting the number of voters, users can set their own voters for participation in the simulation, if they do not wish to use a distribution. They can specify both their private (i.e., truthful) preferences, as well as their public opening preference (default is for them to be the same). A line for a voter should start by specifying its type, if not the same as the defaults ("basic" voter, additive l1 metric): true (for truth bias), lazy (for lazy bias), and mult (for multiplicative and not additive l1 metric).</p>
+
+<p>Following this, a preference order should be specified, using ">" to delineate candidates. Any candidate name can be used, but be consistent—the checking of the input is minimal, and producing more candidates than defined will cause a crash. If you wish to separate public and private preferences use private: and public: before each preference order.</p>
+
+<p>By using r: and k:, users can set the radii of the voters.</p>
+
+<h2>With PrefLib files</h2>
+
+<p>Inputting a PrefLib file as input causes it to run in a simulation with default values: All votes are basic, use l1 additive metric, starting from truthful position with a radius of 1. Each game will be run 100 times, and each run will be stopped after 1000 steps.</p>
+
+<h2>The Code—Short Overview</h2>
+
+<p>After constructing voters—either in main.cpp or in VoteFileHandle.h/cpp, an instance of TestScenario is created, which handles the actual running of the simulations.</p>
+
+<p>All games are derived from the abstract class IterativeGame, which includes abstract classes such as IterativeScheduledGame, which uses a scheduler that doesn't use a one-by-one system. In particular, every voting system (and tie-breaking rule) should set up a different game type, as the game is the mechanism informing the voters which candidate would win if they chose a certain strategy. Our code include regular games for plurality, Borda, and k-approval. In addition, we have classes for plurality in a concurrent scheduling scenario, as well as one with randomized starting points (i.e., non-truthful ones).</p>
+
+<p>A preference orders is a PrefList object. A voter object is derived from the IterativeVoter class, of which IterativeBestResponseVoter are derived (for the "classical" model, as shown here, here, and here). The local dominant voters are IterativePluralityRangeVoter for the l1 additive metric and IterativePluralityRangeMultVoter for the l1 multiplicative metric.</p>
+
+<p>Voter distributions are defined in distributions.h/cpp. Note that many properties of voters (e.g., their type) and the simulator in general are also mentioned in the defs.h/cpp file, and there are enums there for almost all properties.</p>
+
+<h2>Participation & Acknowledgment</h2>
+
+<p>As this is hosted publicly on GitHub, we urge you to download the code, play with it and add to it. We hope that should you enhance it, you will choose to contribute to the community by adding it to this GitHub project, so this framework will continue to thrive and benefit others.</p>
+
+<p>Should you use this code in your own research paper, we ask that you acknowledge our work and provide a reference to it.</p>
+
+<h2>Disclaimer</h2>
+
+<p>We offer this code "as is". We make no guarantees that it works as promised (hoped?), nor that it works at all... It certainly has bugs, errors and omissions, and should you find one, we urge you to fix it. If you believe you've found a significant error that puts the whole edifice in jeopardy, please contact us and let us know.</p>
+
+</div>
+</body>
+
+{% include 'includes/footer.html' %}
+
+</html>

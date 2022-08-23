@@ -1,0 +1,123 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	{% include 'includes/htmlheadercontent.html' %}
+	<title>Preflib</title>
+</head>
+
+<body>
+
+{% include 'includes/header.html' %}
+
+<div class="content">
+
+<h1>Data Types</h1>
+
+<p>Each data file has a given type which somehow represents the underlying mathematical object representing the data. These types are also used as extensions for the files. You will find more information about them in the following.</p>
+
+<p>If you want to know what exactly is in data file, go to the <a href="{% url 'preflibapp:data-format' %}">file format page</a>.</p>
+
+<h2><a id="soc"></a>SOC - Strict Orders - Complete List</h2>
+
+<p id="center_p"><img src="{% static 'types/soc.png' %}" width="25%"></p>
+
+<p>The SOC extension contains <a href="https://en.wikipedia.org/wiki/Preference_(economics)">preferences</a> represented by a strict and complete linear order (transitive, and asymmetric relation) over the candidates, or the alternatives. Each linear order is written in the form <em>A, B, C</em>, indicating that A is strictly preferred to B which is strictly preferred to C. They are complete in the sense that every linear order contains the whole set of candidates. The strict relation is always denoted by use of a comma.</p>
+
+<p>To represent a linear order in a data patch, we display a bar chart indicating for every candidate its <a href="https://en.wikipedia.org/wiki/Borda_count">Borda score</a>.</p>
+
+<p id="center_p"><a href="{% static 'data/types/soc.zip' %}" id="downloadButton">Download all the SOC data files</a></p>
+
+<h2><a id="soi"></a>SOI - Strict Orders - Incomplete List</h2>
+
+<p id="center_p"><img src="{% static 'types/soi.png' %}" width="25%"></p>
+
+<p>The SOI extension contains <a href="https://en.wikipedia.org/wiki/Preference_(economics)">preferences</a> represented by a strict and possibly incomplete linear order (transitive, and asymmetric relation) over the candidates, or the alternatives. Each linear order is written in the form <em>A, B</em>, indicating that A is strictly preferred to B. They are possibly incomplete in the sense that some linear orders might not contain the whole set of candidates. The strict relation is always denoted by use of a comma.</p>
+
+<p>To represent a linear order in a data patch, we display a bar chart indicating for every candidate its <a href="https://en.wikipedia.org/wiki/Borda_count">Borda score</a>.</p>
+
+<p id="center_p"><a href="{% static 'data/types/soi.zip' %}" id="downloadButton">Download all the SOI data files</a></p>
+
+<h2><a id="toc"></a>TOC - Orders with Ties - Complete List</h2>
+
+<p id="center_p"><img src="{% static 'types/toc.png' %}" width="25%"></p>
+
+<p>The TOC extension contains <a href="https://en.wikipedia.org/wiki/Preference_(economics)">preferences</a> represented by a transitive and complete relation over the candidates, or the alternatives. Each relation is written in the form <em>A, {B, C}, D</em>, indicating that A is strictly preferred to B and C, while the voter is indifferent between B and C, with A, B and C all strictly preferred to D. They are complete in the sense that every linear order contains the whole set of candidates. The strict relation is always denoted by use of a comma while elements that an agent is indifferent between are grouped in a curly brace.</p>
+
+<p>To represent order with ties in a data patch, we display a bar chart indicating for every candidate its <a href="https://en.wikipedia.org/wiki/Borda_count">Borda score</a>.</p>
+
+<p id="center_p"><a href="{% static 'data/types/toc.zip' %}" id="downloadButton">Download all the TOC data files</a></p>
+
+<h2><a id="toi"></a>TOI - Orders with Ties - Incomplete List</h2>
+
+<p id="center_p"><img src="{% static 'types/toi.png' %}" width="25%"></p>
+
+<p>The TOI extension contains <a href="https://en.wikipedia.org/wiki/Preference_(economics)">preferences</a> represented by a transitive and possibly incomplete relation over the candidates, or the alternatives. Each relation is written in the form <em>A, {B, C}</em>, indicating that A is strictly preferred to B and C, while the voter is indifferent between B and C. They are possibly incomplete in the sense that some linear orders might not contain the whole set of candidates. The strict relation is always denoted by use of a comma while elements that an agent is indifferent between are grouped in a curly brace.</p>
+
+<p>To represent order with ties in a data patch, we display a bar chart indicating for every candidate its <a href="https://en.wikipedia.org/wiki/Borda_count">Borda score</a>.</p>
+
+<p id="center_p"><a href="{% static 'data/types/toi.zip' %}" id="downloadButton">Download all the TOI data files</a></p>
+
+<h2><a id="tog"></a>TOG - Tournament Graph</h2>
+
+<p id="center_p"><img src="{% static 'types/tog.png' %}" width="25%"></p>
+
+<p> Files with a TOG extension describe a <a href="https://en.wikipedia.org/wiki/Tournament_solution">tournament graph</a>. A tournament graph is a complete directed graph over a set of candidates. In our formatting we simply state the list of pairwise relations that describe the tournament <em>(A, B; B, C)</em>. The strict relation is always denoted by use of a comma. Note that tournaments must be complete assignment of the strict preference relation, otherwise it is a majority graph (see below).</p>
+
+<p>To represent tournaments in a data patch, we simply display the corresponding graph where the color of a node corresponds to its degree.</p>
+
+<p id="center_p"><a href="{% static 'data/types/tog.zip' %}" id="downloadButton">Download all the TOG data files</a></p>
+
+<h2><a id="mjg"></a>MJG - Majority Graph</h2>
+
+<p id="center_p"><img src="{% static 'types/mjg.png' %}" width="25%"></p>
+
+<p> Files with a MJG extension describe a <a href="https://en.wikipedia.org/wiki/Tournament_(graph_theory)#Majority_relations">majority graph</a>. A majority graph is a directed graph over a set of candidates. In our formatting we simply state the list of pairwise relations that described the majority graph <em>(A, B; B, C)</em>. The strict relation is always denoted by use of a comma. Note that majority graphs need not be complete, additionally there is no concept of a "tie" between two elements.</p>
+
+<p>To represent majority graphs in a data patch, we simply display the corresponding graph where the color of a node corresponds to its degree.</p>
+
+<p id="center_p"><a href="{% static 'data/types/mjg.zip' %}" id="downloadButton">Download all the MJG data files</a></p>
+
+<h2><a id="wmg"></a>WMG - Weighted Majority</h2>
+
+<p id="center_p"><img src="{% static 'types/wmg.png' %}" width="25%"></p>
+
+<p> Files with a WMG extension describe a <a href="https://en.wikipedia.org/wiki/Tournament_(graph_theory)#Majority_relations">majority graph</a> with weights. A majority graph is a directed graph over a set of candidates. In our formatting we simply state the list of pairwise relations that described the majority graph <em>(A, B; B, C)</em> along with the number of times the particular relation was listed <em>(A, B)</em> minus the number of times the reverse relation was listed <em>(B, A)</em>. The strict relation is always denoted by use of a comma. Note that majority graphs need not be complete, additionally there is no concept of a "tie" between two elements. </p>
+
+<p>To represent weighted majority graphs in a data patch, we simply display the corresponding graph where the color of a node corresponds to the sum of the weight of its outgoing edges.</p>
+
+<p id="center_p"><a href="{% static 'data/types/wmg.zip' %}" id="downloadButton">Download all the WMG data files</a></p>
+
+<h2><a id="pwg"></a>PWG - Pairwise Graph</h2>
+
+<p id="center_p"><img src="{% static 'types/pwg.png' %}" width="25%"></p>
+
+<p> Files with a PWG extension describe a set of pairwise relations. Every possible pairwise comparison is listed (if it appears in the data set) along with the number of time it appears. For example: <em>61 A, B; 21 B, A</em>.</p>
+
+<p>To represent pairwise relation graphs in a data patch, we simply display the corresponding graph where the color of a node corresponds to the sum of the weight of its outgoing edges.</p>
+
+<p id="center_p"><a href="{% static 'data/types/pwg.zip' %}" id="downloadButton">Download all the PWG data files</a></p>
+
+<h2><a id="wmd"></a>WMD - Weighted Matching Data</h2>
+
+<p id="center_p"><img src="{% static 'types/wmd.png' %}" width="25%"></p>
+
+<p> Files with a WMD extension describe a set of weighted matching data. These are directed graphs where source is linked to the sink with a specified weight. </p>
+
+<p>To represent weighted matching graphs in a data patch, we simply display the corresponding graph where the color of a node corresponds to the sum of the weight of its outgoing edges.</p>
+
+<p id="center_p"><a href="{% static 'data/types/wmd.zip' %}" id="downloadButton">Download all the WMD data files</a></p>
+
+<h2><a id="dat"></a><a id="csv"></a>CSV and DAT - Extra Data File</h2>
+
+<p>Files with a CSV or a DAT extension are used when miscellaneous data are needed which are both a simple <a href="https://en.wikipedia.org/wiki/Comma-separated_values" target="_blank">CSV</a> file with headers.</p>
+
+<p>Files with a dat extension are generally paired with another file, providing more information than is expressible in the basic data formats.</p>
+
+</div>
+</body>
+
+{% include 'includes/footer.html' %}
+
+</html>
