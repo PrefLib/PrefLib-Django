@@ -10,3 +10,4 @@ preflib.db
 local_settings.py
 /cache/
 .idea/
+venv/
