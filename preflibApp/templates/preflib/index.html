@@ -23,17 +23,19 @@
 
 			<p> Please see the <a href="{% url 'preflibapp:about' %}">about</a> page for information about the site, contacting us, and our citation policy. We rely on the support of the community in order to grow the usefulness of this site. To contribute, please contact <a href="http://www.nickmattei.net">Nicholas Mattei</a> at: nsmattei{at}gmail or <a href="http://simonrey.fr">Simon Rey</a> at: s.j.rey{at}uva{dot}nl. </p>
 
-			{% if randomFileWithImage %}
-				<p id="center_p" style="margin-top: 50px;">
-					{% with 'data/'|add:randomFileWithImage.dataPatch.dataSet.category|add:'/'|add:randomFileWithImage.dataPatch.dataSet.abbreviation|add:'/img/'|add:randomFileWithImage.image as imgFile %}
-						<a href="{% url 'preflibapp:datapatch' randomFileWithImage.dataPatch.dataSet.category randomFileWithImage.dataPatch.dataSet.seriesNumber randomFileWithImage.dataPatch.seriesNumber %}">
-							<img src="{% static imgFile %}" class="indexPropImg">
-						</a>
-					{% endwith %}
-				</p>
+			{% if random_file_with_image %}
+                {% with random_file_with_image.dataPatch.dataSet as dataset %}
+                    <p id="center_p" style="margin-top: 50px;">
+                        {% with 'data/'|add:dataset.category|add:'/'|add:dataset.abbreviation|add:'/img/'|add:random_file_with_image.image as img_file %}
+                            <a href="{% url 'preflibapp:datapatch' dataset.category dataset.seriesNumber random_file_with_image.dataPatch.seriesNumber %}">
+                                <img src="{% static img_file %}" class="indexPropImg">
+                            </a>
+                        {% endwith %}
+                    </p>
+                {% endwith %}
 
 				<p id="center_p">
-					<a href="{% url 'preflibapp:datapatch' randomFileWithImage.dataPatch.dataSet.category randomFileWithImage.dataPatch.dataSet.seriesNumber randomFileWithImage.dataPatch.seriesNumber %}">{{ randomFileWithImage.fileName }}</a> from the <a href="{% url 'preflibapp:dataset' randomFileWithImage.dataPatch.dataSet.category randomFileWithImage.dataPatch.dataSet.seriesNumber %}">{{ randomFileWithImage.dataPatch.dataSet.name }} dataset</a>
+					<a href="{% url 'preflibapp:datapatch' random_file_with_image.dataPatch.dataSet.category random_file_with_image.dataPatch.dataSet.seriesNumber random_file_with_image.dataPatch.seriesNumber %}">{{ random_file_with_image.fileName }}</a> from the <a href="{% url 'preflibapp:dataset' random_file_with_image.dataPatch.dataSet.category random_file_with_image.dataPatch.dataSet.seriesNumber %}">{{ random_file_with_image.dataPatch.dataSet.name }} dataset</a>
 				</p>
 			{% endif %}
 
@@ -43,10 +45,10 @@
 			<h2>In Brief</h2>
 			<p> We currently host:</p>
 			<ul>
-				<li> {{ nbDataType }} types of data </li>
-				<li> {{ nbDataSet }} datasets </li>
-				<li> {{ nbDataFile }} data files </li>
-				<li> More than {{ totalSize|filesizeformat }} of data </li>
+				<li> {{ nb_datafile }} types of data </li>
+				<li> {{ nb_dataset }} datasets </li>
+				<li> {{ nb_datafile }} data files </li>
+				<li> More than {{ total_size|filesizeformat }} of data </li>
 			</ul>
 
 			<h2>Other Links</h2>

@@ -31,7 +31,7 @@
 	</nav>
 	
 	<ul id="dataset-list">
-	{% for dsinfo in datasetInfo %}
+	{% for dsinfo in dataset_info %}
 		{% with dsinfo.ds as ds %}
 			<li 
 			id="{{ds.category}}-{{ds.seriesNumber}}" 
@@ -55,18 +55,18 @@
 				</div>
 
 				<p class="data-patch-list">
-					Consists of {{ dsinfo.nbPatches }} data patch{{ dsinfo.nbPatches|pluralize:"es" }}:
+					Consists of {{ dsinfo.num_patches }} data patch{{ dsinfo.num_patches|pluralize:"es" }}:
 					{% for patch in dsinfo.patches %}
 						<span class="data-patch"><a href="{% url 'preflibapp:datapatch' ds.category ds.seriesNumber patch.seriesNumber %}">{{ patch.description }}</a></span>
 					{% endfor %}
-					{% if dsinfo.nbPatchesNotShown > 0 %}
-						and <a href="{% url 'preflibapp:dataset' ds.category ds.seriesNumber %}">{{ dsinfo.nbPatchesNotShown }} more</a>.
+					{% if dsinfo.num_hidden_patches > 0 %}
+						and <a href="{% url 'preflibapp:dataset' ds.category ds.seriesNumber %}">{{ dsinfo.num_hidden_patches }} more</a>.
 					{% endif %}
 				</p>
 
 				<div class="button-row">
 					<a href="{% url 'preflibapp:dataset' ds.category ds.seriesNumber %}" class="downloadButton">Details</a>
-					<a href="{% static dsinfo.zipFile %}" class="downloadButton">Download [zip, {{dsinfo.zipFileSize|filesizeformat}}]</a>
+					<a href="{% static dsinfo.zip_file %}" class="downloadButton">Download [zip, {{dsinfo.zip_file_size|filesizeformat}}]</a>
 				</div>
 			</li>
 		{% endwith %}

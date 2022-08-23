@@ -33,20 +33,20 @@
 			{% endautoescape %}
 		{% endif %}
 
-		<p id="center_p" style="margin-top: 30px;"><a href="{% static zipfilepath %}" class="downloadButton">Download the dataset [zip, {{ totalSize|filesizeformat }}]</a></p>
+		<p id="center_p" style="margin-top: 30px;"><a href="{% static zipfile_path %}" class="downloadButton">Download the dataset [zip, {{ total_size|filesizeformat }}]</a></p>
 	</div>
 
 	<div class="indexRightContent">
 		<h2>Details</h2>
 		<ul>
-			<li> Number of files: {{ nbFiles }}</li>
-			<li> Total size: {{ totalSize|filesizeformat }}</li>
+			<li> Number of files: {{ num_files }}</li>
+			<li> Total size: {{ total_size|filesizeformat }}</li>
 			<li> Data types:
-				{% for dataType in allTypes %}
+				{% for data_type in all_types %}
 					{% if forloop.last %}
-						<a href="{% url 'preflibapp:datatypes' %}#{{dataType.0}}">{{ dataType.0 }}</a>.
+						<a href="{% url 'preflibapp:datatypes' %}#{{data_type.0}}">{{ data_type.0 }}</a>.
 					{% else %}
-						<a href="{% url 'preflibapp:datatypes' %}#{{dataType.0}}">{{ dataType.0 }}</a>,
+						<a href="{% url 'preflibapp:datatypes' %}#{{data_type.0}}">{{ data_type.0 }}</a>,
 					{% endif %}
 				{% endfor %} 
 			</li>

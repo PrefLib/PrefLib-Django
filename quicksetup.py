@@ -2,7 +2,7 @@ import os
 
 ## Write the settings.py file that we do not git for security reasons
 with open("preflib/local_settings.py", "w") as f:
-	f.write("""
+    f.write("""
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -36,22 +36,20 @@ STATIC_ROOT = "static/"
 # Path to the unix convert command for the image handling
 CONVERT_PATH = 'convert'
 """)
-	f.close()
+    f.close()
 
-
-## Create the migration folder and run the initial migration to set up the 
+## Create the migration folder and run the initial migration to set up the
 ## database (a simple SQLlite db here since it should be only use to play around).
 try:
-	os.makedirs(os.path.join("preflibApp", "migrations"))
+    os.makedirs(os.path.join("preflibApp", "migrations"))
 except:
-	pass
+    pass
 with open(os.path.join("preflibApp", "migrations", "__init__.py"), "w") as f:
-	f.write("")
-	f.close()
+    f.write("")
+    f.close()
 
 os.system("python3 manage.py makemigrations")
 os.system("python3 manage.py migrate")
-
 
 ## Initialize the website
 os.system("python3 manage.py initializedb")

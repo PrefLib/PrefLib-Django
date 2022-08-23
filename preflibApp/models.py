@@ -6,26 +6,6 @@ from pydoc import locate
 from .choices import *
 
 
-# ===========================
-#    Profile for the users   
-# ===========================
-
-class UserProfile(models.Model):
-    user = models.OneToOneField(User,
-                                on_delete=models.CASCADE)
-    firstname = models.CharField(max_length=100)
-    lastname = models.CharField(max_length=100)
-    email = models.EmailField()
-    affiliation = models.TextField(null=True)
-    personnalURL = models.URLField(null=True)
-
-    class Meta:
-        ordering = ['user']
-
-    def __str__(self):
-        return self.firstname + " " + self.lastname
-
-
 # ================================
 #    Models related to the data  
 # ================================
