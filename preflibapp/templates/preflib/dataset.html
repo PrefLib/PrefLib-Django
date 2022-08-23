@@ -102,7 +102,7 @@
 						{% for file in sortedFiles %}
 							<tr>
 								<td><a href="{% url 'preflibapp:datatypes'%}#{{file.data_type}}">{{ file.data_type }}</a></td>
-								<td><a href="{% url 'preflibapp:data-etadata'%}#modification">{{ file.modification_type }}</a></td>
+								<td><a href="{% url 'preflibapp:data-metadata'%}#modification">{{ file.modification_type }}</a></td>
 								{% with 'data/'|add:dataset.category|add:'/'|add:dataset.abbreviation|add:'/'|add:file.file_name as f %}
 									<td><a href="{% static f %}" class="downloadButton">Download [{{ file.file_size|filesizeformat }}]</a></td>
 								{% endwith %}

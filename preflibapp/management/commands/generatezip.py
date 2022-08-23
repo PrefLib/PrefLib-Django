@@ -96,7 +96,7 @@ class Command(BaseCommand):
 
             # We actually zip the types
             log.append("\n<p>Zipping data files by type</p>\n<ul>\n")
-            for data_type in DataFile.objects.order_by().values_list('data_type', flat=True):
+            for data_type in DataFile.objects.order_by().values_list('data_type', flat=True).distinct():
                 print("Zipping type " + data_type)
                 log.append("\t<li>Zipping type " + data_type + "... ")
                 zip_type(data_type, data_dir)

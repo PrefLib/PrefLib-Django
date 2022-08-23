@@ -66,7 +66,7 @@ class Command(BaseCommand):
                             if "url" not in paper_dict:
                                 paper_dict["url"] = ""
                             print(paper_dict)
-                            paper_obj, _ = Paper.objects.create(
+                            paper_obj = Paper.objects.create(
                                 name=paper_dict["name"],
                                 title=paper_dict["title"],
                                 authors=paper_dict["author"],

@@ -63,10 +63,6 @@ class Command(BaseCommand):
             print("The folder data was not found, nothing has been done.")
             return
 
-        # Create a lock to avoid running the same procedure in parallel
-        lock = open(os.path.join(data_dir, "metadata.lock"), "w")
-        lock.close()
-
         log = []
         new_log_num = 0
 
@@ -110,8 +106,7 @@ class Command(BaseCommand):
             print("Exception " + str(e))
 
         finally:
-            # In any cases, we remove the lock and save the log
-            os.remove(os.path.join(data_dir, "metadata.lock"))
+            # In any cases, we save the log
             Log.objects.create(
                 log=''.join(log),
                 log_type="metadata",

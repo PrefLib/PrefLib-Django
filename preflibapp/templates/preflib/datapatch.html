@@ -23,7 +23,7 @@
 			<h2>{{ file.0.file_name }}</h2>
 			<div class="patchCellContent">
 				<div class="patchCellContent">
-					{% if file.0.dataType in "soc soi toc toi tog mjg wmg pwg wmd" %}
+					{% if file.0.data_type in "soc soi toc toi tog mjg wmg pwg wmd" %}
 						{% with 'data/'|add:dataset.category|add:'/'|add:dataset.abbreviation|add:'/img/'|add:file.0.image as img_file %}
 							<p>
 								<img src="{% static img_file %}">

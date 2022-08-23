@@ -24,10 +24,10 @@
 			<p> Please see the <a href="{% url 'preflibapp:about' %}">about</a> page for information about the site, contacting us, and our citation policy. We rely on the support of the community in order to grow the usefulness of this site. To contribute, please contact <a href="http://www.nickmattei.net">Nicholas Mattei</a> at: nsmattei{at}gmail or <a href="http://simonrey.fr">Simon Rey</a> at: s.j.rey{at}uva{dot}nl. </p>
 
 			{% if random_file_with_image %}
-                {% with random_file_with_image.dataPatch.dataSet as dataset %}
+                {% with random_file_with_image.datapatch.dataset as dataset %}
                     <p id="center_p" style="margin-top: 50px;">
                         {% with 'data/'|add:dataset.category|add:'/'|add:dataset.abbreviation|add:'/img/'|add:random_file_with_image.image as img_file %}
-                            <a href="{% url 'preflibapp:datapatch' dataset.category dataset.series_number random_file_with_image.dataPatch.series_number %}">
+                            <a href="{% url 'preflibapp:datapatch' dataset.category dataset.series_number random_file_with_image.datapatch.series_number %}">
                                 <img src="{% static img_file %}" class="indexPropImg">
                             </a>
                         {% endwith %}

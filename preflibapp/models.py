@@ -62,6 +62,7 @@ class DataPatch(models.Model):
     description = models.CharField(max_length=1000)
     representative = models.ForeignKey("DataFile",
                                        on_delete=models.CASCADE,
+                                       related_name="represents",
                                        blank=True,
                                        null=True)
     publication_date = models.DateField()

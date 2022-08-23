@@ -204,10 +204,6 @@ class Command(BaseCommand):
             print("ERROR: The static folder datatoadd was not found, no dataset has been added.")
             return
 
-        # Putting the lock on
-        lock = open(os.path.join(datatoadd_dir, "dataset.lock"), "w")
-        lock.close()
-
         log = []
         new_log_num = 0
 
@@ -290,8 +286,7 @@ class Command(BaseCommand):
             print(traceback.format_exc())
             print(e)
         finally:
-            # In any cases, we remove the lock and save the log
-            os.remove(os.path.join(datatoadd_dir, "dataset.lock"))
+            # In any cases, we save the log
             Log.objects.create(
                 log=''.join(log),
                 log_type="add_dataset",
