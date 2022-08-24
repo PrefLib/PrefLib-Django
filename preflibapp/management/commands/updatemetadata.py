@@ -6,7 +6,8 @@ from django.db.models import Max
 from django.conf import settings
 from random import shuffle
 
-from preflibapp.preflibtools.instance import PreflibInstance
+from preflibapp.preflibtools.instances.preflibinstance import PreflibInstance
+from preflibapp.preflibtools.instances.drawing import draw_instance
 from preflibapp.models import *
 
 import importlib
@@ -20,14 +21,14 @@ def update_dataprop(datafile, no_drawing=False):
     # Finding the actual file referred by the datafile and parsing it
     folder = finders.find(os.path.join("data", dataset.category, dataset.abbreviation))
     preflib_instance = PreflibInstance()
-    preflib_instance.parse(os.path.join(folder, datafile.file_name))
+    preflib_instance.parse_file(os.path.join(folder, datafile.file_name))
     if not no_drawing:
         # Creating the image file for it
         try:
             os.makedirs(os.path.join(folder, 'img'))
         except OSError:
             pass
-        preflib_instance.draw(os.path.join(folder, 'img', datafile.file_name.replace('.', '_') + '.png'))
+        draw_instance(preflib_instance, os.path.join(folder, 'img', datafile.file_name.replace('.', '_') + '.png'))
         # NEXT LINE IS TERRIBLE!!!
         os.system(settings.CONVERT_PATH + " " + os.path.join(folder, 'img',
                                                              datafile.file_name.replace('.', '_') + '.png') +
