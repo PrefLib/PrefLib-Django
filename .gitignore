@@ -1,5 +1,6 @@
 /static/
 preflibapp/static/data/
+preflibapp/preflibtools/tests
 __pycache__/
 migrations
 Documentation/*.aux
