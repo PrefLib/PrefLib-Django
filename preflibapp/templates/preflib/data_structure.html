@@ -1,0 +1,126 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	{% include 'includes/htmlheadercontent.html' %}
+	<title>Preflib</title>
+</head>
+
+<body>
+
+{% include 'includes/header.html' %}
+
+<div class="content">
+
+<h1>Data Structure</h1>
+
+<p>PrefLib is about sharing data representing preferences. We have attempted to unify the formatting of the data as much as possible. Each format is as close to a comma separated format (CSV) as possible to improve portability. All the details about the file format can be found in the <a href="{% url 'preflibapp:data-format' %}">data format page</a>. </p>
+
+<h2>Datasets, Data Files</h2>
+
+<p>The database is organized in three layers when its comes to the classification of the data we have. These layers are datasets, data patch and data file. Here is their meaning:</p>
+<ul>
+	<li>Each of the data category described above is a collection of datasets.</li>
+	<li>A dataset consists in a collection of data patches.</li>
+	<li>A data patch is a set of data files, all representing the same original data interpreted in different ways. </li>
+	<li>Each of the data file is of one of the following types:
+		<ul>
+			<li><a href="#soc"> SOC - Strict Orders - Complete List</a>: complete, transitive and asymmetric preference relations.</li>
+	        <li><a href="#soi"> SOI - Strict Orders - Incomplete List</a>: transitive and asymmetric preference relations which might not be complete.</li>
+	        <li><a href="#toc"> TOC - Orders with Ties - Complete List</a>: complete and transitive preference relations where preferences are over sets of object to indicate possible ties.</li>
+	        <li><a href="#toi"> TOI - Orders with Ties - Incomplete List</a>: transitive preference relations possibly incomplete where preferences are over sets of object to indicate possible ties.</li>
+	        <li><a href="#tog"> TOG - Tournament Graph</a>: voting tournament graphs indicating who wins against who for every match of the tournament.</li>
+	        <li><a href="#mjg"> MJG - Majority Graph</a>: majority graphs indicating the winner in every pairwise majority contest. </li>
+	        <li><a href="#wmg"> WMG - Weighted Majority Graph</a>: weighted majority graphs indicating the margin of the winner in every pairwise majority contest.</li>
+	        <li><a href="#pwg"> PWG - Pairwise Graph</a>: pairwise graphs indicating for every ordered pair of candidates the number of agent who ranked the candidates in this order. </li>
+	        <li><a href="#wmd"> WMD - Weighted Matching Data</a>: directed weighted graphs with a source and a sink.</li>
+	        <li><a href="#dat"> DAT - Extra Data File</a>: miscellaneous data.</li>
+	    </ul>
+	</li>
+</ul>
+
+
+<h2>Tags</h2>
+
+<p>Our data is separated into the following categories:</p>
+<ul>
+	<li>Election Data (ED): This category contains data that either was an election, or can be interpreted as election data. Generally speaking the sets are preference relations (votes) over a set of objects (candidates). We have data from actual elections, movie rankings, and competitor rankings from various sporting competitions.</li>
+	<li>Matching Data (MD): This category contains data where agents express preference over items (and vise-verse) in order to pair agents to items. We have synthetic data from organ and kidney matching in the USA as well as bidding data from large conferences. We hope to obtain data in a variety of domains including two-sided matching markets such as residents bidding on hospitals and one-sided markets such as students bidding on dorm rooms.</li>
+	<li>Rating and Combinatorial Preference Data (CD): This category contains data from a broad set of domains that can be viewed as combinatorial and/or multidimensional. This includes multi-attribute ratings, CP-nets, GAI-nets and lexicographical preferences for multi-attribute objects.</li>
+</ul>
+
+<h2>Data Types</h2>
+
+<p>Each data file has a given type which somehow represents the underlying mathematical object representing the data. These types are also used as extensions for the files. You will find more information about them in the following.</p>
+
+<p>If you want to know what exactly is in data file, go to the <a href="{% url 'preflibapp:data-format' %}">file format page</a>.</p>
+
+<h3><a id="soc"></a>SOC - Strict Orders - Complete List</h3>
+
+<p id="center_p"><img src="{% static 'types/soc.png' %}" width="25%"></p>
+
+<p>The SOC extension contains <a href="https://en.wikipedia.org/wiki/Preference_(economics)">preferences</a> represented by a strict and complete linear order (transitive, and asymmetric relation) over the candidates, or the alternatives. Each linear order is written in the form <em>A, B, C</em>, indicating that A is strictly preferred to B which is strictly preferred to C. They are complete in the sense that every linear order contains the whole set of candidates. The strict relation is always denoted by use of a comma.</p>
+
+<p>To represent a linear order in a data patch, we display a bar chart indicating for every candidate its <a href="https://en.wikipedia.org/wiki/Borda_count">Borda score</a>.</p>
+
+<p id="center_p"><a href="{% static 'data/types/soc.zip' %}" class="download-button">Download all the SOC data files</a></p>
+
+<h3><a id="soi"></a>SOI - Strict Orders - Incomplete List</h3>
+
+<p id="center_p"><img src="{% static 'types/soi.png' %}" width="25%"></p>
+
+<p>The SOI extension contains <a href="https://en.wikipedia.org/wiki/Preference_(economics)">preferences</a> represented by a strict and possibly incomplete linear order (transitive, and asymmetric relation) over the candidates, or the alternatives. Each linear order is written in the form <em>A, B</em>, indicating that A is strictly preferred to B. They are possibly incomplete in the sense that some linear orders might not contain the whole set of candidates. The strict relation is always denoted by use of a comma.</p>
+
+<p>To represent a linear order in a data patch, we display a bar chart indicating for every candidate its <a href="https://en.wikipedia.org/wiki/Borda_count">Borda score</a>.</p>
+
+<p id="center_p"><a href="{% static 'data/types/soi.zip' %}" class="download-button">Download all the SOI data files</a></p>
+
+<h3><a id="toc"></a>TOC - Orders with Ties - Complete List</h3>
+
+<p id="center_p"><img src="{% static 'types/toc.png' %}" width="25%"></p>
+
+<p>The TOC extension contains <a href="https://en.wikipedia.org/wiki/Preference_(economics)">preferences</a> represented by a transitive and complete relation over the candidates, or the alternatives. Each relation is written in the form <em>A, {B, C}, D</em>, indicating that A is strictly preferred to B and C, while the voter is indifferent between B and C, with A, B and C all strictly preferred to D. They are complete in the sense that every linear order contains the whole set of candidates. The strict relation is always denoted by use of a comma while elements that an agent is indifferent between are grouped in a curly brace.</p>
+
+<p>To represent order with ties in a data patch, we display a bar chart indicating for every candidate its <a href="https://en.wikipedia.org/wiki/Borda_count">Borda score</a>.</p>
+
+<p id="center_p"><a href="{% static 'data/types/toc.zip' %}" class="download-button">Download all the TOC data files</a></p>
+
+<h3><a id="toi"></a>TOI - Orders with Ties - Incomplete List</h3>
+
+<p id="center_p"><img src="{% static 'types/toi.png' %}" width="25%"></p>
+
+<p>The TOI extension contains <a href="https://en.wikipedia.org/wiki/Preference_(economics)">preferences</a> represented by a transitive and possibly incomplete relation over the candidates, or the alternatives. Each relation is written in the form <em>A, {B, C}</em>, indicating that A is strictly preferred to B and C, while the voter is indifferent between B and C. They are possibly incomplete in the sense that some linear orders might not contain the whole set of candidates. The strict relation is always denoted by use of a comma while elements that an agent is indifferent between are grouped in a curly brace.</p>
+
+<p>To represent order with ties in a data patch, we display a bar chart indicating for every candidate its <a href="https://en.wikipedia.org/wiki/Borda_count">Borda score</a>.</p>
+
+<p id="center_p"><a href="{% static 'data/types/toi.zip' %}" class="download-button">Download all the TOI data files</a></p>
+
+<h3><a id="wmd"></a>WMD - Weighted Matching Data</h3>
+
+<p id="center_p"><img src="{% static 'types/wmd.png' %}" width="25%"></p>
+
+<p> Files with a WMD extension describe a set of weighted matching data. These are directed graphs where source is linked to the sink with a specified weight. </p>
+
+<p>To represent weighted matching graphs in a data patch, we simply display the corresponding graph where the color of a node corresponds to the sum of the weight of its outgoing edges.</p>
+
+<p id="center_p"><a href="{% static 'data/types/wmd.zip' %}" class="download-button">Download all the WMD data files</a></p>
+
+<h3><a id="dat"></a><a id="csv"></a>CSV and DAT - Extra Data File</h3>
+
+<p>Files with a CSV or a DAT extension are used when miscellaneous data are needed which are both a simple <a href="https://en.wikipedia.org/wiki/Comma-separated_values" target="_blank">CSV</a> file with headers.</p>
+
+<p>Files with a dat extension are generally paired with another file, providing more information than is expressible in the basic data formats.</p>
+
+<h2>Metadata</h2>
+
+<p>We tried to provide usefull metadata for the data files we host. They represent different properties that may be satisfied by the preferences: number of voters, number of alternatives, existence of a Condorcet winner and so on. For more details, check the <a href="{% url 'preflibapp:data-metadata' %}">metadata page</a>.</p>
+
+<p>You can also use these metadata in the <a href="{% url 'preflibapp:data-search' %}">search engine</a> we provided.</p>
+
+</div>
+</body>
+
+{% include 'includes/footer.html' %}
+
+</html>

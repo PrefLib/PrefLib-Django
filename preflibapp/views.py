@@ -13,9 +13,9 @@ import random
 import copy
 import os
 
-from .forms import *
-from .scripts import *
 from .choices import *
+from .models import *
+from .forms import *
 
 # ========================
 #   Auxiliary functions
@@ -63,16 +63,12 @@ def get_paginator(request, iterable, page_size=20, window_size=3, max_pages=15):
 def my_render(request, template, args=None):
     if args is None:
         args = {}
-    args['DATACATEGORY'] = DATACATEGORY
-    args['DATATYPES'] = DATATYPES
     args['loginNextUrl'] = request.get_full_path
     return render(request, template, args)
 
 
 def error_render(request, template, status):
     args = dict([])
-    args['DATACATEGORY'] = DATACATEGORY
-    args['DATATYPES'] = DATATYPES
     return render(request, template, args, status=status)
 
 
@@ -104,8 +100,7 @@ def main(request):
     nb_datatype = DataFile.objects.values('data_type').distinct().count()
 
     files_with_images = DataFile.objects.filter(image__isnull=False,
-                                                data_type__in=['soc', 'soi', 'toc', 'toi', 'tog', 'mjg', 'wmg', 'pwg',
-                                                              'wmd'])
+                                                data_type__in=['soc', 'soi', 'toc', 'toi', 'wmd'])
     if files_with_images.exists():
         random_file_with_image = random.choice(files_with_images)
 
@@ -116,47 +111,38 @@ def main(request):
 
 # Data views
 @cache_page(CACHE_TIME)
-def data(request):
-    return my_render(request, os.path.join('preflib', 'data.html'))
+def data_structure(request):
+    return my_render(request, os.path.join('preflib', 'data_structure.html'))
 
 
 @cache_page(CACHE_TIME)
 def data_format(request):
-    return my_render(request, os.path.join('preflib', 'dataformat.html'))
+    return my_render(request, os.path.join('preflib', 'data_format.html'))
 
 
 @cache_page(CACHE_TIME)
 def data_metadata(request):
     metadata_per_categories = [(c[1], Metadata.objects.filter(is_active=True, category=c[0])) for c in
                                METADATACATEGORIES]
-    return my_render(request, os.path.join('preflib', 'datametadata.html'), locals())
+    return my_render(request, os.path.join('preflib', 'data_metadata.html'), locals())
 
 
 @cache_page(CACHE_TIME)
-def all_datasets(request, data_category):
-    # (paginator, datasets, page, pages_before, pages_after) = get_paginator(request, DataSet.objects.filter(category =
-    # data_category).order_by('name'))
-    datasets = DataSet.objects.filter(category=data_category).order_by('name')
-    title = find_choice_value(DATACATEGORY, data_category)
+def all_datasets(request):
+    datasets = DataSet.objects.filter().order_by('name')
     dataset_info = []
     for ds in datasets:
-        patches = DataPatch.objects.filter(dataset=ds)
-        zip_file_path = os.path.join('data', data_category, str(ds.abbreviation), str(ds.abbreviation) + '.zip')
-        static_dir = finders.find(zip_file_path)
-        if static_dir is not None:
-            zip_file_size = os.path.getsize(static_dir)
-        else:
-            zip_file_size = 0
-        max_patches_displayed = 7
+        max_files_displayed = 7
+        files = list(ds.files)
         dataset_info.append({
             "ds": ds,
-            "patches": patches[:max_patches_displayed],
-            "num_patches": patches.count(),
-            "num_hidden_patches": max(0, patches.count() - max_patches_displayed),
-            "zip_file": zip_file_path,
-            "zip_file_size": zip_file_size
+            "files": files[:max_files_displayed],
+            "num_files": len(files),
+            "num_hidden_files": max(0, len(files) - max_files_displayed),
+            "zip_file": ds.zip_file_path,
+            "zip_file_size": ds.zip_file_size
         })
-    return my_render(request, os.path.join('preflib', 'datasetall.html'), locals())
+    return my_render(request, os.path.join('preflib', 'dataset_all.html'), locals())
 
 
 @cache_page(CACHE_TIME)
@@ -380,106 +366,3 @@ def user_logout(request):
     if request.user.is_authenticated:
         logout(request)
     return redirect('preflibapp:main')
-
-
-# Admin views
-def admin(request):
-    if not request.user.is_authenticated:
-        raise Http404
-    return my_render(request, os.path.join('preflib', 'admin.html'))
-
-
-def admin_paper(request):
-    if not request.user.is_authenticated:
-        raise Http404
-    created = False
-    # The variable that get the next page if there is one
-    if request.method == "POST":
-        form = PaperForm(request.POST)
-        if form.is_valid():
-            Paper.objects.create(
-                title=form.cleaned_data['title'],
-                authors=form.cleaned_data['authors'],
-                publisher=form.cleaned_data['publisher'],
-                year=form.cleaned_data['year'],
-                url=form.cleaned_data['url'])
-            created = True
-    else:
-        form = PaperForm()
-    return my_render(request, os.path.join('preflib', 'adminpaper.html'), locals())
-
-
-def admin_zip(request):
-    if not request.user.is_authenticated:
-        raise Http404
-
-    logs = Log.objects.filter(log_type="zip")
-    if len(logs) > 0:
-        log = logs.latest("publication_date")
-    else:
-        log = None
-
-    if request.method == "POST":
-        if "zip" in request.POST and request.POST['zip'] == "True":
-            if finders.find(os.path.join("data", "zip.lock")) is None:
-                threaded_management_command("generatezip")
-                launched_text = """The script regenerating the zip files has been launched, it will take several 
-                minutes to complete, come here to see the log once it will be available. You will be redirected in 5 
-                seconds to the admin panel. """
-            else:
-                launched_text = """The script regenerating the zip files <strong>has not been launched</strong>, 
-                another is already running. You will be redirected in 5 seconds to the admin panel. """
-
-    return my_render(request, os.path.join('preflib', 'adminzip.html'), locals())
-
-
-def admin_add_dataset(request):
-    if not request.user.is_authenticated:
-        raise Http404
-
-    logs = Log.objects.filter(log_type="dataset")
-    if len(logs) > 0:
-        log = logs.latest("publication_date")
-    else:
-        log = None
-
-    if request.method == "POST":
-        if finders.find(os.path.join("datatoadd", "dataset.lock")) is None:
-            args = []
-            if "all" in request.POST:
-                data_dir = finders.find("datatoadd/")
-                for filename in os.listdir(data_dir):
-                    if filename.endswith(".zip"):
-                        args.append(str(filename))
-            else:
-                for zip_file in request.POST.getlist('dataset'):
-                    args.append(str(zip_file))
-            if len(args) == 0:
-                launched_text = """The script adding datasets <strong>has not been launched</strong>, you have not 
-                selected any dataset to be added. Please select at least one. """
-                no_args = True
-            else:
-                threaded_management_command("adddataset", {"file": args})
-                launched_text = """The script adding datasets has been launched, it could take some time to proceed, 
-                come here to see the log once it will be available. You will be redirected in 5 seconds to the admin 
-                panel. """
-        else:
-            launched_text = """The script adding datasets <strong>has not been launched</strong>, another is already 
-            running. You will be redirected in 5 seconds to the admin panel. """
-    else:
-        data_dir = finders.find("datatoadd")
-        files = []
-        for filename in os.listdir(data_dir):
-            if filename.endswith(".zip"):
-                files.append((filename, os.path.getsize(os.path.join(data_dir, filename)) / 1000))
-        files.sort()
-
-    return my_render(request, os.path.join('preflib', 'adminadddataset.html'), locals())
-
-
-def admin_log(request, log_type, log_num):
-    if not request.user.is_authenticated:
-        raise Http404
-    log = get_object_or_404(Log, log_type=log_type, log_num=log_num)
-    title = log_type.capitalize()
-    return my_render(request, os.path.join('preflib', 'adminlog.html'), locals())

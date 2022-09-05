@@ -13,19 +13,22 @@
 
 <div class="content">
 
-<h1> {{ title|capfirst }} data sets </h1>
+<h1> Datasets </h1>
 
 {% if datasets %}
 
-	<p>Here is a list of all data sets in the <em>{{ title }}</em> category.</p>
-
-	<p>Sort by: <a href="javascript:sortByName()" id="sort-name" style="font-weight: bold;">Dataset name (A-Z)</a> &middot; <a href="javascript:sortByNew()" id="sort-new">Newest first</a> &middot; <a href="javascript:sortByOld()" id="sort-old">Oldest first</a></p>
+	<p>
+        Sort by:
+        <a href="javascript:sortByName()" id="sort-name" style="font-weight: bold;">Dataset name (A-Z)</a> &middot;
+        <a href="javascript:sortByNew()" id="sort-new">Newest first</a> &middot;
+        <a href="javascript:sortByOld()" id="sort-old">Oldest first</a>
+    </p>
 	
 	<section id="section-datasets">
 	<nav id="dataset-menu">
 		<ul>
 			{% for ds in datasets %}
-				<li data-number="{{ds.series_number}}" data-name="{{ds.name}}"><a href="#{{ds.category}}-{{ds.series_number}}">{{ ds.name }}</a></li>
+				<li data-number="{{ds.series_number}}" data-name="{{ds.name}}"><a href="#{{ds.series_number}}">{{ ds.name }}</a></li>
 			{% endfor %}
 		</ul>
 	</nav>
@@ -33,12 +36,10 @@
 	<ul id="dataset-list">
 	{% for dsinfo in dataset_info %}
 		{% with dsinfo.ds as ds %}
-			<li 
-			id="{{ds.category}}-{{ds.series_number}}"
-			data-number="{{ds.series_number}}" data-name="{{ds.name}}">
-				<h2 class="dataset-title"><a href="{% url 'preflibapp:dataset' ds.category ds.series_number %}" id="{{ds.category}}{{ds.series_number}}">{{ ds.name }}</a></h2>
+			<li id="{{ ds.series_number }}" data-number="{{ ds.series_number }}" data-name="{{ ds.name }}">
+				<h2 class="dataset-title"><a href="{% url 'preflibapp:dataset' ds.series_number %}" id="{{ ds.series_number }}_title">{{ ds.name }}</a></h2>
 
-				<p class="dataset-number">{{ds.category}}-{{ds.series_number}}</p>
+				<p class="dataset-number">{{ds.series_number}}</p>
 
 				{% if ds.tags %}
 					<p class="dataset-tags">
@@ -55,18 +56,18 @@
 				</div>
 
 				<p class="data-patch-list">
-					Consists of {{ dsinfo.num_patches }} data patch{{ dsinfo.num_patches|pluralize:"es" }}:
-					{% for patch in dsinfo.patches %}
-						<span class="data-patch"><a href="{% url 'preflibapp:datapatch' ds.category ds.series_number patch.series_number %}">{{ patch.description }}</a></span>
+					Consists of {{ dsinfo.num_files }} data file{{ dsinfo.num_files|pluralize:"s" }}:
+					{% for file in dsinfo.files %}
+						<span class="data-file">{{ file.title }}</span>
 					{% endfor %}
-					{% if dsinfo.num_hidden_patches > 0 %}
-						and <a href="{% url 'preflibapp:dataset' ds.category ds.series_number %}">{{ dsinfo.num_hidden_patches }} more</a>.
+					{% if dsinfo.num_hidden_files > 0 %}
+						and <a href="{% url 'preflibapp:dataset' ds.series_number %}">{{ dsinfo.num_hidden_files }} more</a>.
 					{% endif %}
 				</p>
 
 				<div class="button-row">
-					<a href="{% url 'preflibapp:dataset' ds.category ds.series_number %}" class="downloadButton">Details</a>
-					<a href="{% static dsinfo.zip_file %}" class="downloadButton">Download [zip, {{dsinfo.zip_file_size|filesizeformat}}]</a>
+					<a href="{% url 'preflibapp:dataset' ds.series_number %}" class="download-button">Details</a>
+					<a href="{% static dsinfo.zip_file %}" class="download-button">Download [zip, {{dsinfo.zip_file_size|filesizeformat}}]</a>
 				</div>
 			</li>
 		{% endwith %}
@@ -158,7 +159,7 @@
 	</script>
 
 {% else %}
-	<p> There are no datasets in the <em>{{ title }}</em> category yet. Do you want to contribute? </p>
+	<p> There are no datasets yet. Do you want to contribute? </p>
 {% endif %}
 
 </div>

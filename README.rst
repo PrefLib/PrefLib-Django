@@ -12,7 +12,10 @@ If you want to play around with the website, after cloning the repository, run t
 
 	python3 quicksetup.py
 
-This script creates all the required folders and files. Note that you might need to install additional python packages for the script to run through. After the script is done, we advice to add some data to the newly created website. To do so, first download some zipped datasets from `PrefLib.org website <https://www.preflib.org/>`_. You can use the following links:
+This script creates all the required folders and files. Note that you might need to install additional
+python packages for the script to run through. After the script is done, we advice to add some data to
+the newly created website. To do so, first download some zipped datasets from
+`PrefLib.org website <https://www.preflib.org/>`_. You can use the following links:
 
 * **AGH course selection**: `https://www.preflib.org/static/data/ED/agh/agh.zip <https://www.preflib.org/static/data/ED/agh/agh.zip>`_
 * **Aspen election data**: `https://www.preflib.org/static/data/ED/aspen/aspen.zip <https://www.preflib.org/static/data/ED/aspen/aspen.zip>`_

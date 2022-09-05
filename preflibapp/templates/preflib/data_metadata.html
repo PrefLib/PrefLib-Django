@@ -41,9 +41,9 @@
 		<p>Applies to:
 			{% for data_type in metadata.applies_to_list %}
 				{% if forloop.last %}
-					<a href="{% url 'preflibapp:datatypes' %}#{{data_type}}">{{ data_type }}</a>.
+					<a href="{% url 'preflibapp:data-structure' %}#{{data_type}}">{{ data_type }}</a>.
 				{% else %}
-					<a href="{% url 'preflibapp:datatypes' %}#{{data_type}}">{{ data_type }}</a>,
+					<a href="{% url 'preflibapp:data-structure' %}#{{data_type}}">{{ data_type }}</a>,
 				{% endif %}
 			{% endfor %}
 		</p>

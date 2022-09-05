@@ -20,7 +20,7 @@
     <li> XX is a 2 letter category code that is one of ED (election data), MD (matching data) of CD (combinatorial or rating data).</li>
     <li> YYYYY is a 5 digit Series Code which specifies the source of the data. This is the dataset identifier. </li>
     <li> ZZZZZZZZ is an 8 digit Element Number for each individual file of a series. This is the data patch identifier. </li>
-    <li> EXT which is a unique file extension describing the type of data in the file. See the <a href="{% url 'preflibapp:datatypes' %}">data types page</a> for more details about the extension.</li>
+    <li> EXT which is a unique file extension describing the type of data in the file. See the <a href="{% url 'preflibapp:data-structure' %}">data types page</a> for more details about the extension.</li>
 </ul>
 
 <p>We have developed a small set of lightweight tools in Python3 for working with PrefLib and generating synthetic data. Please download the current version of the tools below and check the README for full details. PrefLib tools are covered under the BSD License and is available at the <a href="https://github.com/nmattei/PrefLib-Tools">PrefLib-Tools GitHub Page</a>.</p>
@@ -34,7 +34,7 @@
 
 <h2><a id="election"></a>Election Data</h2>
 
-<p>The format for all ranked preferences (orders over candidates or sets of candidates) is as follow with each element being on a new line. The file extensions <a href="{% url 'preflibapp:datatypes'%}#soc ">SOC</a>, <a href="{% url 'preflibapp:datatypes'%}#soi ">SOI</a>, <a href="{% url 'preflibapp:datatypes'%}#toc ">TOC</a>, <a href="{% url 'preflibapp:datatypes'%}#toi ">TOI</a>, <a href="{% url 'preflibapp:datatypes'%}#tog ">TOG</a>, <a href="{% url 'preflibapp:datatypes'%}#mjg ">MJG</a>, <a href="{% url 'preflibapp:datatypes'%}#wmg ">WMG</a> and <a href="{% url 'preflibapp:datatypes'%}#pwg ">PWG</a> use this format.</p>
+<p>The format for all ranked preferences (orders over candidates or sets of candidates) is as follow with each element being on a new line. The file extensions <a href="{% url 'preflibapp:data-structure'%}#soc ">SOC</a>, <a href="{% url 'preflibapp:data-structure'%}#soi ">SOI</a>, <a href="{% url 'preflibapp:data-structure'%}#toc ">TOC</a>, and <a href="{% url 'preflibapp:data-structure'%}#toi ">TOI</a> use this format.</p>
 <div class="coloredbox">
     <ul>
         <li>Number of Candidates</li>
@@ -59,7 +59,7 @@
     <li><em>Preference list</em>: a strict ordering indicated by comma and elements that are indifferent are grouped with brackets.</li>
 </ul>
 
-<p>Here is an example of the 25 first lines of a data file of complete orders with ties (<a href="{% url 'preflibapp:datatypes'%}#toc ">TOC</a>) (taken from the debian election dataset).</p>
+<p>Here is an example of the 25 first lines of a data file of complete orders with ties (<a href="{% url 'preflibapp:data-structure'%}#toc ">TOC</a>) (taken from the debian election dataset).</p>
 
 <div class='codebox'>
     <table>
@@ -170,7 +170,7 @@
 
 <h2><a id="matching"></a>Weighted Matching Data</h2>
 
-<p>The format for all weighted matching data is as follow with each element being on a new line. Only the file extensions <a href="{% url 'preflibapp:datatypes'%}#pwg ">WMD</a> uses this format.</p>
+<p>The format for all weighted matching data is as follow with each element being on a new line. Only the file extensions <a href="{% url 'preflibapp:data-structure'%}#pwg ">WMD</a> uses this format.</p>
 
 <div class="coloredbox">
     <ul>
@@ -192,7 +192,7 @@
     <li><em>Source, Destination, Weight</em>: an edge represented by its source node, its destination node and its weight.</li>
 </ul>
 
-<p>Here is an example of the 25 first lines of a weighted matching data file (<a href="{% url 'preflibapp:datatypes'%}#wmd ">WMD</a>) (taken from the kidney matching dataset).</p>
+<p>Here is an example of the 25 first lines of a weighted matching data file (<a href="{% url 'preflibapp:data-structure'%}#wmd ">WMD</a>) (taken from the kidney matching dataset).</p>
 
 <div class='codebox'>
     <table>
@@ -303,7 +303,7 @@
 
 <h2><a id="extra"></a>Extra Data File</h2>
 
-<p>When miscellaneous data are needed, we use the file extension <a href="{% url 'preflibapp:datatypes'%}#dat ">DAT</a> which always is a simple <a href="https://en.wikipedia.org/wiki/Comma-separated_values" target="_blank">CSV</a> file with headers.</p>
+<p>When miscellaneous data are needed, we use the file extension <a href="{% url 'preflibapp:data-structure'%}#dat ">DAT</a> which always is a simple <a href="https://en.wikipedia.org/wiki/Comma-separated_values" target="_blank">CSV</a> file with headers.</p>
 
 <div class="coloredbox">
     <ul>

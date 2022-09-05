@@ -20,48 +20,26 @@
 			<input type="checkbox" id="menucheck">
 			<ul class="main-menu cf">
 				<li>
-					<a href="{% url 'preflibapp:data' %}">
-						<div>
-							<span><span id="listspan">&#x2756;&nbsp;</span>Data</span>
-							<span class="drop-icon">&nbsp;&#x25be;</span>
-							<label title="Toggle Drop-down" class="drop-icon" for="datacheck">&nbsp;&#x25be;</label>
-						</div>
-					</a>
-					<input type="checkbox" id="datacheck">
-					<ul class="sub-menu">
-						<li>
-							<a href="{% url 'preflibapp:datatypes' %}">
-								<span id="listspan">&#x2666;&nbsp;</span>Types
-							</a>
-						</li>
-						<li>
-							<a href="{% url 'preflibapp:data-format' %}">
-								<span id="listspan">&#x2666;&nbsp;</span>Format
-							</a>
-						</li>
-						<li>
-							<a href="{% url 'preflibapp:data-metadata' %}">
-								<span id="listspan">&#x2666;&nbsp;</span>Metadata
-							</a>
-						</li>
-					</ul>
-				</li>
-
-				<li>
-					<a href="{% url 'preflibapp:all-datasets' 'ED' %}">
-						<span id="listspan">&#x2756;&nbsp;</span>Elections
+					<a href="{% url 'preflibapp:data-structure' %}">
+						<span id="listspan">&#x2756;&nbsp;</span>Structure
 					</a>
 				</li>
 
 				<li>
-					<a href="{% url 'preflibapp:all-datasets' 'MD' %}">
-						<span id="listspan">&#x2756;&nbsp;</span>Matchings
+					<a href="{% url 'preflibapp:data-format' %}">
+						<span id="listspan">&#x2756;&nbsp;</span>Format
 					</a>
 				</li>
 
 				<li>
-					<a href="{% url 'preflibapp:all-datasets' 'CD' %}">
-						<span id="listspan">&#x2756;&nbsp;</span>Ratings
+					<a href="{% url 'preflibapp:data-metadata' %}">
+						<span id="listspan">&#x2756;&nbsp;</span>Metadata
+					</a>
+				</li>
+
+				<li>
+					<a href="{% url 'preflibapp:all-datasets' %}">
+						<span id="listspan">&#x2756;&nbsp;</span>Datasets
 					</a>
 				</li>
 

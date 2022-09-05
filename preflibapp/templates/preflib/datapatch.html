@@ -32,7 +32,7 @@
 					{% endif %}
 
 					{% with 'data/'|add:dataset.category|add:'/'|add:dataset.abbreviation|add:'/'|add:file.0.file_name as f %}
-						<p><a href="{% static f %}" class="downloadButton">Download</a></p>
+						<p><a href="{% static f %}" class="download-button">Download</a></p>
 					{% endwith %}
 
 					<div class="patchCellContentFlex">

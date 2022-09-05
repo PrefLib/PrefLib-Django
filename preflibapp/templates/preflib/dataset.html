@@ -33,7 +33,7 @@
 			{% endautoescape %}
 		{% endif %}
 
-		<p id="center_p" style="margin-top: 30px;"><a href="{% static zipfile_path %}" class="downloadButton">Download the dataset [zip, {{ total_size|filesizeformat }}]</a></p>
+		<p id="center_p" style="margin-top: 30px;"><a href="{% static zipfile_path %}" class="download-button">Download the dataset [zip, {{ total_size|filesizeformat }}]</a></p>
 	</div>
 
 	<div class="indexRightContent">
@@ -104,7 +104,7 @@
 								<td><a href="{% url 'preflibapp:datatypes'%}#{{file.data_type}}">{{ file.data_type }}</a></td>
 								<td><a href="{% url 'preflibapp:data-metadata'%}#modification">{{ file.modification_type }}</a></td>
 								{% with 'data/'|add:dataset.category|add:'/'|add:dataset.abbreviation|add:'/'|add:file.file_name as f %}
-									<td><a href="{% static f %}" class="downloadButton">Download [{{ file.file_size|filesizeformat }}]</a></td>
+									<td><a href="{% static f %}" class="download-button">Download [{{ file.file_size|filesizeformat }}]</a></td>
 								{% endwith %}
 							</tr>
 						{% endfor %}

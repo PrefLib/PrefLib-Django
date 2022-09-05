@@ -12,13 +12,16 @@ from .choices import *
 
 class DataTag(models.Model):
     name = models.CharField(max_length=30,
-                            unique=True)
-    description = models.TextField()
+                            unique=True,
+                            verbose_name="name")
+    description = models.TextField(
+                            verbose_name="Description of the tag")
     parent = models.ForeignKey('DataTag',
                                on_delete=models.CASCADE,
                                null=True,
                                blank=True,
-                               related_name="children")
+                               related_name="children",
+                               verbose_name="Parent tag")
 
     class Meta:
         ordering = ['name']
@@ -28,52 +31,30 @@ class DataTag(models.Model):
 
 
 class DataSet(models.Model):
-    name = models.CharField(max_length=1000)
+    name = models.CharField(max_length=1000,
+                            unique=True,
+                            verbose_name="name")
     abbreviation = models.CharField(max_length=100,
-                                    unique=True)
-    category = models.CharField(choices=DATACATEGORY,
-                                max_length=5)
-    series_number = models.SlugField()
-    description = models.TextField()
+                                    unique=True,
+                                    verbose_name="abbreviation of the dataset")
+    series_number = models.SlugField(unique=True,
+                                     verbose_name="series number of the dataset")
+    zip_file_path = models.CharField(max_length=1000, blank=True, unique=True)
+    zip_file_size = models.FloatField(default=0)
+    description = models.TextField(blank=True, verbose_name="description of the dataset")
     tags = models.ManyToManyField(DataTag,
-                                  blank=True)
-    required_citations = models.TextField(blank=True,
-                                          null=True)
+                                  blank=True,
+                                  verbose_name="tags appliying to the dataset")
+    required_citations = models.TextField(blank=True, verbose_name="HTML code describing the required citations")
     selected_studies = models.TextField()
     publication_date = models.DateField()
     modification_date = models.DateField(auto_now=True)
 
-    def get_tag_list(self):
-        return ', '.join([str(tag) for tag in self.tags.all()])
-
     class Meta:
-        ordering = ('category', 'series_number')
-        unique_together = ('category', 'series_number')
+        ordering = ('series_number',)
 
     def __str__(self):
-        return self.category + "-" + self.series_number + " - " + self.name
-
-
-class DataPatch(models.Model):
-    dataset = models.ForeignKey(DataSet,
-                                on_delete=models.CASCADE)
-    series_number = models.SlugField()
-    name = models.CharField(max_length=1000)
-    description = models.CharField(max_length=1000)
-    representative = models.ForeignKey("DataFile",
-                                       on_delete=models.CASCADE,
-                                       related_name="represents",
-                                       blank=True,
-                                       null=True)
-    publication_date = models.DateField()
-    modification_date = models.DateField(auto_now=True)
-
-    class Meta:
-        unique_together = ('dataset', 'series_number')
-        ordering = ['name']
-
-    def __str__(self):
-        return self.name
+        return self.series_number + " - " + self.name
 
 
 class Metadata(models.Model):
@@ -111,18 +92,21 @@ class Metadata(models.Model):
 
 
 class DataFile(models.Model):
-    datapatch = models.ForeignKey(DataPatch,
-                                  on_delete=models.CASCADE)
+    dataset = models.ForeignKey(DataSet,
+                                on_delete=models.CASCADE,
+                                related_name='files')
     file_name = models.CharField(max_length=255,
                                  unique=True)
     data_type = models.CharField(choices=DATATYPES,
                                  max_length=5)
-    metadatas = models.ManyToManyField(Metadata,
-                                       through="DataProperty")
+    metadata = models.ManyToManyField(Metadata,
+                                      through="DataProperty")
     modification_type = models.CharField(choices=MODIFICATIONTYPES,
                                          max_length=20)
+    title = models.CharField(max_length=100, blank=True)
+    description = models.TextField(blank=True)
     file_size = models.FloatField(default=0)
-    image = models.CharField(max_length=1000, null=True)
+    image = models.CharField(max_length=1000, blank=True)
     publication_date = models.DateField()
     modification_date = models.DateField(auto_now=True)
 

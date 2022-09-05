@@ -12,13 +12,6 @@ def is_choice(choices, choice):
     return False
 
 
-DATACATEGORY = [
-    ('ED', 'election'),
-    ('MD', 'matching'),
-    ('CD', 'combinatorial'),
-    # ('OD', 'optimization')
-]
-
 DATATYPES = [
     ('soc', 'strict order complete'),
     ('soi', 'strict order incomplete'),

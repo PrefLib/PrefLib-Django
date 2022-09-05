@@ -573,7 +573,7 @@ Pagination
 Download button 
 ============ */
 
-.downloadButton {
+.download-button {
 	font-style: normal;
 	color: white;
 	font-size: 90%;
@@ -583,7 +583,7 @@ Download button
 	border-radius: 5px;
 }
 
-.downloadButton:hover {
+.download-button:hover {
 	background-color: var(--color-blue1);
 }
 
