@@ -15,7 +15,7 @@ class DataTag(models.Model):
                             unique=True,
                             verbose_name="name")
     description = models.TextField(
-                            verbose_name="Description of the tag")
+        verbose_name="Description of the tag")
     parent = models.ForeignKey('DataTag',
                                on_delete=models.CASCADE,
                                null=True,
@@ -39,7 +39,7 @@ class DataSet(models.Model):
                                     verbose_name="abbreviation of the dataset")
     series_number = models.SlugField(unique=True,
                                      verbose_name="series number of the dataset")
-    zip_file_path = models.CharField(max_length=1000, blank=True, unique=True)
+    zip_file_path = models.CharField(max_length=1000, blank=True, null=True, unique=True)
     zip_file_size = models.FloatField(default=0)
     description = models.TextField(blank=True, verbose_name="description of the dataset")
     tags = models.ManyToManyField(DataTag,
@@ -105,8 +105,13 @@ class DataFile(models.Model):
                                          max_length=20)
     title = models.CharField(max_length=100, blank=True)
     description = models.TextField(blank=True)
+    file_path = models.CharField(max_length=1000, blank=True, unique=True)
     file_size = models.FloatField(default=0)
     image = models.CharField(max_length=1000, blank=True)
+    relates_to = models.ForeignKey('DataFile',
+                                   on_delete=models.CASCADE,
+                                   related_name='related_files',
+                                   null=True)
     publication_date = models.DateField()
     modification_date = models.DateField(auto_now=True)
 

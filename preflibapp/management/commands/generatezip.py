@@ -11,42 +11,31 @@ import zipfile
 import os
 
 
-def zip_dataset(ds, data_dir):
+def zip_dataset(dataset, data_dir):
     # First locate the dataset folder
-    ds_dir = os.path.join(data_dir, ds.category, ds.abbreviation)
+    ds_dir = os.path.join(data_dir, dataset.abbreviation)
     # Create the zip file for the dataset
-    zipf = zipfile.ZipFile(os.path.join(ds_dir, ds.abbreviation + ".zip"), "w", zipfile.ZIP_DEFLATED)
+    zipf = zipfile.ZipFile(os.path.join(ds_dir, dataset.abbreviation + ".zip"), "w", zipfile.ZIP_DEFLATED)
 
-    # Re-create the info file based on the details in the database
-    info_file = open(os.path.join(ds_dir, "info.txt"), "w")
-    info_file.write("Name: " + ds.name + "\n\n")
-    info_file.write("Abbreviation: " + ds.abbreviation + "\n\n")
-    info_file.write("Category: " + ds.category + "\n\n")
-    info_file.write("Series Number: " + ds.series_number + "\n\n")
-    info_file.write("Path: " + ds.category + "/" + ds.abbreviation + "\n\n")
-    info_file.write("Description: " + ds.description + "\n\n")
-    info_file.write("Required Citations: " + ds.required_citations + "\n\n")
-    info_file.write("Selected Studies: " + ds.selected_studies + "\n\n")
-    info_file.write("description, status, file_name\n")
-
-    # Add all the files to the zip archive and their info in the info file
-    for df in DataFile.objects.filter(datapatch__dataset=ds):
-        zipf.write(os.path.join(ds_dir, df.file_name), df.file_name)
-        info_file.write(df.datapatch.description + ", " + df.modification_type + ", " + df.file_name + "\n")
+    # Add all the files to the zip archive
+    for datafile in dataset.files.all():
+        zipf.write(os.path.join(ds_dir, datafile.file_name), datafile.file_name)
 
     # Add the info.txt file to the archive
-    info_file.close()
     zipf.write(os.path.join(ds_dir, "info.txt"), "info.txt")
 
     # Closing the archive
     zipf.close()
 
+    dataset.zip_file_path = os.path.join(ds_dir, dataset.abbreviation + ".zip")
+    dataset.zip_file_size = os.path.getsize(os.path.join(ds_dir, dataset.abbreviation + ".zip"))
+    dataset.save()
+
 
 def zip_type(data_type, data_dir):
     zipf = zipfile.ZipFile(os.path.join(data_dir, "types", data_type + ".zip"), "w", zipfile.ZIP_DEFLATED)
-    for df in DataFile.objects.filter(data_type=data_type):
-        zipf.write(os.path.join(data_dir, df.datapatch.dataset.category, df.datapatch.dataset.abbreviation,
-                                df.file_name), df.file_name)
+    for datafile in DataFile.objects.filter(data_type=data_type):
+        zipf.write(os.path.join(data_dir, datafile.file_path), datafile.file_name)
     zipf.close()
 
 

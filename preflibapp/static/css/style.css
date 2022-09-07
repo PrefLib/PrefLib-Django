@@ -856,12 +856,12 @@ ul#dataset-list .dataset-description {
 	padding-left: 10px;
 }
 
-.data-patch-list {
+.data-file-list {
 	line-height: 1.4;
 	margin-bottom: 0;
 }
 
-.data-patch-list .data-patch {
+.data-file-list .data-file {
 	font-size: 80%;
 	background-color: var(--color-blue3);
 	box-shadow: 0px 0px 1px 0px var(--color-blue1);
@@ -869,7 +869,7 @@ ul#dataset-list .dataset-description {
 	border-radius: 3px;
 }
 
-.data-patch-list .data-patch a {
+.data-file-list .data-file a {
 	color: black;
 	font-style: normal;
 }

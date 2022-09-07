@@ -55,7 +55,7 @@
 				{% endautoescape %}
 				</div>
 
-				<p class="data-patch-list">
+				<p class="data-file-list">
 					Consists of {{ dsinfo.num_files }} data file{{ dsinfo.num_files|pluralize:"s" }}:
 					{% for file in dsinfo.files %}
 						<span class="data-file">{{ file.title }}</span>

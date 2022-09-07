@@ -52,7 +52,7 @@ class Command(BaseCommand):
                 dataset = DataSet.objects.get(abbreviation=abbreviation)
 
                 # Delete the static files
-                shutil.rmtree(os.path.join(data_dir, dataset.category, dataset.abbreviation))
+                shutil.rmtree(os.path.join(data_dir, dataset.abbreviation))
 
                 # Delete the DB entry
                 dataset.delete()

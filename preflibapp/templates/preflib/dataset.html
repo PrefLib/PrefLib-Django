@@ -56,66 +56,21 @@
 	</div>
 </div>
 
-<h2>All the patches of the dataset </h2>
+<h2>Data Files</h2>
 
-{% include 'includes/paginator.html' %}
-
-<div class="patchGrid">
-
-	{% for patch in patches %}
-		<div class="patchCell">
-			<h3><a href="{% url 'preflibapp:datapatch' dataset.category dataset.series_number patch.series_number %}">{{ patch.name }}: <span>{{ patch.description }}</span></a></h3>
-
-			<div class="patchCellContent">
-
-				{% with patch.datafile_set.all|dictsortreversed:"data_type"|dictsortreversed:"modification_type" as sortedFiles %}
-
-					{% with patch_num_vot_alt|key_value:patch as num_vot_alt %}
-						{% if num_vot_alt %}
-							<table align="center" class="patchtable">
-								<tr>
-									<th class="patchtable-header">#Voters</th>
-									<th class="patchtable-header">#Alternatives</th>
-								</tr>
-								<tr>
-									<td>{{ num_vot_alt.1 }}</td>
-									<td>{{ num_vot_alt.0 }}</td>
-								</tr>
-							</table>
-						{% endif %}
-					{% endwith %}
-
-					<p>
-						{% with 'data/'|add:dataset.category|add:'/'|add:dataset.abbreviation|add:'/img/'|add:patch.representative.image as img_file %}
-							{% if img_file %}
-								<a href="{% url 'preflibapp:datapatch' dataset.category dataset.series_number patch.series_number %}"><img src="{% static img_file %}"></a>
-							{% endif %}
-						{% endwith %}
-					</p>
-
-					<table align="center" class="patchtable">
-						<tr>
-							<th class="patchtable-header">Type</th>
-							<th class="patchtable-header">Modification</th>
-							<th class="patchtable-header"></th>
-						</tr>
-						{% for file in sortedFiles %}
-							<tr>
-								<td><a href="{% url 'preflibapp:datatypes'%}#{{file.data_type}}">{{ file.data_type }}</a></td>
-								<td><a href="{% url 'preflibapp:data-metadata'%}#modification">{{ file.modification_type }}</a></td>
-								{% with 'data/'|add:dataset.category|add:'/'|add:dataset.abbreviation|add:'/'|add:file.file_name as f %}
-									<td><a href="{% static f %}" class="download-button">Download [{{ file.file_size|filesizeformat }}]</a></td>
-								{% endwith %}
-							</tr>
-						{% endfor %}
-					</table>
-
-					<p>Learn more about this data patch <a href="{% url 'preflibapp:datapatch' dataset.category dataset.series_number patch.series_number %}">on this page</a>.</p>
-				{% endwith %}
-			</div>
-		</div>
-	{% endfor %}
-</div>
+<table>
+    <tr>
+        <th>
+            <td>Name</td>
+        </th>
+    </tr>
+    {% for file in ds.files %}
+        <tr>
+            <td>{{ file.fileName }}</td>
+            <td><a href="{% static file.file_path %}" class="download-button">Download [{{ file.file_size|filesizeformat }}]</a></td>
+        </tr>
+    {% endfor %}
+</table>
 
 {% include 'includes/paginator.html' %}
 

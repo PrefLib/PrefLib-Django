@@ -4,6 +4,8 @@ from django.core import management
 from django.utils import timezone
 from django.db.models import Max
 
+import preflibapp
+
 from preflibapp.models import *
 
 import traceback
@@ -11,11 +13,10 @@ import zipfile
 import os
 
 
-def read_info_file(file_name, tmp_dir):
-    infos = {'files': {}, 'patches': {}}
+def read_info_file(file_name):
+    infos = {'files': {}}
     file = open(file_name, 'r')
     # We go line per line trying to match the beginning of the line to a known header
-    reading_patches = False
     reading_files = False
     for line in file.readlines():
         if len(line) > 1:
@@ -23,8 +24,6 @@ def read_info_file(file_name, tmp_dir):
                 infos['name'] = line[5:].strip()
             elif line.startswith('Abbreviation:'):
                 infos['abb'] = line[13:].strip()
-            elif line.startswith('Category:'):
-                infos['cat'] = line[9:].strip()
             elif line.startswith('Tags:'):
                 infos['tags'] = [tag.strip() for tag in line[5:].strip().split(',')]
             elif line.startswith('Series Number:'):
@@ -37,66 +36,49 @@ def read_info_file(file_name, tmp_dir):
                 infos['citations'] = line[19:].strip() if line[19:].strip() != "None" else ""
             elif line.startswith('Selected Studies:'):
                 infos['studies'] = line[17:].strip() if line[17:].strip() != "None" else ""
-            elif line.startswith('patch_name, description, series_number, publication_date, representative'):
-                reading_patches = True
-            elif line.startswith('patch_number, file_name, modification_type, publication_date'):
+            elif line.startswith('file_name, modification_type, relates_to, title, description, publication_date'):
                 reading_files = True
-            # If it's not one the above header, it must be the lists of the patches and files contained in the
+            # If it's not one the above header, it must be the lists of the files contained in the
             # dataset, we parse this here
             else:
-                if reading_patches and not reading_files:
-                    patch_dict = {}
-                    split_line = line.split(',')
-                    patch_dict['patch_name'] = split_line[0].strip()
-                    patch_dict['description'] = split_line[1].strip()
-                    patch_dict['series_number'] = split_line[2].strip()
-                    patch_dict['publication_date'] = split_line[3].strip()
-                    patch_dict['representative'] = split_line[4].strip()
-                    infos['patches'][patch_dict['series_number']] = patch_dict
-                elif reading_files:
+                if reading_files:
                     file_dict = {}
                     split_line = line.split(',')
-                    file_dict['patch_number'] = split_line[0].strip()
-                    file_dict['file_name'] = split_line[1].strip()
-                    file_dict['modification_type'] = split_line[2].strip()
-                    file_dict['publication_date'] = split_line[3].strip()
-                    try:
-                        file_dict['size'] = os.path.getsize(os.path.join(tmp_dir, file_dict['file_name']))
-                    except OSError:
-                        file_dict['size'] = 0
+                    file_dict['file_name'] = split_line[0].strip()
+                    file_dict['modification_type'] = split_line[1].strip()
+                    file_dict['relates_to'] = split_line[2].strip()
+                    file_dict['title'] = split_line[3].strip()
+                    file_dict['description'] = split_line[4].strip()
+                    file_dict['publication_date'] = split_line[5].strip()
+
                     infos['files'][file_dict['file_name']] = file_dict
     file.close()
     return infos
 
 
-def add_dataset(tmp_dir, datatoadd_dir, data_dir, zipfile_name, log):
+def add_dataset(file_path, tmp_dir, data_dir, log):
     # We start by extracting the zip file
-    with zipfile.ZipFile(os.path.join(datatoadd_dir, zipfile_name), 'r') as archive:
+    with zipfile.ZipFile(file_path, 'r') as archive:
         archive.extractall(tmp_dir)
 
-    # We try to read and parse the info file, if we don't find the info.txt file,
-    # we skip the dataset
-    infos = None
-    for file_name in os.listdir(tmp_dir):
-        if file_name == "info.txt":
-            infos = read_info_file(os.path.join(tmp_dir, file_name), tmp_dir)
-            os.remove(os.path.join(tmp_dir, file_name))
-            break
-    if infos is None:
-        raise Exception("No info.txt file has been found for " + str(zipfile_name) + " ... skipping it.")
+    # We try to read and parse the info file, if we don't find the info.txt file, we skip the dataset
+    if os.path.exists(os.path.join(tmp_dir, "info.txt")):
+        infos = read_info_file(os.path.join(tmp_dir, "info.txt"))
+    else:
+        raise Exception("No info.txt file has been found for " + str(file_path) + " ... skipping it.")
 
     # Now that we have all the infos, we can create the dataset object in the database
     dataset_obj, _ = DataSet.objects.update_or_create(
         abbreviation=infos['abb'],
         defaults={
             'name': infos['name'],
-            'category': infos['cat'],
             'series_number': infos['series'],
+            'zip_file_path': None,
+            'zip_file_size': 0,
             'description': infos['description'],
             'required_citations': infos['citations'],
             'selected_studies': infos['studies'],
-            'publication_date': infos['publication_date'],
-            'modification_date': timezone.now()})
+            'publication_date': infos['publication_date']})
 
     # We add the tags, creating them in the database if needed
     for tag in infos["tags"]:
@@ -112,97 +94,91 @@ def add_dataset(tmp_dir, datatoadd_dir, data_dir, zipfile_name, log):
 
     # We create a folder for the dataset in the data folder
     try:
-        os.makedirs(os.path.join(data_dir, infos['cat'], infos['abb']))
+        os.makedirs(os.path.join(data_dir, infos['abb']))
     except FileExistsError:
         pass
+    if os.path.exists(os.path.join(data_dir, infos['abb'], "info.txt")):
+        os.remove(os.path.join(data_dir, infos['abb'], "info.txt"))
+    os.rename(os.path.join(tmp_dir, "info.txt"), os.path.join(data_dir, infos['abb'], "info.txt"))
 
     # We create the 'img' folder in the previously created folder, this folder
     # will contain all the visualizations of the datafiles
     try:
-        os.makedirs(os.path.join(data_dir, infos['cat'], infos['abb'], 'img'))
+        os.makedirs(os.path.join(data_dir, infos['abb'], 'img'))
     except FileExistsError:
         pass
 
     # Let's now add the datafiles to the database
+    relates_to_dict = {}
     for file_name in os.listdir(tmp_dir):
         # We only do it if it actually is a file we're interested in
         if is_choice(DATATYPES, os.path.splitext(file_name)[1][1:]):  # Using [1:] here to remove the dot
 
             # Move the file to the folder of the dataset
-            os.rename(os.path.join(tmp_dir, file_name), os.path.join(data_dir, infos['cat'], infos['abb'], file_name))
+            if os.path.exists(os.path.join(data_dir, infos['abb'], file_name)):
+                os.remove(os.path.join(data_dir, infos['abb'], file_name))
+            os.rename(os.path.join(tmp_dir, file_name), os.path.join(data_dir, infos['abb'], file_name))
 
             # Looking through the infos we collected to see if the file appears there
             file_info = infos['files'].get(file_name)
             # If not, we proceed with default values and raise a warning
             if not file_info:
                 file_info = {
-                    'patch_number': os.path.splitext(file_name)[0].split('-')[-1],
-                    'file_name': file_name,
                     'modification_type': '-',
+                    'title': '',
+                    'description': '-',
                     'publication_date': timezone.now(),
                 }
 
                 log.append("</li>\n</ul>\n<p><strong>No info has been found for the file " + str(file_name) +
-                           " in the info file of " + str(zipfile_name) + "</strong></p>\n<ul>")
-
-            # Same for the path the file belongs to
-            patch_info = infos['patches'].get(file_info['patch_number'])
-            if not patch_info:
-                patch_info = {
-                    'patch_name': os.path.splitext(file_name)[0],
-                    'description': '-',
-                    'series_number': os.path.splitext(file_name)[0].split('-')[-1],
-                    'representative': None,
-                    'publication_date': timezone.now(),
-                }
-
-                log.append("</li>\n</ul>\n<p><strong>No info has been found for the patch " +
-                           str(file_info['patch_number']) + " in the info file of " + str(zipfile_name) +
-                           "</strong></p>\n<ul>")
-
-            # We get of create the datapatch object containing the datafile
-            datapatch_obj, _ = DataPatch.objects.update_or_create(
-                dataset=dataset_obj,
-                series_number=file_info['patch_number'],
-                defaults={
-                    "name": patch_info['patch_name'],
-                    "description": patch_info['description'],
-                    "publication_date": patch_info['publication_date'],
-                    "modification_date": timezone.now()})
+                           " in the info file of " + str(file_path) + "</strong></p>\n<ul>")
 
             # We can finally create (or update) the datafile object in the database
             datafile_obj, _ = DataFile.objects.update_or_create(
                 file_name=file_name,
                 defaults={
-                    "datapatch": datapatch_obj,
+                    "dataset": dataset_obj,
                     "data_type": os.path.splitext(file_name)[1][1:],
                     "modification_type": file_info['modification_type'],
-                    "file_size": file_info['size'],
-                    "publication_date": file_info['publication_date'],
-                    "modification_date": timezone.now()})
+                    "title": file_info['title'],
+                    "description": file_info['description'],
+                    "file_path": os.path.join(infos['abb'], file_name),
+                    "file_size": os.path.getsize(os.path.join(data_dir, infos['abb'], file_name)),
+                    "publication_date": file_info['publication_date']})
 
-            # We add the representative of the datapatch if needed
-            if file_name == patch_info['representative']:
-                datapatch_obj.representative = datafile_obj
-                datapatch_obj.save()
+            if file_info['relates_to']:
+                relates_to_dict[datafile_obj] = file_info['relates_to']
+
+    for datafile, relates_to_name in relates_to_dict.items():
+        related_file = DataFile.objects.get(file_name=relates_to_name)
+        datafile.relates_to = related_file
+        datafile.save()
 
     # Finally, we remove the zip file from the datatoadd directory since everything went well
-    os.remove(os.path.join(datatoadd_dir, zipfile_name))
+    os.remove(file_path)
 
 
 class Command(BaseCommand):
     help = "Add datasets to database"
 
     def add_arguments(self, parser):
-        parser.add_argument('--file', nargs='*', type=str)
+        parser.add_argument('-d', nargs='*', type=str)
+        parser.add_argument('-f', nargs='*', type=str)
         parser.add_argument('--all', action='store_true')
 
     def handle(self, *args, **options):
-        # Looking for the datatoadd folder
-        datatoadd_dir = finders.find("datatoadd")
-        if not datatoadd_dir:
-            print("ERROR: The static folder datatoadd was not found, no dataset has been added.")
+        if not options['d'] and not options['f']:
+            print("ERROR: you need to pass an input argument: either -d for a directory of -f for a single file.")
             return
+        if options['f']:
+            for file_path in options['f']:
+                if os.path.splitext(file_path)[1] != ".zip":
+                    print("ERROR: the argument -f should point to a zip file.")
+                    return
+        if options['d']:
+            if not os.path.isdir(options['d']):
+                print("ERROR: the argument -d should point to a directory.")
+                return
 
         log = []
         new_log_num = 0
@@ -219,13 +195,13 @@ class Command(BaseCommand):
             data_dir = finders.find("data")
             if not data_dir:
                 try:
-                    os.makedirs(datatoadd_dir[0:-9] + "data")
-                    data_dir = datatoadd_dir[0:-9] + "data"
+                    data_dir = os.path.join(os.path.dirname(preflibapp.__file__), "static", "data")
+                    os.makedirs(data_dir)
                 except FileExistsError:
                     pass
 
             # Creating a tmp folder to extract the zip in
-            tmp_dir = os.path.join(datatoadd_dir, "tmp")
+            tmp_dir = os.path.join(data_dir, "adddataset_tmp")
             try:
                 os.makedirs(tmp_dir)
             except FileExistsError:
@@ -238,25 +214,26 @@ class Command(BaseCommand):
 
             # If the option 'all' has been passed, we add all the datasets in the datatoadd folder
             # to the 'file' option
-            if options['all']:
-                options['file'] = []
-                for filename in os.listdir(datatoadd_dir):
+            if options['d']:
+                if not options['f']:
+                    options['f'] = []
+                for filename in os.listdir(options['d']):
                     if filename.endswith(".zip"):
                         options['file'].append(str(filename))
 
             # Starting the real stuff
             log.append("<p>Adding datasets</p>\n<ul>\n")
             start_time = timezone.now()
-            for file_name in options['file']:
+            for file_path in options['f']:
                 # We only consider zip files
-                if file_name.endswith('.zip'):
+                if os.path.splitext(file_path)[1] == '.zip':
                     # Let's work on the dataset
-                    file_name = file_name.split(os.path.sep)[-1]
+                    file_name = os.path.basename(file_path)
                     print("Adding dataset " + str(file_name))
                     log.append("\n\t<li>Dataset " + str(file_name) + "... ")
                     try:
                         # Actually adding the dataset
-                        add_dataset(tmp_dir, datatoadd_dir, data_dir, file_name, log)
+                        add_dataset(file_path, tmp_dir, data_dir, log)
                         log.append(" ... done.</li>\n")
                     except Exception as e:
                         # If something happened, we log it and move on

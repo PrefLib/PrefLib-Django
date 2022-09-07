@@ -17,22 +17,22 @@ import os
 
 def update_dataprop(datafile, no_drawing=False):
     # Easy access to the dataset containing the datafile
-    dataset = datafile.datapatch.dataset
+    dataset = datafile.dataset
     # Finding the actual file referred by the datafile and parsing it
-    folder = finders.find(os.path.join("data", dataset.category, dataset.abbreviation))
-    preflib_instance = PreflibInstance()
-    preflib_instance.parse_file(os.path.join(folder, datafile.file_name))
+    data_folder = finders.find("data")
+    dataset_folder = os.path.join(data_folder, dataset.abbreviation)
+    preflib_instance = PreflibInstance(os.path.join(data_folder, datafile.file_path))
     if not no_drawing:
         # Creating the image file for it
         try:
-            os.makedirs(os.path.join(folder, 'img'))
-        except OSError:
+            os.makedirs(os.path.join(dataset_folder, 'img'))
+        except FileExistsError:
             pass
-        draw_instance(preflib_instance, os.path.join(folder, 'img', datafile.file_name.replace('.', '_') + '.png'))
+        draw_instance(preflib_instance, os.path.join(dataset_folder, 'img', datafile.file_name.replace('.', '_') + '.png'))
         # NEXT LINE IS TERRIBLE!!!
-        os.system(settings.CONVERT_PATH + " " + os.path.join(folder, 'img',
+        os.system(settings.CONVERT_PATH + " " + os.path.join(dataset_folder, 'img',
                                                              datafile.file_name.replace('.', '_') + '.png') +
-                  " -trim " + os.path.join(folder, 'img', datafile.file_name.replace('.', '_') + '.png'))
+                  " -trim " + os.path.join(dataset_folder, 'img', datafile.file_name.replace('.', '_') + '.png'))
         datafile.image = datafile.file_name.replace('.', '_') + '.png'
     datafile.save()
     # Selecting only the active metadata
@@ -54,8 +54,8 @@ class Command(BaseCommand):
     help = "Update the metadata of the data file"
 
     def add_arguments(self, parser):
-        parser.add_argument('--dataset', nargs='*', type=str)
-        parser.add_argument('--noDrawing', action='store_true')
+        parser.add_argument('--abb', nargs='*', type=str)
+        parser.add_argument('--nodrawing', action='store_true')
 
     def handle(self, *args, **options):
         # Check if there is directory "data" exists in the statics
@@ -76,12 +76,11 @@ class Command(BaseCommand):
                 new_log_num += 1
 
             # Either the datasets have been specified or we run through all of them
-            if options["dataset"] is None:
+            if "abb" in options:
+                datafiles = DataFile.objects.filter(dataset__abbreviation__in=options["dataset"]).order_by("file_name")
+            else:
                 datafiles = list(DataFile.objects.all().order_by("file_name"))
                 shuffle(datafiles)
-            else:
-                datafiles = DataFile.objects.filter(datapatch__dataset__abbreviation__in=options["dataset"]).order_by(
-                    "file_name")
 
             # Starting the real stuff
             log = ["<h4> Updating the metadata #" + str(new_log_num) + " - " + str(timezone.now()) + "</h4>\n<p><ul>"]
@@ -89,7 +88,7 @@ class Command(BaseCommand):
             for datafile in datafiles:
                 print("\nData file " + str(datafile.file_name) + "...")
                 log.append("\n\t<li>Data file " + str(datafile.file_name) + "... ")
-                update_dataprop(datafile, no_drawing=options['noDrawing'])
+                update_dataprop(datafile, no_drawing=options['nodrawing'])
                 log.append(" ... done.</li>\n")
 
             # Closing the log

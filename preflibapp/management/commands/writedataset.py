@@ -79,10 +79,9 @@ class Command(BaseCommand):
                 self.write_info_file(dataset, ds_dir)
 
                 # Copy the data files to the folder
-                for data_patch in dataset.datapatch_set.all():
-                    for data_file in data_patch.datafile_set.all():
-                        shutil.copyfile(os.path.join(data_dir, dataset.category, dataset.abbreviation,
-                                                     data_file.file_name), os.path.join(ds_dir, data_file.file_name))
+                for datafile in dataset.files.all():
+                    shutil.copyfile(os.path.join(data_dir, datafile.file_path),
+                                    os.path.join(ds_dir, datafile.file_name))
 
             # Finalizing the log
             log.append("</ul>\n<p>The datasets have been successfully deleted in ")
@@ -107,7 +106,6 @@ class Command(BaseCommand):
             # File Header
             f.write("Name: {}\n\n".format(dataset.name))
             f.write("Abbreviation: {}\n\n".format(dataset.abbreviation))
-            f.write("Category: {}\n\n".format(dataset.category))
             f.write("Tags: {}\n\n".format(dataset.get_tag_list()))
             f.write("Series Number: {}\n\n".format(dataset.series_number))
             f.write("Publication Date: {}\n\n".format(dataset.publication_date))
@@ -115,18 +113,9 @@ class Command(BaseCommand):
             f.write("Required Citations: {}\n\n".format(dataset.required_citations))
             f.write("Selected Studies: {}\n\n".format(dataset.selected_studies))
 
-            # Patch Section (Building the file section at the same time)
-            f.write("patch_name, description, series_number, publication_date, representative\n")
-            write_file_str = "\npatch_number, file_name, modification_type, publication_date\n"
-            for data_patch in dataset.datapatch_set.all():
-                f.write("{}, {}, {}, {}, {}\n".format(data_patch.name, data_patch.description, data_patch.series_number,
-                                                      data_patch.publication_date, data_patch.representative.file_name))
-
-                for data_file in data_patch.datafile_set.all():
-                    write_file_str += "{}, {}, {}, {}\n".format(data_patch.series_number, data_file.file_name,
-                                                                data_file.modification_type, data_file.publication_date)
-
-            # File Section
-            f.write(write_file_str)
-
+            f.write("file_name, modification_type, relates_to, title, description, publication_date\n")
+            for data_file in dataset.files.all():
+                f.write("{}, {}, {}, {}, {}, {}\n".format(data_file.file_name, data_file.modification_type,
+                                                          data_file.related_to, data_file.title, data_file.description,
+                                                          data_file.publication_date))
             f.close()

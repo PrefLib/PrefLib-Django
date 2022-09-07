@@ -133,7 +133,7 @@ def all_datasets(request):
     dataset_info = []
     for ds in datasets:
         max_files_displayed = 7
-        files = list(ds.files)
+        files = list(ds.files.all())
         dataset_info.append({
             "ds": ds,
             "files": files[:max_files_displayed],
