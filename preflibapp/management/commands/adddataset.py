@@ -176,9 +176,10 @@ class Command(BaseCommand):
                     print("ERROR: the argument -f should point to a zip file.")
                     return
         if options['d']:
-            if not os.path.isdir(options['d']):
-                print("ERROR: the argument -d should point to a directory.")
-                return
+            for dir_path in options['d']:
+                if not os.path.isdir(dir_path):
+                    print("ERROR: the argument -d should point to a directory.")
+                    return
 
         log = []
         new_log_num = 0
@@ -217,9 +218,10 @@ class Command(BaseCommand):
             if options['d']:
                 if not options['f']:
                     options['f'] = []
-                for filename in os.listdir(options['d']):
-                    if filename.endswith(".zip"):
-                        options['file'].append(str(filename))
+                for dir_path in options['d']:
+                    for filename in os.listdir(dir_path):
+                        if filename.endswith(".zip"):
+                            options['f'].append(os.path.join(dir_path, filename))
 
             # Starting the real stuff
             log.append("<p>Adding datasets</p>\n<ul>\n")
