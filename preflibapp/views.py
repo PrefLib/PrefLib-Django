@@ -146,7 +146,7 @@ def all_datasets(request):
 
 
 @cache_page(CACHE_TIME)
-def dataset(request, data_category, dataset_num):
+def dataset(request, dataset_num):
     dataset = get_object_or_404(DataSet, category=data_category, series_number=dataset_num)
     (paginator, patches, page, pages_before, pages_after) = get_paginator(request, DataPatch.objects.filter(
         dataset=dataset).order_by("name"))
