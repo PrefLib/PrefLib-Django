@@ -8,6 +8,8 @@ import preflibapp
 
 from preflibapp.models import *
 
+from io import StringIO
+
 import traceback
 import zipfile
 import os
@@ -15,44 +17,65 @@ import os
 
 def read_info_file(file_name):
     infos = {'files': {}}
-    file = open(file_name, 'r')
-    # We go line per line trying to match the beginning of the line to a known header
-    reading_files = False
-    for line in file.readlines():
-        if len(line) > 1:
-            if line.startswith('Name:'):
-                infos['name'] = line[5:].strip()
-            elif line.startswith('Abbreviation:'):
-                infos['abb'] = line[13:].strip()
-            elif line.startswith('Tags:'):
-                infos['tags'] = [tag.strip() for tag in line[5:].strip().split(',')]
-            elif line.startswith('Series Number:'):
-                infos['series'] = line[14:].strip()
-            elif line.startswith('Publication Date:'):
-                infos['publication_date'] = line[17:].strip()
-            elif line.startswith('Description:'):
-                infos['description'] = line[12:].strip()
-            elif line.startswith('Required Citations:'):
-                infos['citations'] = line[19:].strip() if line[19:].strip() != "None" else ""
-            elif line.startswith('Selected Studies:'):
-                infos['studies'] = line[17:].strip() if line[17:].strip() != "None" else ""
-            elif line.startswith('file_name, modification_type, relates_to, title, description, publication_date'):
-                reading_files = True
-            # If it's not one the above header, it must be the lists of the files contained in the
-            # dataset, we parse this here
-            else:
-                if reading_files:
-                    file_dict = {}
-                    split_line = line.split(',')
-                    file_dict['file_name'] = split_line[0].strip()
-                    file_dict['modification_type'] = split_line[1].strip()
-                    file_dict['relates_to'] = split_line[2].strip()
-                    file_dict['title'] = split_line[3].strip()
-                    file_dict['description'] = split_line[4].strip()
-                    file_dict['publication_date'] = split_line[5].strip()
-
-                    infos['files'][file_dict['file_name']] = file_dict
-    file.close()
+    with open(file_name, 'r') as file:
+        # We go line per line trying to match the beginning of the line to a known header tag
+        lines = file.readlines()
+        line_index = 0
+        for line_index in range(len(lines)):
+            line = lines[line_index]
+            if len(line) > 1:
+                if line.startswith('Name:'):
+                    infos['name'] = line[5:].strip()
+                elif line.startswith('Abbreviation:'):
+                    infos['abb'] = line[13:].strip()
+                elif line.startswith('Tags:'):
+                    infos['tags'] = [tag.strip() for tag in line[5:].strip().split(',')]
+                elif line.startswith('Series Number:'):
+                    infos['series'] = line[14:].strip()
+                elif line.startswith('Publication Date:'):
+                    infos['publication_date'] = line[17:].strip()
+                elif line.startswith('Description:'):
+                    infos['description'] = line[12:].strip()
+                elif line.startswith('Required Citations:'):
+                    infos['citations'] = line[19:].strip() if line[19:].strip() != "None" else ""
+                elif line.startswith('Selected Studies:'):
+                    infos['studies'] = line[17:].strip() if line[17:].strip() != "None" else ""
+                elif line.startswith('file_name, modification_type, relates_to, title, description, publication_date'):
+                    break
+        # We are now reading the description of the files
+        for line in lines[line_index + 1:]:
+            line = line.strip()
+            if len(line) > 0:
+                split_line = line.split(',')
+                new_split_line = []
+                inside_quotes = False
+                tmp_split = ''
+                for split in split_line:
+                    split = split.strip()
+                    if len(split) > 0:
+                        if inside_quotes:
+                            if split[-1] == "'":
+                                tmp_split += split[:-1]
+                                new_split_line.append(tmp_split)
+                                inside_quotes = False
+                            else:
+                                tmp_split += split + ', '
+                        else:
+                            if split[0] == "'":
+                                tmp_split += split[1:] + ', '
+                                inside_quotes = True
+                            else:
+                                new_split_line.append(split)
+                    else:
+                        new_split_line.append('')
+                infos['files'][new_split_line[0].strip()] = {
+                    'file_name': new_split_line[0].strip(),
+                    'modification_type': new_split_line[1].strip(),
+                    'relates_to': new_split_line[2].strip(),
+                    'title': new_split_line[3].strip(),
+                    'description': new_split_line[4].strip(),
+                    'publication_date': new_split_line[5].strip()
+                }
     return infos
 
 
@@ -127,9 +150,11 @@ def add_dataset(file_path, tmp_dir, data_dir, log):
                     'modification_type': '-',
                     'title': '',
                     'description': '-',
+                    'relates_to': '',
                     'publication_date': timezone.now(),
                 }
 
+                print("No info found for {}".format(file_name))
                 log.append("</li>\n</ul>\n<p><strong>No info has been found for the file " + str(file_name) +
                            " in the info file of " + str(file_path) + "</strong></p>\n<ul>")
 
@@ -202,7 +227,7 @@ class Command(BaseCommand):
                     pass
 
             # Creating a tmp folder to extract the zip in
-            tmp_dir = os.path.join(data_dir, "adddataset_tmp")
+            tmp_dir = "adddataset_tmp"
             try:
                 os.makedirs(tmp_dir)
             except FileExistsError:

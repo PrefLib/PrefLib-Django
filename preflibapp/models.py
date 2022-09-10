@@ -97,6 +97,7 @@ class DataFile(models.Model):
                                 related_name='files')
     file_name = models.CharField(max_length=255,
                                  unique=True)
+
     data_type = models.CharField(choices=DATATYPES,
                                  max_length=5)
     metadata = models.ManyToManyField(Metadata,

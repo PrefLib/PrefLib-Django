@@ -55,7 +55,7 @@ class Command(BaseCommand):
                 log.append("\n<p><strong>There is no data folder in the static folder, that is weird...</strong></p>")
 
             # Starting the real stuff
-            log.append("<p>Deleting datasets</p>\n<ul>\n")
+            log.append("<p>Writing datasets</p>\n<ul>\n")
             start_time = timezone.now()
 
             if options['all']:
@@ -64,11 +64,13 @@ class Command(BaseCommand):
 
             for abbreviation in options['abb']:
 
+                log.append("\t<li>{}</li>\n".format(abbreviation))
+
                 # Get the dataset
                 dataset = DataSet.objects.get(abbreviation=abbreviation)
 
                 # Creating the folder for the dataset, if it already exists, we delete the content
-                ds_dir = os.path.join(options['d'], dataset.abbreviation)
+                ds_dir = os.path.join(options['d'], "{} - {}".format(dataset.series_number, dataset.abbreviation))
                 try:
                     os.makedirs(ds_dir)
                 except FileExistsError:
@@ -81,10 +83,13 @@ class Command(BaseCommand):
                 # Copy the data files to the folder
                 for datafile in dataset.files.all():
                     shutil.copyfile(os.path.join(data_dir, datafile.file_path),
-                                    os.path.join(ds_dir, datafile.file_name))
+                                    os.path.join(ds_dir, "{}-{}".format(
+                                        dataset.series_number,
+                                        datafile.file_name.split('-')[2])
+                                    ))
 
             # Finalizing the log
-            log.append("</ul>\n<p>The datasets have been successfully deleted in ")
+            log.append("</ul>\n<p>The datasets have been successfully written. It took ")
             log.append(str((timezone.now() - start_time).total_seconds() / 60))
             log.append(" minutes.</p>")
 
@@ -102,11 +107,16 @@ class Command(BaseCommand):
 
     @staticmethod
     def write_info_file(dataset, ds_dir):
+        def escape_comas(string):
+            if ',' in string:
+                return "'" + string + "'"
+            return string
+
         with open(os.path.join(ds_dir, "info.txt"), "w") as f:
             # File Header
             f.write("Name: {}\n\n".format(dataset.name))
             f.write("Abbreviation: {}\n\n".format(dataset.abbreviation))
-            f.write("Tags: {}\n\n".format(dataset.get_tag_list()))
+            f.write("Tags: {}\n\n".format(', '.join([tag.name for tag in dataset.tags.all()])))
             f.write("Series Number: {}\n\n".format(dataset.series_number))
             f.write("Publication Date: {}\n\n".format(dataset.publication_date))
             f.write("Description: {}\n\n".format(dataset.description))
@@ -115,7 +125,10 @@ class Command(BaseCommand):
 
             f.write("file_name, modification_type, relates_to, title, description, publication_date\n")
             for data_file in dataset.files.all():
-                f.write("{}, {}, {}, {}, {}, {}\n".format(data_file.file_name, data_file.modification_type,
-                                                          data_file.related_to, data_file.title, data_file.description,
-                                                          data_file.publication_date))
+                f.write("{}-{}, {}, {}, {}, {}, {}\n".format(dataset.series_number, data_file.file_name.split('-')[2],
+                                                             data_file.modification_type,
+                                                             '' if data_file.relates_to is None else data_file.relates_to,
+                                                             escape_comas(data_file.title),
+                                                             escape_comas(data_file.description),
+                                                             data_file.publication_date))
             f.close()
