@@ -8,8 +8,6 @@ import preflibapp
 
 from preflibapp.models import *
 
-from io import StringIO
-
 import traceback
 import zipfile
 import os
@@ -198,12 +196,14 @@ class Command(BaseCommand):
         if options['f']:
             for file_path in options['f']:
                 if os.path.splitext(file_path)[1] != ".zip":
-                    print("ERROR: the argument -f should point to a zip file.")
+                    print("ERROR: the argument -f should point to a zip file, and {} does not look like one.".format(
+                        file_path))
                     return
         if options['d']:
             for dir_path in options['d']:
                 if not os.path.isdir(dir_path):
-                    print("ERROR: the argument -d should point to a directory.")
+                    print("ERROR: the argument -d should point to a directory, and {} does not look like one.".format(
+                        dir_path))
                     return
 
         log = []

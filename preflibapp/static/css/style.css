@@ -438,8 +438,12 @@ a:hover {
 	background: var(--color-blue3);
 }	
 
-#center_p {
+.center {
 	text-align: center;
+}
+
+.bold {
+	font-weight: bold;
 }
 
 /* ===
@@ -801,11 +805,11 @@ Index page
 ======= */
 
 @media screen and (min-width: 1100px) {
-	.indexContent-wrap {
+	.side-by-side-wrapper {
 		display: flex;
 	}
 
-	.indexRightContent {
+	.side-by-side-right {
 		flex: 30%;
 		margin-left: 40px;
 		flex-shrink: 0;

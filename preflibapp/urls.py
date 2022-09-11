@@ -6,9 +6,7 @@ from . import views
 app_name = 'preflibapp'
 urlpatterns = [
     path('', views.main, name='main'),
-    re_path(r'^structure/?$', views.data_structure, name='data-structure'),
     re_path(r'^format/?$', views.data_format, name='data-format'),
-    re_path(r'^metadata/?$', views.data_metadata, name='data-metadata'),
 
     re_path(r'^datasets/?$', views.all_datasets, name='all-datasets'),
     re_path(r'^dataset/(?P<dataset_num>[0-9]{5})/?$', views.dataset, name='dataset'),

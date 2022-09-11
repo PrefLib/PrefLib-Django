@@ -109,22 +109,11 @@ def main(request):
     return my_render(request, os.path.join('preflib', 'index.html'), locals())
 
 
-# Data views
-@cache_page(CACHE_TIME)
-def data_structure(request):
-    return my_render(request, os.path.join('preflib', 'data_structure.html'))
-
-
 @cache_page(CACHE_TIME)
 def data_format(request):
-    return my_render(request, os.path.join('preflib', 'data_format.html'))
-
-
-@cache_page(CACHE_TIME)
-def data_metadata(request):
     metadata_per_categories = [(c[1], Metadata.objects.filter(is_active=True, category=c[0])) for c in
                                METADATACATEGORIES]
-    return my_render(request, os.path.join('preflib', 'data_metadata.html'), locals())
+    return my_render(request, os.path.join('preflib', 'data_format.html'))
 
 
 @cache_page(CACHE_TIME)
@@ -147,73 +136,12 @@ def all_datasets(request):
 
 @cache_page(CACHE_TIME)
 def dataset(request, dataset_num):
-    dataset = get_object_or_404(DataSet, category=data_category, series_number=dataset_num)
-    (paginator, patches, page, pages_before, pages_after) = get_paginator(request, DataPatch.objects.filter(
-        dataset=dataset).order_by("name"))
-    number_alt_meta = Metadata.objects.get(short_name="numAlt")
-    number_vot_meta = Metadata.objects.get(short_name="numVot")
-    patch_num_vot_alt = {}
-    for patch in patches:
-        try:
-            number_alt = DataProperty.objects.get(metadata=number_alt_meta,
-                                                  datafile=patch.representative).typed_value()
-            number_vot = DataProperty.objects.get(metadata=number_vot_meta,
-                                                  datafile=patch.representative).typed_value()
-            patch_num_vot_alt[patch] = (number_alt, number_vot)
-        except DataProperty.DoesNotExist:
-            pass
-    all_files = DataFile.objects.filter(datapatch__dataset=dataset)
-    num_files = all_files.count()
-    total_size = all_files.aggregate(Sum('file_size'))['file_size__sum']
-    if total_size is not None:
-        total_size = total_size
-    all_types = all_files.order_by('data_type').values_list('data_type').distinct()
-    zipfile_path = os.path.join('data', data_category, str(dataset.abbreviation), str(dataset.abbreviation) + '.zip')
+    dataset = get_object_or_404(DataSet, series_number=dataset_num)
+    data_files = dataset.files.all()
+    num_files = data_files.count()
+    total_size = data_files.aggregate(Sum('file_size'))['file_size__sum']
+    all_types = data_files.order_by('data_type').values_list('data_type').distinct()
     return my_render(request, os.path.join('preflib', 'dataset.html'), locals())
-
-
-@cache_page(CACHE_TIME)
-def datapatch(request, data_category, dataset_num, datapatch_num):
-    dataset = get_object_or_404(DataSet, category=data_category, series_number=dataset_num)
-    datapatch = get_object_or_404(DataPatch, dataset=dataset, series_number=datapatch_num)
-    datafiles = DataFile.objects.filter(datapatch=datapatch).order_by('-modification_type')
-    metadata_per_categories = [(c[1], Metadata.objects.filter(is_active=True, is_displayed=True, category=c[0])) for c in
-                               METADATACATEGORIES]
-    number_alt_meta = Metadata.objects.get(short_name="numAlt")
-    files_meta_preview = []
-    for file in datafiles:
-        meta_category = []
-        for (category, metadata) in metadata_per_categories:
-            meta_inside_cat = []
-            for m in metadata:
-                if DataProperty.objects.filter(metadata=m, datafile=file).exists():
-                    meta_inside_cat.append((m, DataProperty.objects.get(metadata=m, datafile=file).typed_value()))
-            if len(meta_inside_cat) > 0:
-                meta_category.append((category, meta_inside_cat))
-        # Getting the first few lines of the file
-        try:
-            number_alt = DataProperty.objects.get(metadata=number_alt_meta, datafile=file).typed_value()
-            f = open(finders.find(os.path.join("data", dataset.category, dataset.abbreviation, file.file_name)), "r")
-            if number_alt <= 12:
-                lines = f.readlines()
-                lines = lines[:min(number_alt + 2 + 10, len(lines))]
-                lines = [(str(i + 1), lines[i]) for i in range(len(lines))]
-            else:
-                tmp_lines = f.readlines()
-                lines = [(str(i + 1), tmp_lines[i]) for i in range(12)]
-                lines.append(("...", ""))
-                lines += [(str(i + 1), tmp_lines[i][:45] + ("..." if len(tmp_lines[i]) > 45 else "")) for i in
-                          range(number_alt + 1, min(number_alt + 12, len(tmp_lines)))]
-            f.close()
-            files_meta_preview.append((file, meta_category, lines))
-        except DataProperty.DoesNotExist:
-            pass
-    return my_render(request, os.path.join('preflib', 'datapatch.html'), locals())
-
-
-@cache_page(CACHE_TIME)
-def datatypes(request):
-    return my_render(request, os.path.join('preflib', 'datatypes.html'))
 
 
 def data_search(request):

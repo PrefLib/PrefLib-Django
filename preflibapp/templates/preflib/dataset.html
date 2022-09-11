@@ -13,30 +13,30 @@
 {% include 'includes/header.html' %}
 
 <div class="content">
-<h1>{{ dataset.category }}-{{ dataset.series_number }}: {{ dataset.name }}</h1>
+    <h1>{{ dataset.name }} ({{ dataset.series_number }})</h1>
 
-<div class="indexContent-wrap">
-	<div class="indexMainContent">
+<div class="side-by-side-wrapper">
+	<div>
 		{% autoescape off %}
 		<p>{{ dataset.description }}</p>
 		{% endautoescape %}
 
 		{% if dataset.required_citations %}
 			{% autoescape off %}
-			<p><span style="font-weight: bold;">Required citations:</span> {{ dataset.required_citations }} </p>
+			<p><span class="bold">Required citations:</span> {{ dataset.required_citations }} </p>
 			{% endautoescape %}
 		{% endif %}
 
 		{% if dataset.required_citations %}
 			{% autoescape off %}
-			<p><span style="font-weight: bold;">Selected studies:</span> {{ dataset.selected_studies }} </p>
+			<p><span class="bold">Selected studies:</span> {{ dataset.selected_studies }} </p>
 			{% endautoescape %}
 		{% endif %}
 
-		<p id="center_p" style="margin-top: 30px;"><a href="{% static zipfile_path %}" class="download-button">Download the dataset [zip, {{ total_size|filesizeformat }}]</a></p>
+		<p class="center" style="margin-top: 30px;"><a href="{% static dataset.zip_file_path %}" class="download-button">Download the dataset [zip, {{ dataset.zip_file_size|filesizeformat }}]</a></p>
 	</div>
 
-	<div class="indexRightContent">
+	<div class="side-by-side-right">
 		<h2>Details</h2>
 		<ul>
 			<li> Number of files: {{ num_files }}</li>
@@ -44,9 +44,9 @@
 			<li> Data types:
 				{% for data_type in all_types %}
 					{% if forloop.last %}
-						<a href="{% url 'preflibapp:datatypes' %}#{{data_type.0}}">{{ data_type.0 }}</a>.
+						<a href="{% url 'preflibapp:data-format' %}#{{data_type.0}}">{{ data_type.0 }}</a>.
 					{% else %}
-						<a href="{% url 'preflibapp:datatypes' %}#{{data_type.0}}">{{ data_type.0 }}</a>,
+						<a href="{% url 'preflibapp:data-format' %}#{{data_type.0}}">{{ data_type.0 }}</a>,
 					{% endif %}
 				{% endfor %} 
 			</li>
@@ -58,19 +58,16 @@
 
 <h2>Data Files</h2>
 
-<table>
-    <tr>
-        <th>
-            <td>Name</td>
-        </th>
-    </tr>
-    {% for file in ds.files %}
-        <tr>
-            <td>{{ file.fileName }}</td>
-            <td><a href="{% static file.file_path %}" class="download-button">Download [{{ file.file_size|filesizeformat }}]</a></td>
-        </tr>
+<div class="all-data-files">
+
+    {% for file in data_files %}
+        <div class="data-file-wrapper">
+            {{ file.file_name }}
+            <a href="{% static file.file_path %}" class="download-button">Download [{{ file.file_size|filesizeformat }}]</a>
+        </div>
     {% endfor %}
-</table>
+
+</div>
 
 {% include 'includes/paginator.html' %}
 

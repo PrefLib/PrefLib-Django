@@ -54,7 +54,7 @@ class DataSet(models.Model):
         ordering = ('series_number',)
 
     def __str__(self):
-        return self.series_number + " - " + self.name
+        return self.series_number + " - " + self.abbreviation
 
 
 class Metadata(models.Model):

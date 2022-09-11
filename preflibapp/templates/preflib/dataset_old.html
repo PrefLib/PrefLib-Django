@@ -15,8 +15,8 @@
 <div class="content">
 <h1>{{ dataset.category }}-{{ dataset.series_number }}: {{ dataset.name }}</h1>
 
-<div class="indexContent-wrap">
-	<div class="indexMainContent">
+<div class="side-by-side-wrapper">
+	<div>
 		{% autoescape off %}
 		<p>{{ dataset.description }}</p>
 		{% endautoescape %}
@@ -36,7 +36,7 @@
 		<p id="center_p" style="margin-top: 30px;"><a href="{% static zipfile_path %}" class="download-button">Download the dataset [zip, {{ total_size|filesizeformat }}]</a></p>
 	</div>
 
-	<div class="indexRightContent">
+	<div class="side-by-side-right">
 		<h2>Details</h2>
 		<ul>
 			<li> Number of files: {{ num_files }}</li>
