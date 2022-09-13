@@ -9,7 +9,7 @@ urlpatterns = [
     re_path(r'^format/?$', views.data_format, name='data-format'),
 
     re_path(r'^datasets/?$', views.all_datasets, name='all-datasets'),
-    re_path(r'^dataset/(?P<dataset_num>[0-9]{5})/?$', views.dataset, name='dataset'),
+    re_path(r'^dataset/(?P<dataset_num>[0-9]{5})/?$', views.dataset_view, name='dataset'),
 
     re_path(r'^data/search/?$', views.data_search, name="data-search"),
 

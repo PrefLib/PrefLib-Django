@@ -1,0 +1,5 @@
+Django
+mip
+numpy
+matplotlib
+networkx

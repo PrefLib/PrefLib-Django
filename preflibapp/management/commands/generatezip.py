@@ -27,7 +27,7 @@ def zip_dataset(dataset, data_dir):
     # Closing the archive
     zipf.close()
 
-    dataset.zip_file_path = os.path.join(ds_dir, dataset.abbreviation + ".zip")
+    dataset.zip_file_path = "data/{}/{}.zip".format(ds_dir, dataset.abbreviation)
     dataset.zip_file_size = os.path.getsize(os.path.join(ds_dir, dataset.abbreviation + ".zip"))
     dataset.save()
 

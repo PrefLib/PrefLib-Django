@@ -8,48 +8,42 @@ def initialize_tags():
     election_tag, _ = DataTag.objects.update_or_create(
         name="Election",
         defaults={
-            "description": "The preferences apply to scenario in which some alternatives are to be selected",
-            "parent": None
+            "description": "The preferences apply to scenario in which some alternatives are to be selected/elected.",
         }
     )
 
     sport_tag, _ = DataTag.objects.update_or_create(
         name="Sport",
         defaults={
-            "description": "The data represent sport tournaments, interpreted as elections",
-            "parent": election_tag
+            "description": "The data represent sport events, interpreted as elections.",
         }
     )
 
     politics_tag, _ = DataTag.objects.update_or_create(
         name="Politics",
         defaults={
-            "description": "The preferences apply to political scenario",
-            "parent": election_tag
+            "description": "The preferences apply to political scenario.",
         }
     )
 
     matching_tag, _ = DataTag.objects.update_or_create(
         name="Matching",
         defaults={
-            "description": "The preferences apply to scenario in which alternatives are to be matched",
-            "parent": None
+            "description": "The preferences apply to scenario in which alternatives are to be matched to one another.",
         }
     )
 
     ratings_tag, _ = DataTag.objects.update_or_create(
         name="Ratings",
         defaults={
-            "description": "The preferences express ratings about the alternatives",
-            "parent": None
+            "description": "The preferences express ratings about the alternatives.",
         }
     )
 
     combi_tag, _ = DataTag.objects.update_or_create(
         name="Combinatorial",
         defaults={
-            "description": "The data represent combinatorial preferences about the alternatives.",
-            "parent": None
+            "description": "The data represent combinatorial preferences over the alternatives.",
         }
     )
 
@@ -63,7 +57,7 @@ def initialize_metadata():
                            "available for data representing orderings of the alternatives.",
             "is_active": True,
             "is_displayed": True,
-            "applies_to": 'soc,soi,toc,toi,tog,mjg,wmg,pwg,wmd',
+            "applies_to": 'soc,soi,toc,toi,wmd',
             "inner_module": "preflibtools.properties.basic",
             "inner_function": "num_alternatives",
             "inner_type": "int",
@@ -186,9 +180,7 @@ def initialize_metadata():
         defaults={
             "category": "preference",
             "description": """A boolean value set to True if the set of ballots cast represents <a 
-            href="https://en.wikipedia.org/wiki/Single_peaked_preferences">single-peaked preferences</a>. To check 
-            this property, we used the <a href="https://github.com/zmf6921/incompletesp">code of Zack Fitzsimmons and 
-            Martin Lackner</a> available on GitHub that we want to thank here.""",
+            href="https://en.wikipedia.org/wiki/Single_peaked_preferences">single-peaked preferences</a>.""",
             "is_active": True,
             "is_displayed": True,
             "applies_to": 'soc',
@@ -225,7 +217,7 @@ def initialize_metadata():
             "category": "ballot",
             "description": """Given a set of ballots, how many alternatives have been submitted in the ballot with 
             the highest number of submitted alternatives. In data representing complete orders (<a 
-            href="/data/types#soc">SOC</a> and <a href="/data/types#toc">TOC</a>), this should be equal to the number 
+            href="/format#soc">SOC</a> and <a href="/format#toc">TOC</a>), this should be equal to the number 
             of alternatives.""",
             "is_active": True,
             "is_displayed": True,
@@ -245,7 +237,7 @@ def initialize_metadata():
             "category": "ballot",
             "description": """Given a set of ballots, how many alternatives have been submitted in the ballot with 
             the smallest number of submitted alternatives. In data representing complete orders (<a 
-            href="/data/types#soc">SOC</a> and <a href="/data/types#toc">TOC</a>), this should be equal to the number 
+            href="/format#soc">SOC</a> and <a href="/format#toc">TOC</a>), this should be equal to the number 
             of alternatives.""",
             "is_active": True,
             "is_displayed": True,
@@ -266,7 +258,7 @@ def initialize_metadata():
             "description": """In a given ballot, an indifference is a position in the order such that more than one 
             alternative is ranked at this position. Given a set of ballots, the maximum number of indifferences is 
             the number of indifferences in the ballot with the highest number of them. In data witout ties (<a 
-            href="/data/types#soc">SOC</a> and <a href="/data/types#soi">SOI</a>), this should be 0.""",
+            href="/format#soc">SOC</a> and <a href="/format#soi">SOI</a>), this should be 0.""",
             "is_active": True,
             "is_displayed": True,
             "applies_to": 'soc,soi,toc,toi',
@@ -286,7 +278,7 @@ def initialize_metadata():
             "description": """In a given ballot, an indifference is a position in the order such that more than one 
             alternative is ranked at this position. Given a set of ballots, the minimum number of indifferences is 
             the number of indifferences in the ballot with the smallest number of them. In data witout ties (<a 
-            href="/data/types#soc">SOC</a> and <a href="/data/types#soi">SOI</a>), this should be 0.""",
+            href="/format#soc">SOC</a> and <a href="/format#soi">SOI</a>), this should be 0.""",
             "is_active": True,
             "is_displayed": True,
             "applies_to": 'soc,soi,toc,toi',
@@ -306,7 +298,7 @@ def initialize_metadata():
             "description": """In a given ballot, an indifference is a position in the order such that more than one 
             alternative is ranked at this position. Given a set of ballots, the size of the largest indifference is 
             the maximal number of alternatives which are tied in a ballot. In data witout ties (<a 
-            href="/data/types#soc">SOC</a> and <a href="/data/types#soi">SOI</a>), this should be 0.""",
+            href="/format#soc">SOC</a> and <a href="/format#soi">SOI</a>), this should be 0.""",
             "is_active": True,
             "is_displayed": True,
             "applies_to": 'soc,soi,toc,toi',
@@ -326,7 +318,7 @@ def initialize_metadata():
             "description": """In a given ballot, an indifference is a position in the order such that more than one 
             alternative is ranked at this position. Given a set of ballots, the size of the largest indifference is 
             the maximal number of alternatives which are tied in a ballot. In data witout ties (<a 
-            href="/data/types#soc">SOC</a> and <a href="/data/types#soi">SOI</a>), this should be 0.""",
+            href="/format#soc">SOC</a> and <a href="/format#soi">SOI</a>), this should be 0.""",
             "is_active": True,
             "is_displayed": True,
             "applies_to": 'soc,soi,toc,toi',
@@ -342,12 +334,12 @@ def initialize_metadata():
     metadata_condorcet, _ = Metadata.objects.update_or_create(
         name="Condorcet winner",
         defaults={
-            "category": "property",
+            "category": "aggregation",
             "description": """A boolean value set to True if the ballot represented as a graph admits a <a 
             href="https://en.wikipedia.org/wiki/Condorcet_criterion">Condorcet winner</a>.""",
             "is_active": True,
             "is_displayed": True,
-            "applies_to": 'soc,toc,soi,toi,tog,mjg,wmg,pwg',
+            "applies_to": 'soc,toc,soi,toi',
             "inner_module": "preflibtools.properties.basic",
             "inner_function": "has_condorcet",
             "inner_type": "bool",

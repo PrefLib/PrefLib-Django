@@ -165,7 +165,7 @@ def add_dataset(file_path, tmp_dir, data_dir, log):
                     "modification_type": file_info['modification_type'],
                     "title": file_info['title'],
                     "description": file_info['description'],
-                    "file_path": os.path.join(infos['abb'], file_name),
+                    "file_path": 'data/{}/{}'.format(infos['abb'], file_name),
                     "file_size": os.path.getsize(os.path.join(data_dir, infos['abb'], file_name)),
                     "publication_date": file_info['publication_date']})
 

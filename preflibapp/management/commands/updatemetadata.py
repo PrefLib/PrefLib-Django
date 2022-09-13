@@ -15,26 +15,11 @@ import traceback
 import os
 
 
-def update_dataprop(datafile, no_drawing=False):
+def update_dataprop(datafile):
     # Easy access to the dataset containing the datafile
     dataset = datafile.dataset
     # Finding the actual file referred by the datafile and parsing it
-    data_folder = finders.find("data")
-    dataset_folder = os.path.join(data_folder, dataset.abbreviation)
-    preflib_instance = PreflibInstance(os.path.join(data_folder, datafile.file_path))
-    if not no_drawing:
-        # Creating the image file for it
-        try:
-            os.makedirs(os.path.join(dataset_folder, 'img'))
-        except FileExistsError:
-            pass
-        draw_instance(preflib_instance, os.path.join(dataset_folder, 'img', datafile.file_name.replace('.', '_') + '.png'))
-        # NEXT LINE IS TERRIBLE!!!
-        os.system(settings.CONVERT_PATH + " " + os.path.join(dataset_folder, 'img',
-                                                             datafile.file_name.replace('.', '_') + '.png') +
-                  " -trim " + os.path.join(dataset_folder, 'img', datafile.file_name.replace('.', '_') + '.png'))
-        datafile.image = datafile.file_name.replace('.', '_') + '.png'
-    datafile.save()
+    preflib_instance = PreflibInstance(finders.find(datafile.file_path))
     # Selecting only the active metadata
     metadata = Metadata.objects.filter(is_active=True)
     for m in metadata:
@@ -55,9 +40,15 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('--abb', nargs='*', type=str)
-        parser.add_argument('--nodrawing', action='store_true')
+        parser.add_argument('--all', action='store_true')
 
     def handle(self, *args, **options):
+        if not options['all'] and not options['abb']:
+            print(
+                "ERROR: you need to pass at least one dataset to write (with option --abb DATASET_ABBREVIATION) or "
+                "the option --all.")
+            return
+
         # Check if there is directory "data" exists in the statics
         data_dir = finders.find("data")
         if not data_dir:
@@ -76,11 +67,10 @@ class Command(BaseCommand):
                 new_log_num += 1
 
             # Either the datasets have been specified or we run through all of them
-            if "abb" in options:
-                datafiles = DataFile.objects.filter(dataset__abbreviation__in=options["dataset"]).order_by("file_name")
-            else:
-                datafiles = list(DataFile.objects.all().order_by("file_name"))
-                shuffle(datafiles)
+            if options['all']:
+                options['abb'] = DataSet.objects.values_list('abbreviation', flat=True)
+
+            datafiles = DataFile.objects.filter(dataset__abbreviation__in=options["abb"])
 
             # Starting the real stuff
             log = ["<h4> Updating the metadata #" + str(new_log_num) + " - " + str(timezone.now()) + "</h4>\n<p><ul>"]
@@ -88,7 +78,7 @@ class Command(BaseCommand):
             for datafile in datafiles:
                 print("\nData file " + str(datafile.file_name) + "...")
                 log.append("\n\t<li>Data file " + str(datafile.file_name) + "... ")
-                update_dataprop(datafile, no_drawing=options['nodrawing'])
+                update_dataprop(datafile)
                 log.append(" ... done.</li>\n")
 
             # Closing the log

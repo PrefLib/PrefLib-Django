@@ -99,10 +99,10 @@ def main(request):
     total_size = DataFile.objects.aggregate(Sum('file_size'))['file_size__sum']
     nb_datatype = DataFile.objects.values('data_type').distinct().count()
 
-    files_with_images = DataFile.objects.filter(image__isnull=False,
-                                                data_type__in=['soc', 'soi', 'toc', 'toi', 'wmd'])
-    if files_with_images.exists():
-        random_file_with_image = random.choice(files_with_images)
+    # files_with_images = DataFile.objects.filter(image__isnull=False,
+    #                                             data_type__in=['soc', 'soi', 'toc', 'toi', 'wmd'])
+    # if files_with_images.exists():
+    #     random_file_with_image = random.choice(files_with_images)
 
     (paginator, papers, page, pages_before, pages_after) = get_paginator(request, Paper.objects.all(), page_size=15)
 
@@ -111,9 +111,10 @@ def main(request):
 
 @cache_page(CACHE_TIME)
 def data_format(request):
+    all_tags = DataTag.objects.all()
     metadata_per_categories = [(c[1], Metadata.objects.filter(is_active=True, category=c[0])) for c in
                                METADATACATEGORIES]
-    return my_render(request, os.path.join('preflib', 'data_format.html'))
+    return my_render(request, os.path.join('preflib', 'data_format.html'), locals())
 
 
 @cache_page(CACHE_TIME)
@@ -122,7 +123,7 @@ def all_datasets(request):
     dataset_info = []
     for ds in datasets:
         max_files_displayed = 7
-        files = list(ds.files.all())
+        files = list(ds.files.filter(related_files__isnull=True))
         dataset_info.append({
             "ds": ds,
             "files": files[:max_files_displayed],
@@ -135,18 +136,55 @@ def all_datasets(request):
 
 
 @cache_page(CACHE_TIME)
-def dataset(request, dataset_num):
+def dataset_view(request, dataset_num):
     dataset = get_object_or_404(DataSet, series_number=dataset_num)
     data_files = dataset.files.all()
     num_files = data_files.count()
     total_size = data_files.aggregate(Sum('file_size'))['file_size__sum']
     all_types = data_files.order_by('data_type').values_list('data_type').distinct()
+
+    files_info = []
+    for file in data_files:
+        if file.relates_to is None:
+            file_dict = {"f": file}
+            # Getting the metadata value for each category
+            meta_per_category = {}
+            for prop in file.dataproperty_set.all():
+                category_long_name = find_choice_value(METADATACATEGORIES, prop.metadata.category)
+                if category_long_name in meta_per_category:
+                    meta_per_category[category_long_name].append(prop)
+                else:
+                    meta_per_category[category_long_name] = [prop]
+                if prop.metadata.short_name == "numAlt":
+                    file_dict["num_alt"] = prop.typed_value()
+                if prop.metadata.short_name == "numVot":
+                    file_dict["num_vot"] = prop.typed_value()
+            file_dict["meta_per_cat"] = meta_per_category
+            # Getting the first few lines of the file
+            if "num_alt" in file_dict:
+                number_alt = file_dict["num_alt"]
+                with open(finders.find(file.file_path), "r") as f:
+                    if number_alt <= 12:
+                        tmp_lines = f.readlines()
+                        lines = tmp_lines[:min(number_alt + 2 + 10, len(tmp_lines))]
+                        lines = [(str(i + 1), lines[i]) for i in range(len(lines))]
+                        if len(lines) < len(tmp_lines):
+                            lines.append(("...", ""))
+                    else:
+                        tmp_lines = f.readlines()
+                        lines = [(str(i + 1), tmp_lines[i]) for i in range(12)]
+                        lines.append(("...", ""))
+                        lines += [(str(i + 1), tmp_lines[i][:45] + ("..." if len(tmp_lines[i]) > 45 else "")) for i in
+                                  range(number_alt + 1, min(number_alt + 12, len(tmp_lines)))]
+                        if min(number_alt + 12, len(tmp_lines)) < len(tmp_lines):
+                            lines.append(("...", ""))
+                file_dict["preview"] = lines
+            files_info.append(file_dict)
     return my_render(request, os.path.join('preflib', 'dataset.html'), locals())
 
 
 def data_search(request):
     print(request.POST)
-    categories = copy.deepcopy(DATACATEGORY)
     types = copy.deepcopy(DATATYPES)
     types.remove(('dat', 'extra data file'))
     types.remove(('csv', 'comma-separated values'))
@@ -180,15 +218,6 @@ def data_search(request):
     all_files = DataFile.objects.filter(data_type__in=[t[0] for t in types])
     if request.method == 'POST':
         request.session['search_datafiles_POST'] = request.POST
-
-        category_filter = [cat[0] for cat in categories]
-        for cat in categories:
-            if request.POST.get(cat[0] + 'selector') == "no":
-                if cat[0] in category_filter:
-                    category_filter.remove(cat[0])
-            elif request.POST.get(cat[0] + 'selector') == "yes":
-                category_filter = [c for c in category_filter if c == cat[0]]
-        all_files = all_files.filter(datapatch__dataset__category__in=category_filter)
 
         datatype_filter = [t[0] for t in types]
         for t in types:

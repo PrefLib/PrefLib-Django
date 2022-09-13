@@ -60,7 +60,6 @@ class Command(BaseCommand):
 
             if options['all']:
                 options['abb'] = DataSet.objects.values_list('abbreviation', flat=True)
-                print(options['abb'])
 
             for abbreviation in options['abb']:
 

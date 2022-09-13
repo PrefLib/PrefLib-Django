@@ -4,291 +4,350 @@
 <html>
 <head>
     {% include 'includes/htmlheadercontent.html' %}
-	<title>Preflib</title>
+	<title>Preflib | Format</title>
 </head>
 
 <body>
 
 {% include 'includes/header.html' %}
 
-<div class="content">
+<div class="content format-content">
 
-<h1>Data Structure</h1>
+<h1>PrefLib Format</h1>
 
-<p>PrefLib is about sharing data representing preferences. We have attempted to unify the formatting of the data as much as possible. Each format is as close to a comma separated format (CSV) as possible to improve portability. All the details about the file format can be found in the <a href="{% url 'preflibapp:data-format' %}">data format page</a>. </p>
-
-<h2>Datasets, Data Files</h2>
-
-<p>The database is organized in three layers when its comes to the classification of the data we have. These layers are datasets, data patch and data file. Here is their meaning:</p>
+<p>
+    PrefLib is about sharing data representing preferences. We have attempted to unify the formatting of the data as
+    much as possible. We detail below the different aspects of the hosted data. Specifically, you can learn about:
+</p>
 <ul>
-	<li>Each of the data category described above is a collection of datasets.</li>
-	<li>A dataset consists in a collection of data patches.</li>
-	<li>A data patch is a set of data files, all representing the same original data interpreted in different ways. </li>
-	<li>Each of the data file is of one of the following types:
-		<ul>
-			<li><a href="#soc"> SOC - Strict Orders - Complete List</a>: complete, transitive and asymmetric preference relations.</li>
-	        <li><a href="#soi"> SOI - Strict Orders - Incomplete List</a>: transitive and asymmetric preference relations which might not be complete.</li>
-	        <li><a href="#toc"> TOC - Orders with Ties - Complete List</a>: complete and transitive preference relations where preferences are over sets of object to indicate possible ties.</li>
-	        <li><a href="#toi"> TOI - Orders with Ties - Incomplete List</a>: transitive preference relations possibly incomplete where preferences are over sets of object to indicate possible ties.</li>
-	        <li><a href="#tog"> TOG - Tournament Graph</a>: voting tournament graphs indicating who wins against who for every match of the tournament.</li>
-	        <li><a href="#mjg"> MJG - Majority Graph</a>: majority graphs indicating the winner in every pairwise majority contest. </li>
-	        <li><a href="#wmg"> WMG - Weighted Majority Graph</a>: weighted majority graphs indicating the margin of the winner in every pairwise majority contest.</li>
-	        <li><a href="#pwg"> PWG - Pairwise Graph</a>: pairwise graphs indicating for every ordered pair of candidates the number of agent who ranked the candidates in this order. </li>
-	        <li><a href="#wmd"> WMD - Weighted Matching Data</a>: directed weighted graphs with a source and a sink.</li>
-	        <li><a href="#dat"> DAT - Extra Data File</a>: miscellaneous data.</li>
-	    </ul>
-	</li>
+    <li><a href="#structure">The database structure</a></li>
+    <li><a href="#types">The types of data</a></li>
+    <li><a href="#format">The file format</a></li>
+    <li><a href="#metadata">The metadata</a></li>
 </ul>
 
-<h2>Tags</h2>
+<h2 id="structure">Database Structure</h2>
 
-<p>Our data is separated into the following categories:</p>
-<ul>
-	<li>Election Data (ED): This category contains data that either was an election, or can be interpreted as election data. Generally speaking the sets are preference relations (votes) over a set of objects (candidates). We have data from actual elections, movie rankings, and competitor rankings from various sporting competitions.</li>
-	<li>Matching Data (MD): This category contains data where agents express preference over items (and vise-verse) in order to pair agents to items. We have synthetic data from organ and kidney matching in the USA as well as bidding data from large conferences. We hope to obtain data in a variety of domains including two-sided matching markets such as residents bidding on hospitals and one-sided markets such as students bidding on dorm rooms.</li>
-	<li>Rating and Combinatorial Preference Data (CD): This category contains data from a broad set of domains that can be viewed as combinatorial and/or multidimensional. This includes multi-attribute ratings, CP-nets, GAI-nets and lexicographical preferences for multi-attribute objects.</li>
-</ul>
+<p>
+    Our database gathers several datasets. A dataset is a collection of data files somewhat related to each
+    others (different years of the same election for instance). The data file represent preferences, expressed according
+    to different formats, see the different <a href="#types">types of data</a> we host.
+</p>
 
-<h2>Data Types</h2>
-
-<p>Each data file has a given type which somehow represents the underlying mathematical object representing the data. These types are also used as extensions for the files. You will find more information about them in the following.</p>
-
-<p>If you want to know what exactly is in data file, go to the <a href="{% url 'preflibapp:data-format' %}">file format page</a>.</p>
-
-<h3><a id="soc"></a>SOC - Strict Orders - Complete List</h3>
-
-<p id="center_p"><img src="{% static 'types/soc.png' %}" width="25%"></p>
-
-<p>The SOC extension contains <a href="https://en.wikipedia.org/wiki/Preference_(economics)">preferences</a> represented by a strict and complete linear order (transitive, and asymmetric relation) over the candidates, or the alternatives. Each linear order is written in the form <em>A, B, C</em>, indicating that A is strictly preferred to B which is strictly preferred to C. They are complete in the sense that every linear order contains the whole set of candidates. The strict relation is always denoted by use of a comma.</p>
-
-<p>To represent a linear order in a data patch, we display a bar chart indicating for every candidate its <a href="https://en.wikipedia.org/wiki/Borda_count">Borda score</a>.</p>
-
-<p id="center_p"><a href="{% static 'data/types/soc.zip' %}" class="download-button">Download all the SOC data files</a></p>
-
-<h3><a id="soi"></a>SOI - Strict Orders - Incomplete List</h3>
-
-<p id="center_p"><img src="{% static 'types/soi.png' %}" width="25%"></p>
-
-<p>The SOI extension contains <a href="https://en.wikipedia.org/wiki/Preference_(economics)">preferences</a> represented by a strict and possibly incomplete linear order (transitive, and asymmetric relation) over the candidates, or the alternatives. Each linear order is written in the form <em>A, B</em>, indicating that A is strictly preferred to B. They are possibly incomplete in the sense that some linear orders might not contain the whole set of candidates. The strict relation is always denoted by use of a comma.</p>
-
-<p>To represent a linear order in a data patch, we display a bar chart indicating for every candidate its <a href="https://en.wikipedia.org/wiki/Borda_count">Borda score</a>.</p>
-
-<p id="center_p"><a href="{% static 'data/types/soi.zip' %}" class="download-button">Download all the SOI data files</a></p>
-
-<h3><a id="toc"></a>TOC - Orders with Ties - Complete List</h3>
-
-<p id="center_p"><img src="{% static 'types/toc.png' %}" width="25%"></p>
-
-<p>The TOC extension contains <a href="https://en.wikipedia.org/wiki/Preference_(economics)">preferences</a> represented by a transitive and complete relation over the candidates, or the alternatives. Each relation is written in the form <em>A, {B, C}, D</em>, indicating that A is strictly preferred to B and C, while the voter is indifferent between B and C, with A, B and C all strictly preferred to D. They are complete in the sense that every linear order contains the whole set of candidates. The strict relation is always denoted by use of a comma while elements that an agent is indifferent between are grouped in a curly brace.</p>
-
-<p>To represent order with ties in a data patch, we display a bar chart indicating for every candidate its <a href="https://en.wikipedia.org/wiki/Borda_count">Borda score</a>.</p>
-
-<p id="center_p"><a href="{% static 'data/types/toc.zip' %}" class="download-button">Download all the TOC data files</a></p>
-
-<h3><a id="toi"></a>TOI - Orders with Ties - Incomplete List</h3>
-
-<p id="center_p"><img src="{% static 'types/toi.png' %}" width="25%"></p>
-
-<p>The TOI extension contains <a href="https://en.wikipedia.org/wiki/Preference_(economics)">preferences</a> represented by a transitive and possibly incomplete relation over the candidates, or the alternatives. Each relation is written in the form <em>A, {B, C}</em>, indicating that A is strictly preferred to B and C, while the voter is indifferent between B and C. They are possibly incomplete in the sense that some linear orders might not contain the whole set of candidates. The strict relation is always denoted by use of a comma while elements that an agent is indifferent between are grouped in a curly brace.</p>
-
-<p>To represent order with ties in a data patch, we display a bar chart indicating for every candidate its <a href="https://en.wikipedia.org/wiki/Borda_count">Borda score</a>.</p>
-
-<p id="center_p"><a href="{% static 'data/types/toi.zip' %}" class="download-button">Download all the TOI data files</a></p>
-
-<h3><a id="wmd"></a>WMD - Weighted Matching Data</h3>
-
-<p id="center_p"><img src="{% static 'types/wmd.png' %}" width="25%"></p>
-
-<p> Files with a WMD extension describe a set of weighted matching data. These are directed graphs where source is linked to the sink with a specified weight. </p>
-
-<p>To represent weighted matching graphs in a data patch, we simply display the corresponding graph where the color of a node corresponds to the sum of the weight of its outgoing edges.</p>
-
-<p id="center_p"><a href="{% static 'data/types/wmd.zip' %}" class="download-button">Download all the WMD data files</a></p>
-
-<h3><a id="dat"></a><a id="csv"></a>CSV and DAT - Extra Data File</h3>
-
-<p>Files with a CSV or a DAT extension are used when miscellaneous data are needed which are both a simple <a href="https://en.wikipedia.org/wiki/Comma-separated_values" target="_blank">CSV</a> file with headers.</p>
-
-<p>Files with a dat extension are generally paired with another file, providing more information than is expressible in the basic data formats.</p>
-
-<h2>Metadata</h2>
-
-<p>We tried to provide usefull metadata for the data files we host. They represent different properties that may be satisfied by the preferences: number of voters, number of alternatives, existence of a Condorcet winner and so on. For more details, check the <a href="">metadata page</a>.</p>
-
-<p>You can also use these metadata in the <a href="{% url 'preflibapp:data-search' %}">search engine</a> we provided.</p>
-
-<h1>File Format</h1>
-
-<p>Each data file we host has a unique identifier in the format [XX]-YYYYY-ZZZZZZZZ.EXT. These numbers are broken down as:</p>
-<ul>
-    <li> XX is a 2 letter category code that is one of ED (election data), MD (matching data) of CD (combinatorial or rating data).</li>
-    <li> YYYYY is a 5 digit Series Code which specifies the source of the data. This is the dataset identifier. </li>
-    <li> ZZZZZZZZ is an 8 digit Element Number for each individual file of a series. This is the data patch identifier. </li>
-    <li> EXT which is a unique file extension describing the type of data in the file. See the <a href="">data types page</a> for more details about the extension.</li>
-</ul>
-
-<p>We have developed a small set of lightweight tools in Python3 for working with PrefLib and generating synthetic data. Please download the current version of the tools below and check the README for full details. PrefLib tools are covered under the BSD License and is available at the <a href="https://github.com/nmattei/PrefLib-Tools">PrefLib-Tools GitHub Page</a>.</p>
-
-<p> We are currently using 3 formats that are described below.</p>
-<ul>
-    <li><a href="#election">Election data</a></li>
-    <li><a href="#matching">Matching data</a></li>
-    <li><a href="#extra">Extra data</a></li>
-</ul>
-
-<h2><a id="election"></a>Election Data</h2>
-
-<p>The format for all ranked preferences (orders over candidates or sets of candidates) is as follow with each element being on a new line. The file extensions <a href="#soc ">SOC</a>, <a href="#soi ">SOI</a>, <a href="#toc ">TOC</a>, and <a href="#toi ">TOI</a> use this format.</p>
-<div class="coloredbox">
+<p>
+    The datasets are classified based on some tags they can have or not. We describe them below.
+</p>
+{% if all_tags %}
     <ul>
-        <li>Number of Candidates</li>
-        <li>1, Candidate Name</li>
-        <li>2, Candidate Name</li>
-        <li>...</li>
-        <li>Number of Voters, Sum of Vote Count, Number of Unique Orders</li>
-        <li>Count, Preference list</li>
-        <li>Count, Preference list</li>
-        <li>...</li>
+        {% for tag in all_tags %}
+            <li><em>{{ tag.name|title }}</em>: {{ tag.description }}</li>
+        {% endfor %}
     </ul>
+{% endif %}
+
+<h2 id="types">Data Types</h2>
+
+<p>
+    Each data file has a given data type which represents the type of preferences that are expressed in the data file.
+    These types are also used as file extensions. We review them all in the following.
+</p>
+
+<h3 id="soc">SOC - Strict Orders - Complete List</h3>
+
+<p class="center"><img src="{% static 'types/soc.png' %}" width="25%"></p>
+
+<p>
+    The SOC extension contains <a href="https://en.wikipedia.org/wiki/Preference_(economics)">preferences</a>
+    represented by a strict and complete linear order (transitive, and asymmetric relation) over the alternatives.
+    They are complete in the sense that every linear order contains the whole set of alternatives. They are strict in
+    the sense that no two alternatives can be tied.
+</p>
+
+<p class="center"><a href="{% static 'data/types/soc.zip' %}" class="download-button">Download all the SOC data files</a></p>
+
+<h3 id="soi">SOI - Strict Orders - Incomplete List</h3>
+
+<p class="center"><img src="{% static 'types/soi.png' %}" width="25%"></p>
+
+<p>
+    The SOI extension contains <a href="https://en.wikipedia.org/wiki/Preference_(economics)">preferences</a>
+    represented by a strict and possibly incomplete linear order (transitive, and asymmetric relation) over the
+    alternatives. They are possibly incomplete in the sense that some preferences might not contain the whole set of
+    alternatives. They are strict in the sense that no two alternatives can be tied.
+</p>
+
+<p class="center"><a href="{% static 'data/types/soi.zip' %}" class="download-button">Download all the SOI data files</a></p>
+
+<h3 id="toc">TOC - Orders with Ties - Complete List</h3>
+
+<p class="center"><img src="{% static 'types/toc.png' %}" width="25%"></p>
+
+<p>
+    The TOC extension contains <a href="https://en.wikipedia.org/wiki/Preference_(economics)">preferences</a>
+    represented by a transitive and complete relation over the alternatives. They are complete in the sense that every
+    preference contains the whole set of candidates. They need not be strict: several alternatives can be tied.
+</p>
+
+<p class="center"><a href="{% static 'data/types/toc.zip' %}" class="download-button">Download all the TOC data files</a></p>
+
+<h3 id="toi">TOI - Orders with Ties - Incomplete List</h3>
+
+<p class="center"><img src="{% static 'types/toi.png' %}" width="25%"></p>
+
+<p>
+    The TOI extension contains <a href="https://en.wikipedia.org/wiki/Preference_(economics)">preferences</a>
+    represented by a transitive and possibly incomplete relation over the alternatives. They are possibly incomplete in
+    the sense that some preferences might not contain the whole set of alternatives. They also need not be strict:
+    several alternatives can be tied.
+</p>
+
+<p class="center"><a href="{% static 'data/types/toi.zip' %}" class="download-button">Download all the TOI data files</a></p>
+
+<h3 id="wmd">WMD - Weighted Matching Data</h3>
+
+<p class="center"><img src="{% static 'types/wmd.png' %}" width="25%"></p>
+
+<p>
+    Files with a WMD extension describe a set of weighted matching data. These are weighted directed graphs, i.e., a
+    collection of edges between the alternatives associated with a weight.
+</p>
+
+<p class="center"><a href="{% static 'data/types/wmd.zip' %}" class="download-button">Download all the WMD data files</a></p>
+
+<h3 id="dat"><span id="csv"></span>CSV and DAT - Extra Data File</h3>
+
+<p>
+    Files with a CSV or a DAT extension are used when miscellaneous data are needed. They are generally paired with
+    another file, providing more information than is expressible in the basic data formats.
+</p>
+
+<h2 id="format">File Format</h2>
+
+<h3>Ordinal Preferences</h3>
+
+<p>
+    The data types <a href="#soc">SOC</a>, <a href="#soi">SOI</a>, <a href="#toc">TOC</a>, and <a href="#toi">TOI</a>
+    all represent ordinal preferences. We encode them using the following format.
+</p>
+
+<div class='codebox'>
+    <table>
+        <tbody>
+            <tr>
+                <td class='lineNumber'>1</td>
+                <td class='code-line-content'>Number of alternatives</td>
+            </tr>
+            <tr>
+                <td class='lineNumber'>2</td>
+                <td class='code-line-content'>1, First alternative's name</td>
+            </tr>
+            <tr>
+                <td class='lineNumber'>3</td>
+                <td class='code-line-content'>2, Second alternative's name</td>
+            </tr>
+            <tr>
+                <td class='lineNumber'>...</td>
+                <td class='code-line-content'></td>
+            </tr>
+            <tr>
+                <td class='lineNumber'>m + 2</td>
+                <td class='code-line-content'>Number of Voters, Sum of Vote Count, Number of Unique Orders</td>
+            </tr>
+            <tr>
+                <td class='lineNumber'>m + 3</td>
+                <td class='code-line-content'>Count, Preference list</td>
+            </tr>
+            <tr>
+                <td class='lineNumber'>m + 4</td>
+                <td class='code-line-content'>Count, Preference list</td>
+            </tr>
+            <tr>
+                <td class='lineNumber'>...</td>
+                <td class='code-line-content'></td>
+            </tr>
+        </tbody>
+    </table>
 </div>
 
-<p>Votes are sorted by count in the individual data files. Each field is described below:</p>
+<p>
+    The first lines describe the alternatives. The first line indicates the number of alternatives. The following lines
+    give for each alternative, their real name.
+</p>
+
+<p>
+    After the alternatives, comes the ballots. A first line provides several figures:
+</p>
 <ul>
-    <li><em>Number of Candidates</em>: the number of candidates or alternatives agents vote over.</li>
-    <li><em>X, Candidate Name</em>: the name of the candidate or the alternative labeled by the number X.</li>
     <li><em>Number of Voters</em>: the number of actual ballots that were cast.</li>
-    <li><em>Sum of Vote Count</em>: the sum of weights. In most cases the Number of Voters = Sum of Vote Count, except where for example, we have induced a relation like generating a pairwise graph from a set of linear orders. In this case we would have some number n of voters over m alternatives but we would have n * m choose 2 as the sum of weights since each voter expresses a relation between each pair of elements.</li>
+    <li><em>Sum of Vote Count</em>: the sum of the weightsof the voters which is almost always equals to the number of voters.</li>
     <li><em>Number of Unique Orders</em>: the number of distinct ballots that were cast.</li>
-    <li><em>X, Preference list</em>: the preference list together with the number of agents who submitted it.</li>
-    <li><em>Preference list</em>: a strict ordering indicated by comma and elements that are indifferent are grouped with brackets.</li>
 </ul>
 
-<p>Here is an example of the 25 first lines of a data file of complete orders with ties (<a href="#toc ">TOC</a>) (taken from the debian election dataset).</p>
+<p>
+    Finally, the actual preferences are presented. Each line indicates first the number of voters who submitted the
+    given preference list, and then the preference list. Inside a preference list, a strict ordering is indicated by
+    comma, and indifference classes are gouped with brackets. We provide some examples below for a better understanding.
+</p>
+<ul>
+    <li><em>1, 4, 3, 2</em>: indicates that 1 is preferred to 4, that is preferred to 3, itself preferred to 2.</li>
+    <li><em>1, {4, 3}, 2</em>: indicates that 1 is preferred to 4 and 3, that are both preferred to 2, but 4 and 3 are ranked at the same position.</li>
+</ul>
+
+<p>
+    To conclude, here is an example of the 25 first lines of a data file of complete orders with ties
+    (<a href="#toc">TOC</a>) (taken from the <a href="{% url 'preflibapp:dataset' '00002' %}">debian election dataset</a>).
+</p>
 
 <div class='codebox'>
     <table>
         <tbody>
             <tr>
                 <td class='lineNumber'> 1 </td>
-                <td class='lineContent'> 4 </td>
+                <td class='code-line-content'> 4 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 2 </td>
-                <td class='lineContent'> 1, Branden Robinson </td>
+                <td class='code-line-content'> 1, Branden Robinson </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 3 </td>
-                <td class='lineContent'> 2, Raphael Hertzog </td>
+                <td class='code-line-content'> 2, Raphael Hertzog </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 4 </td>
-                <td class='lineContent'> 3, Bdale Garbee </td>
+                <td class='code-line-content'> 3, Bdale Garbee </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 5 </td>
-                <td class='lineContent'> 4, None Of The Above </td>
+                <td class='code-line-content'> 4, None Of The Above </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 6 </td>
-                <td class='lineContent'> 475, 475, 41 </td>
+                <td class='code-line-content'> 475, 475, 41 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 7 </td>
-                <td class='lineContent'> 60, 3, 1, 2, 4 </td>
+                <td class='code-line-content'> 60, 3, 1, 2, 4 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 8 </td>
-                <td class='lineContent'> 50, 1, 3, 2, 4 </td>
+                <td class='code-line-content'> 50, 1, 3, 2, 4 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 9 </td>
-                <td class='lineContent'> 40, 3, 1, 2,  4 </td>
+                <td class='code-line-content'> 40, 3, 1, 2,  4 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 10 </td>
-                <td class='lineContent'> 34, 3, 2, 1, 4 </td>
+                <td class='code-line-content'> 34, 3, 2, 1, 4 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 11 </td>
-                <td class='lineContent'> 31, 3, 2, 4, 1 </td>
+                <td class='code-line-content'> 31, 3, 2, 4, 1 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 12 </td>
-                <td class='lineContent'> 29, 2, 3, 1, 4 </td>
+                <td class='code-line-content'> 29, 2, 3, 1, 4 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 13 </td>
-                <td class='lineContent'> 29, 1, 3, 2,  4 </td>
+                <td class='code-line-content'> 29, 1, 3, 2,  4 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 14 </td>
-                <td class='lineContent'> 24, 2, 1, 3, 4 </td>
+                <td class='code-line-content'> 24, 2, 1, 3, 4 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 15 </td>
-                <td class='lineContent'> 22, 1, 2, 3, 4 </td>
+                <td class='code-line-content'> 22, 1, 2, 3, 4 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 16 </td>
-                <td class='lineContent'> 20, 3, 2, 1,  4 </td>
+                <td class='code-line-content'> 20, 3, 2, 1,  4 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 17 </td>
-                <td class='lineContent'> 15, 1, 3, 4, 2 </td>
+                <td class='code-line-content'> 15, 1, 3, 4, 2 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 18 </td>
-                <td class='lineContent'> 14, 2, 3, 1,  4 </td>
+                <td class='code-line-content'> 14, 2, 3, 1,  4 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 19 </td>
-                <td class='lineContent'> 11, 3, 1, 4, 2 </td>
+                <td class='code-line-content'> 11, 3, 1, 4, 2 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 20 </td>
-                <td class='lineContent'> 9, 2, 3, 4, 1 </td>
+                <td class='code-line-content'> 9, 2, 3, 4, 1 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 21 </td>
-                <td class='lineContent'> 9, 3, {1, 2, 4} </td>
+                <td class='code-line-content'> 9, 3, {1, 2, 4} </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 22 </td>
-                <td class='lineContent'> 8, 1, 2, 3,  4 </td>
+                <td class='code-line-content'> 8, 1, 2, 3,  4 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 23 </td>
-                <td class='lineContent'> 7, 1, {2, 3, 4} </td>
+                <td class='code-line-content'> 7, 1, {2, 3, 4} </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 24 </td>
-                <td class='lineContent'> 5, 3, 4, {1, 2} </td>
+                <td class='code-line-content'> 5, 3, 4, {1, 2} </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 25 </td>
-                <td class='lineContent'> 5, 3, 2, {1, 4} </td>
+                <td class='code-line-content'> 5, 3, 2, {1, 4} </td>
             </tr>
         </tbody>
     </table>
 </div> 
 
-<h2><a id="matching"></a>Weighted Matching Data</h2>
+<h3>Weighted Matching</h3>
 
-<p>The format for all weighted matching data is as follow with each element being on a new line. Only the file extensions <a href="#pwg">WMD</a> uses this format.</p>
+<p>
+    The format for all weighted matching data is as follow with each element being on a new line. Only the file
+    extensions <a href="#wmd">WMD</a> uses this format.
+</p>
 
-<div class="coloredbox">
-    <ul>
-        <li>Number of Nodes, Number of Edges</li>
-        <li>1, Node Name</li>
-        <li>2, Node Name</li>
-        <li>...</li>
-        <li>Source, Destination, Weight</li>
-        <li>Source, Destination, Weight</li>
-        <li>...</li>
-    </ul>
+<div class='codebox'>
+    <table>
+        <tbody>
+            <tr>
+                <td class='lineNumber'>1</td>
+                <td class='code-line-content'>Number of Nodes, Number of Edges/td>
+            </tr>
+            <tr>
+                <td class='lineNumber'>2</td>
+                <td class='code-line-content'>1, First node's name</td>
+            </tr>
+            <tr>
+                <td class='lineNumber'>3</td>
+                <td class='code-line-content'>2, Second node's name</td>
+            </tr>
+            <tr>
+                <td class='lineNumber'>...</td>
+                <td class='code-line-content'></td>
+            </tr>
+            <tr>
+                <td class='lineNumber'>n + 2</td>
+                <td class='code-line-content'>Source, Destination, Weight</td>
+            </tr>
+            <tr>
+                <td class='lineNumber'>n + 3</td>
+                <td class='code-line-content'>Source, Destination, Weight</td>
+            </tr>
+            <tr>
+                <td class='lineNumber'>...</td>
+                <td class='code-line-content'></td>
+            </tr>
+        </tbody>
+    </table>
 </div>
 
-<p>The edges are sorted by source so that all edges starting from the same source are grouped together. Each field is described below:</p>
+<p>Each of the field above are described below.</p>
 <ul>
     <li><em>Number of Nodes</em>: the number of nodes in the graph.</li>
     <li><em>Number of Edges</em>: the number of edges in the graph.</li>
@@ -296,135 +355,138 @@
     <li><em>Source, Destination, Weight</em>: an edge represented by its source node, its destination node and its weight.</li>
 </ul>
 
-<p>Here is an example of the 25 first lines of a weighted matching data file (<a href="#wmd ">WMD</a>) (taken from the kidney matching dataset).</p>
+<p>
+    Here is an example of the 25 first lines of a weighted matching data file (<a href="#wmd">WMD</a>)
+    (taken from the <a href="{% url "preflibapp:dataset" '00036' %}">kidney matching dataset</a>).
+</p>
 
 <div class='codebox'>
     <table>
         <tbody>
             <tr>
                 <td class='lineNumber'> 1 </td>
-                <td class='lineContent'> 16, 26 </td>
+                <td class='code-line-content'> 16, 26 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 2 </td>
-                <td class='lineContent'> 1, Pair 1 </td>
+                <td class='code-line-content'> 1, Pair 1 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 3 </td>
-                <td class='lineContent'> 2, Pair 2 </td>
+                <td class='code-line-content'> 2, Pair 2 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 4 </td>
-                <td class='lineContent'> 3, Pair 3 </td>
+                <td class='code-line-content'> 3, Pair 3 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 5 </td>
-                <td class='lineContent'> 4, Pair 4 </td>
+                <td class='code-line-content'> 4, Pair 4 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 6 </td>
-                <td class='lineContent'> 5, Pair 5 </td>
+                <td class='code-line-content'> 5, Pair 5 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 7 </td>
-                <td class='lineContent'> 6, Pair 6 </td>
+                <td class='code-line-content'> 6, Pair 6 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 8 </td>
-                <td class='lineContent'> 7, Pair 7 </td>
+                <td class='code-line-content'> 7, Pair 7 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 9 </td>
-                <td class='lineContent'> 8, Pair 8 </td>
+                <td class='code-line-content'> 8, Pair 8 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 10 </td>
-                <td class='lineContent'> 9, Pair 9 </td>
+                <td class='code-line-content'> 9, Pair 9 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 11 </td>
-                <td class='lineContent'> 10, Pair 10 </td>
+                <td class='code-line-content'> 10, Pair 10 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 12 </td>
-                <td class='lineContent'> 11, Pair 11 </td>
+                <td class='code-line-content'> 11, Pair 11 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 13 </td>
-                <td class='lineContent'> 12, Pair 12 </td>
+                <td class='code-line-content'> 12, Pair 12 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 14 </td>
-                <td class='lineContent'> 13, Pair 13 </td>
+                <td class='code-line-content'> 13, Pair 13 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 15 </td>
-                <td class='lineContent'> 14, Pair 14 </td>
+                <td class='code-line-content'> 14, Pair 14 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 16 </td>
-                <td class='lineContent'> 15, Pair 15 </td>
+                <td class='code-line-content'> 15, Pair 15 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 17 </td>
-                <td class='lineContent'> 16, Pair 16 </td>
+                <td class='code-line-content'> 16, Pair 16 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 18 </td>
-                <td class='lineContent'> 0, 4, 1 </td>
+                <td class='code-line-content'> 0, 4, 1 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 19 </td>
-                <td class='lineContent'> 2, 7, 1 </td>
+                <td class='code-line-content'> 2, 7, 1 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 20 </td>
-                <td class='lineContent'> 2, 3, 1 </td>
+                <td class='code-line-content'> 2, 3, 1 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 21 </td>
-                <td class='lineContent'> 3, 4, 1 </td>
+                <td class='code-line-content'> 3, 4, 1 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 22 </td>
-                <td class='lineContent'> 5, 7, 1 </td>
+                <td class='code-line-content'> 5, 7, 1 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 23 </td>
-                <td class='lineContent'> 5, 3, 1 </td>
+                <td class='code-line-content'> 5, 3, 1 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 24 </td>
-                <td class='lineContent'> 6, 7, 1 </td>
+                <td class='code-line-content'> 6, 7, 1 </td>
             </tr>
             <tr>
                 <td class='lineNumber'> 25 </td>
-                <td class='lineContent'> 6, 3, 1 </td>
+                <td class='code-line-content'> 6, 3, 1 </td>
             </tr>
         </tbody>
     </table>
 </div>
 
-<h2><a id="extra"></a>Extra Data File</h2>
+<h3>Extra Data File</h3>
 
-<p>When miscellaneous data are needed, we use the file extension <a href="#dat ">DAT</a> which always is a simple <a href="https://en.wikipedia.org/wiki/Comma-separated_values" target="_blank">CSV</a> file with headers.</p>
+<p>
+    When miscellaneous data are needed, we use the file extension DAT which has no specified format.
+</p>
 
-<div class="coloredbox">
-    <ul>
-        <li>Item 1 Name, Item 2 Name, Item 3 Name, ..., Item N Name</li>
-        <li>Item 1 Value, Item 2 Value, Item 3 Value, ..., Item N Value</li>
-    </ul>
-</div>
+<h2 id="metadata">Metadata</h2>
 
-<p>Files with a dat extension are generally paired with another file, providing more information than is expressible in the basic data formats.</p>
+<p>
+    We have annotated most of our data files to be able to have a more fine grain analysis of the data we host.
+    This allows for instance to be able to have a more interesting <a href="{% url 'preflibapp:data-search' %}">
+    search tool</a>. For each data file, its metadata are presented on its corresponding page.
+</p>
 
-<h1>Metadata</h1>
+<p>
+    In the following we present all the metadata we are using. Note that they may not always be available as some
+    of them require sophisticated computations and/or do not apply for all types of data.
+</p>
 
-<p>We have annotated most of our data files to be able to have a more fine grain analysis of the data we host. This allow for instance to be able to have a more interesting <a href="{% url 'preflibapp:data-search' %}">search tool</a>. For each data file, its metadata are presented in the page of the corresponding datapatch.</p>
-
-<p>In the following we present all the metadata we are using. Note that they may not always be available as some of them require sophisticated computations and/or do not apply for all types of data.</p>
-
-<h2 id="modification">Modification Type</h2>
+<h3 id="modification">Modification Type</h3>
 
 <p>Each data file is labeled as either Original, Induced, Imbued or Synthetic.</p>
 <ul>
@@ -433,27 +495,21 @@
     <li><em>Imbued</em>: Data that has been imbued with extra information. For example, extending an incomplete partial order by placing all unranked candidates tied at the end.</li>
     <li><em>Synthetic</em>: Data that has been generated artificially. It is for example, instances of the kidney matching problem generated via the art donor pool generation method.</li>
 </ul>
-<p>We encourage you to understand some of the impacts that making these assumptions can have, see, e.g. A Behavioral Perspective on Social Choice. Anna Popova, Michel Regenwetter, and Nicholas Mattei. Annals of Mathematics and Artificial Intelligence 68(1-3), 2013. </p>
+<p>We encourage you to understand some of the impacts that making these assumptions can have, see, e.g.
+    <a href="https://link.springer.com/article/10.1007/s10472-012-9326-6">A Behavioral Perspective on Social Choice.</a>
+        Anna Popova, Michel Regenwetter, and Nicholas Mattei. Annals of Mathematics and Artificial Intelligence 68(1-3),
+        2013.
+</p>
 
 {% for cat in metadata_per_categories %}
 
-	<h2>{{ cat.0|title }}</h2>
+	<h3>{{ cat.0|title }}</h3>
 
-	{% for metadata in cat.1 %}
-
-		<h3 id="{{ metadata.short_name }}">{{ metadata.name|title }}</h3>
-		<p>{{ metadata.description|safe }}</p>
-		<p>Applies to:
-			{% for data_type in metadata.applies_to_list %}
-				{% if forloop.last %}
-					<a href="#{{data_type}}">{{ data_type }}</a>.
-				{% else %}
-					<a href="#{{data_type}}">{{ data_type }}</a>,
-				{% endif %}
-			{% endfor %}
-		</p>
-
-	{% endfor %}
+    <ul>
+        {% for metadata in cat.1 %}
+            <li id="metadata-{{ metadata.short_name }}"><em>{{ metadata.name|title }}</em>: {{ metadata.description|safe }}</li>
+        {% endfor %}
+    </ul>
 
 {% endfor %}
 

@@ -513,7 +513,7 @@ Strong
 
 strong  {
 	color: red;
-	text-decoration: bold;
+	font-weight: bold;
 }
 
 /* ==========
@@ -624,9 +624,9 @@ Code box
 	padding: 10px 10px;
 	border: solid 1px black;
 	border-radius: 6px;
-	background: #414141;
-	color: white;
-	text-shadow: 0px 1px 0px black;
+	background: #e8e8e8;
+	color: #1b1b1b;
+	font-family: "Courier New";
 }
 
 .codebox p {
@@ -659,17 +659,8 @@ Code box
 	padding-right: 10px;
 }
 
-.codebox .lineContent {
+.codebox .code-line-content {
 	padding-left: 20px;
-}
-
-.collapsible {
-	background-color: var(--color-grey);
-	cursor: pointer;
-	width: 100%;
-	border: none;
-	text-align: left;
-	outline: none;
 }
 
 
@@ -679,84 +670,6 @@ Publications layout
 
 #publication {
 	padding: 2px
-}
-
-/* ===
-Images 
-=== */
-
-img {
-	margin: 5px;
-}
-
-/* =======
-Patch grid
-======= */
-
-@media screen and (max-width: 1200px) {
-	.patchGrid {
-		grid-template-columns: 100%;
-	}
-}
-
-@media screen and (min-width: 1200px) {
-	.patchGrid {
-		grid-template-columns: 50% 50%;
-	}
-}
-
-.patchGrid {
-	display: grid;
-	width: 100%;
-}
-
-.patchCell {
-	display: inline-grid;
-	text-align: center;
-	border-top: 2px solid var(--color-blue2);
-	border-bottom: 2px solid var(--color-blue2);
-	border-right: 2px solid var(--color-blue2);
-}
-
-@media screen and (min-width: 1200px) {
-	.patchCell:nth-child(odd) {
-		border-left: 2px solid var(--color-blue2);
-	}
-}
-
-@media screen and (max-width: 1200px) {
-	.patchCell {
-		border-left: 2px solid var(--color-blue2);
-	}
-}
-
-.patchGrid img {
-	width: 50%;
-	border: 1px solid var(--color-grey);
-	background: color;
-	padding: 2px;
-}
-
-.patchGrid h2, .patchGrid h3 {
-	background: var(--color-blue2);
-	margin: 0px;
-	padding: 8px;
-	color: white;
-	text-align: center;
-	border: none;
-	height: 1.2em;
-}
-
-.patchGrid h2 a, .patchGrid h3 a {
-	color: inherit;
-}
-
-.patchCellContent {
-	padding: 10px;
-}
-
-.patchCellContent p {
-	text-align: center;
 }
 
 /* =======
@@ -818,6 +731,20 @@ Index page
 
 .indexPropImg {
 	width: 50%;
+}
+
+/* =========
+Format page
+========= */
+
+.format-content h2 {
+	margin-top: 50px;
+	margin-bottom: 30px;
+}
+
+.format-content h3 {
+	margin-top: 30px;
+	margin-bottom: 30px;
 }
 
 /* =========
@@ -943,33 +870,109 @@ nav#dataset-menu {
 Dataset page
 ========= */
 
-.patchtable-header {
-	padding: 10px 20px;
-	border-bottom: 1px solid #ddd;
+.all-data-files {
+	margin-top: 20px;
 }
 
-.patchtable tr:nth-child(2) td {
+.data-file-wrapper {
+	margin-bottom: 20px;
+}
+
+.data-file-title {
+	background: var(--color-blue3);
+	color: var(--color-blue1);
+	font-weight: bold;
 	padding-top: 10px;
+	padding-bottom: 10px;
+	display: grid;
+	grid-template-columns: auto 1fr auto auto;
+	align-items: center;
 }
 
-/* ===========
-Datapatch page
-=========== */
+.data-file-title, .data-file-content, .data-details-wrapper {
+	padding-left: 20px;
+	padding-right: 20px;
+}
+.data-file-title .menu-icon {
+	margin-right: 20px;
+}
 
-.propertyTable {
+.data-file-title .menu-icon div {
+	width: 28px;
+	height: 3px;
+	background-color: var(--color-blue1);
+	margin: 4px 0;
+}
+
+.data-file-title .file-name {
+	font-size: 120%;
+}
+
+.data-file-title .download-button {
+	font-weight: normal;
+	margin-left: 20px;
+}
+
+.data-file-title .vot-alt-numbers {
+	font-weight: normal;
+	font-size: smaller;
+}
+
+.data-file-content {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.data-file-content p {
+	margin: 0;
+}
+
+.data-file-related-files-table {
+	margin: 7px auto;
+}
+
+.data-file-related-files-table th {
+	border-bottom: 1px #ccc solid;
+}
+
+.data-file-related-files-table td {
+	padding-left: 15px;
+	padding-right: 15px;
+}
+
+.file-details-wrapper {
+	display: grid;
+	grid-template-columns: 35% 60%;
+	align-items: center;
+}
+
+.file-details-preview .codebox {
+	margin: 0;
+	padding: 0;
+}
+
+.file-details-preview .codebox tr:not(:first-child) td {
+	padding-top: 1px;
+	padding-bottom: 1px;
+}
+
+.file-details-preview .codebox tr:last-child td {
+	padding-bottom: 5px;
+}
+.file-details-property-table {
 	margin: 0 auto;
 	border: 2px solid var(--color-blue3);
 }
 
-.propertyTable th {
+.file-details-property-table th {
 	background: var(--color-blue3);
 }
 
-.propertyTable td {
+.file-details-property-table td {
 	text-align: left;
 }
 
-.propertyTable tr td:first-child {
+.file-details-property-table tr td:first-child {
 	text-align: right;
 }
 

@@ -7,7 +7,7 @@
 	{% include 'includes/htmlheadercontent.html' %}
 	<link rel="stylesheet" type="text/css" href="{% static 'css/nouislider.css' %}"/>
 	<script src="{% static 'js/nouislider.js' %}"></script>
-	<title>Preflib</title>
+	<title>Preflib | Search</title>
 </head>
 
 <body>
@@ -28,49 +28,7 @@
 		<form method="post" action="{% url 'preflibapp:data-search' %}#results">
 			{% csrf_token %}
 
-			<div class="searchGrid3">
-
-				<div class="searchCell">
-				
-				<table>
-					<tr>
-						<th colspan="2">Category of Data</th>
-					</tr>
-					{% for cat in categories %}
-						<tr>
-							<td>{{ cat.1|title }} data</td>
-							<td>
-								<div class="triValuedSelector">
-									{% with cat.0|add:"selector" as key %}
-										{% with request.POST|key_value:key as value %}
-											<input type="radio" name="{{ cat.0 }}selector" id="{{ cat.0 }}SelectorYes" class="triValuedSelectorYes" value="yes" {% if value == "yes" %} checked {% endif %}/>
-											<label for="{{ cat.0 }}SelectorYes">&#10003;</label>
-											<input type="radio" name="{{ cat.0 }}selector" id="{{ cat.0 }}SelectorIndef" class="triValuedSelectorIndef" value="indef" {% if request.POST %}{% if value == "indef" %} checked {% endif %}{% else %}checked{% endif %}/>
-											<label for="{{ cat.0 }}SelectorIndef"><span style="vertical-align: top; font-size: 0.6em;">&#10003;</span>/<span style="vertical-align: bottom; font-size: 0.6em;">&#10007;</span></label>
-											<input type="radio" name="{{ cat.0 }}selector" id="{{ cat.0 }}SelectorNo" class="triValuedSelectorNo" value="no" {% if value == "no" %} checked {% endif %}/>
-											<label for="{{ cat.0 }}SelectorNo">&#10007;</label>
-										{% endwith %}
-									{% endwith %}
-								</div>
-							</td>
-						</tr>
-					{% endfor %}
-				</table>
-				<script>
-					{% for cat in categories %}
-						var {{ cat.0 }}selectorYes = document.getElementById('{{ cat.0 }}SelectorYes');
-						var {{ cat.0 }}selectorNo = document.getElementById('{{ cat.0 }}SelectorNo');
-						{{ cat.0 }}selectorYes.addEventListener("change", function(evt) {
-							{% for e in categories %}
-								{% if e.0 != cat.0 %}
-									{{ e.0 }}selectorNo.checked = true;
-								{% endif %}
-							{% endfor %}
-						})
-					{% endfor %}
-				</script>
-
-				</div>
+			<div class="searchGrid2">
 
 				<div class="searchCell">
 
@@ -86,7 +44,7 @@
 								</tr><tr>
 							{% endif %}
 						{% endif %}
-						<td><a href="{% url 'preflibapp:datatypes' %}#{{type.0}}" title="{{ type.1|title }}">{{ type.0 | upper }}</a></td>
+						<td><a href="{% url 'preflibapp:data-format' %}#{{type.0}}" title="{{ type.1|title }}">{{ type.0 | upper }}</a></td>
 						<td>
 							<div class="triValuedSelector">
 								{% with type.0|add:"selector" as key %}
@@ -171,7 +129,6 @@
 			<table align="center">
 				<tr>
 					<th class="headerRotate"><div><span>File</span></div></th>
-					<th class="headerRotate"><div><span>Election type</span></div></th>
 					<th class="headerRotate"><div><span>Data type</span></div></th>
 					{% for metadata in metadatas %}
 						<th class="headerRotate"><div><span>{{ metadata.search_res_name }}</span></div></th>
@@ -180,8 +137,7 @@
 				</tr>
 				{% for file in datafiles %}
 				<tr>
-					<td><a href="{% url 'preflibapp:datapatch' file.datapatch.dataset.category file.datapatch.dataset.series_number file.datapatch.series_number %}">{{ file.short_name }}</a></td>
-					<td>{{ file.datapatch.dataset.category }}</td>
+					<td><a href="{% url 'preflibapp:dataset' file.dataset.series_number %}#{{ file.short_name }}">{{ file.short_name }}</a></td>
 					<td>{{ file.data_type }}</td>
 					{% for metadata in metadatas %}
 						{% if metadata in file.metadatas.all %}
@@ -203,9 +159,7 @@
 						{% endif %}
 					{% endfor %}
 					<td>
-						{% with 'data/'|add:file.datapatch.dataset.category|add:'/'|add:file.datapatch.dataset.abbreviation|add:'/'|add:file.file_name as f %}
-							<a href="{% static f %}">Download</a>
-						{% endwith %}
+                        <a href="{% static file.file_path %}">Download</a>
 					</td>
 				</tr>
 				{% endfor %}

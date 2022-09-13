@@ -4,7 +4,7 @@
 <html>
 <head>
 	{% include 'includes/htmlheadercontent.html' %}
-	<title>Preflib</title>
+	<title>Preflib | Datasets</title>
 </head>
 
 <body>
@@ -41,10 +41,10 @@
 
 				<p class="dataset-number">{{ds.series_number}}</p>
 
-				{% if ds.tags %}
+				{% if ds.tags.all %}
 					<p class="dataset-tags">
 						{% for tag in ds.tags.all %}
-							<span class="data-tag">{{ tag.name }}</span>
+							<span title="{{ tag.description }}" class="data-tag">{{ tag.name }}</span>
 						{% endfor %}
 					</p>
 				{% endif %}
@@ -58,7 +58,7 @@
 				<p class="data-file-list">
 					Consists of {{ dsinfo.num_files }} data file{{ dsinfo.num_files|pluralize:"s" }}:
 					{% for file in dsinfo.files %}
-						<span class="data-file">{{ file.title }}</span>
+						<span class="data-file"><a href="{% url 'preflibapp:dataset' ds.series_number %}#{{ file.short_name }}">{{ file.title }}</a></span>
 					{% endfor %}
 					{% if dsinfo.num_hidden_files > 0 %}
 						and <a href="{% url 'preflibapp:dataset' ds.series_number %}">{{ dsinfo.num_hidden_files }} more</a>.

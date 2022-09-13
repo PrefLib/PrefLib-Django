@@ -37,7 +37,7 @@ METADATACATEGORIES = [
     ('general', 'general properties'),
     ('preference', 'preference structure'),
     ('ballot', 'ballot structure'),
-    # ('graph', 'graph structure')
+    ('aggregation', 'aggregtated structure')
 ]
 
 SEARCHWIDGETS = [

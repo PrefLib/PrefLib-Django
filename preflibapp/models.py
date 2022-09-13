@@ -16,12 +16,6 @@ class DataTag(models.Model):
                             verbose_name="name")
     description = models.TextField(
         verbose_name="Description of the tag")
-    parent = models.ForeignKey('DataTag',
-                               on_delete=models.CASCADE,
-                               null=True,
-                               blank=True,
-                               related_name="children",
-                               verbose_name="Parent tag")
 
     class Meta:
         ordering = ['name']
@@ -97,18 +91,18 @@ class DataFile(models.Model):
                                 related_name='files')
     file_name = models.CharField(max_length=255,
                                  unique=True)
-
     data_type = models.CharField(choices=DATATYPES,
                                  max_length=5)
     metadata = models.ManyToManyField(Metadata,
-                                      through="DataProperty")
+                                      through="DataProperty",
+                                      related_name="files")
     modification_type = models.CharField(choices=MODIFICATIONTYPES,
                                          max_length=20)
     title = models.CharField(max_length=100, blank=True)
     description = models.TextField(blank=True)
     file_path = models.CharField(max_length=1000, blank=True, unique=True)
     file_size = models.FloatField(default=0)
-    image = models.CharField(max_length=1000, blank=True)
+    image_js = models.TextField(blank=True)
     relates_to = models.ForeignKey('DataFile',
                                    on_delete=models.CASCADE,
                                    related_name='related_files',
@@ -120,7 +114,7 @@ class DataFile(models.Model):
         ordering = ['file_name']
 
     def short_name(self):
-        return self.file_name.split('.')[0][3:]
+        return self.file_name.split('.')[0]
 
     def __str__(self):
         return self.file_name

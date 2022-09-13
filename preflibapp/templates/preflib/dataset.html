@@ -5,7 +5,7 @@
 <html>
 <head>
 	{% include 'includes/htmlheadercontent.html' %}
-	<title>Preflib</title>
+	<title>Preflib | {{ dataset.name }}</title>
 </head>
 
 <body>
@@ -56,18 +56,125 @@
 	</div>
 </div>
 
-<h2>Data Files</h2>
-
 <div class="all-data-files">
-
-    {% for file in data_files %}
+    {% for file_info in files_info %}
         <div class="data-file-wrapper">
-            {{ file.file_name }}
-            <a href="{% static file.file_path %}" class="download-button">Download [{{ file.file_size|filesizeformat }}]</a>
+            <div class="data-file-title collapsible" id="{{ file_info.f.short_name }}">
+                <div class="menu-icon"><div></div><div></div><div></div></div>
+                <div class="file-name">
+                    {{ file_info.f.title }} &#8212; {{ file_info.f.file_name }}
+                </div>
+                <div class="vot-alt-numbers">
+                    {% if file_info.num_vot %}
+                        <span>
+                            {{ file_info.num_vot }} Voters{% if file_info.num_vot and file_info.num_alt %},{% endif %}
+                        </span>
+                    {% endif %}
+                    {% if file_info.num_alt %}
+                        <span>{{ file_info.num_alt }} Alternatives</span>
+                    {% endif %}
+                </div>
+                <div class="button-wrapper">
+                    <a href="{% static file_info.f.file_path %}" class="download-button">Download [{{ file_info.f.file_size|filesizeformat }}]</a>
+                </div>
+            </div>
+
+            <div class="collapsible-content" style="display: none">
+                <div class="data-file-content">
+                    {% if file_info.f.description %}
+                        <p>
+                            {{ file_info.f.description }}
+                        </p>
+                    {% endif %}
+
+                    {% if file_info.f.related_files.all %}
+                        <p>The following files are related to this file:</p>
+                        <table class="data-file-related-files-table">
+                            <tr>
+                                <th>File name</th>
+                                <th>Description</th>
+                                <th></th>
+                            </tr>
+                            {% for related_file in file_info.f.related_files.all %}
+                                <tr>
+                                    <td>{{ related_file.file_name }}</td>
+                                    <td>{{ related_file.description }}</td>
+                                    <td>
+                                        <a href="{% static related_file.file_path %}">Download [{{ related_file.file_size|filesizeformat }}]</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    {% endif %}
+
+                    {% if file_info.meta_per_cat or file_info.preview %}
+                        <p>Check the following for more details.</p>
+                    {% endif %}
+                </div>
+                <div class="file-details-wrapper">
+                    {% if file_info.meta_per_cat %}
+                        <div class="file-details-metadata">
+                            <table class="file-details-property-table">
+                                {% for category, properties in file_info.meta_per_cat.items %}
+                                    <tr>
+                                        <th colspan="2">{{ category | title }}</th>
+                                    </tr>
+                                    {% for property in properties %}
+                                        <tr>
+                                            <td>{{ property.metadata.name }}</td>
+                                            {% if property.metadata.inner_type == "bool" %}
+                                                {% if property.typed_value %}
+                                                    <td><span class="checkmark">&#x2713;</span></td>
+                                                {% else %}
+                                                    <td><span class="xmark">&#x2717;</span></td>
+                                                {% endif %}
+                                            {% else %}
+                                                <td>{{ property.value }}</td>
+                                            {% endif %}
+                                        </tr>
+                                    {% endfor %}
+                                {% endfor %}
+                            </table>
+                        </div>
+                    {% endif %}
+
+                    {% if file_info.preview %}
+                        <div class="file-details-preview">
+                            <div class='codebox'>
+                                <table>
+                                    <tbody>
+                                        <td colspan="2" class='code-line-content' style="text-align: center; font-size: 120%; font-weight: bold;">Preview of the File</td>
+                                        {% for line in file_info.preview %}
+                                            <tr>
+                                                <td class='lineNumber'>{{ line.0 }}</td>
+                                                <td class='code-line-content'>{{ line.1 }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     {% endfor %}
-
 </div>
+
+<script>
+	var coll = document.getElementsByClassName("collapsible");
+	var i;
+	for (i = 0; i < coll.length; i++) {
+		coll[i].addEventListener("click", function() {
+			var content = this.nextElementSibling;
+			if (content.style.display === "none"){
+				content.style.display = "block";
+			} else {
+				content.style.display = "none";
+			}
+		});
+	}
+</script>
 
 {% include 'includes/paginator.html' %}
 

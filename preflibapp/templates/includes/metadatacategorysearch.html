@@ -10,7 +10,7 @@
 		{% if metadata.search_widget == "ternary" %}
 			<tr>
 				<td>
-					<a href="{% url 'preflibapp:data-metadata' %}#{{metadata.short_name}}" title="{{ metadata.description}}">{{ metadata.search_question }}</a>
+					<a href="{% url 'preflibapp:data-format' %}#metadata-{{metadata.short_name}}" title="{{ metadata.description}}">{{ metadata.search_question }}</a>
 				</td>
 				<td>
 					<div class="triValuedSelector">
@@ -33,7 +33,7 @@
 			{% if metadata.search_widget == "range" %}
 				<tr>
 					<td colspan="2">
-						<a href="{% url 'preflibapp:data-metadata' %}#{{metadata.short_name}}" title="{{ metadata.description}}">{{ metadata.search_question }}</a> <input id="{{ metadata.short_name }}_slider_value_min" class="valueInput" name="{{ metadata.short_name }}_slider_value_min"> - <input id="{{ metadata.short_name }}_slider_value_max" class="valueInput" name="{{ metadata.short_name }}_slider_value_max">
+						<a href="{% url 'preflibapp:data-format' %}#metadata-{{metadata.short_name}}" title="{{ metadata.description}}">{{ metadata.search_question }}</a> <input id="{{ metadata.short_name }}_slider_value_min" class="valueInput" name="{{ metadata.short_name }}_slider_value_min"> - <input id="{{ metadata.short_name }}_slider_value_max" class="valueInput" name="{{ metadata.short_name }}_slider_value_max">
 					</td>
 				</tr>
 				<tr>
