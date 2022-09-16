@@ -15,30 +15,83 @@
 	<div class="side-by-side-wrapper">
 		<div>
 			<h1>PrefLib</h1>
-			<p>PrefLib is a reference library of preference data and links assembled by <a href="http://www.nickmattei.net">Nicholas Mattei</a>, <a href="http://www.cse.unsw.edu.au/~tw/">Toby Walsh</a> and lately <a href="http://simonrey.fr">Simon Rey</a>. This site and library is proudly supported by the <a href="https://research.csiro.au/adt/">Algorithmic Decision Theory group</a> at <a href="https://www.data61.csiro.au/">Data61</a> and the <a href="https://staff.science.uva.nl/u.endriss/group.php">The COMSOC Group at the University of Amsterdam</a>.</p>
+			<p>
+                PrefLib is a reference library of preference data maintained by
+                <a href="http://www.nickmattei.net">Nicholas Mattei</a> and <a href="http://simonrey.fr">Simon Rey</a>.
+                This website was originally developed by <a href="http://www.nickmattei.net">Nicholas Mattei</a> and
+                <a href="http://www.cse.unsw.edu.au/~tw/">Toby Walsh</a>.
+            </p>
 
-			<p>We want to provide a comprehensive resource for the multiple research communities that deal with preferences, including computational social choice, recommender systems, data mining, machine learning, and combinatorial optimization, to name just a few. </p>
+            <p>
+                We aim at providing a comprehensive resource for the multiple research communities that deal with preferences:
+                computational social choice, recommender systems, data mining, machine learning, combinatorial optimization, to name just a few.
+            </p>
 
-			<p> For more information on PrefLib and some helpful tips on using it, please see Nick's Tutorial <a href="http://www.explore14.preflib.org/?page_id=11">Slides and Code</a> from <a href="http://www.explore14.preflib.org/">EXPLORE 2014</a>.
+            <p>
+                The strength of PrefLib is to provide carefully curated data formatted in a unified format. We encourage
+                the users to read the <a href="{% url 'preflibapp:data-format' %}">detailed explanations</a> that we
+                provide regarding the format and the modelisation choices. Once everything is clear, feel free to
+                <a href="{% url 'preflibapp:all-datasets' %}">explore the datassets</a> we are hosting, or to
+                <a href="{% url 'preflibapp:data-search' %}">search for specific files</a> that may interest you.
+            </p>
 
-			<p> Please see the <a href="{% url 'preflibapp:about' %}">about</a> page for information about the site, contacting us, and our citation policy. We rely on the support of the community in order to grow the usefulness of this site. To contribute, please contact <a href="http://www.nickmattei.net">Nicholas Mattei</a> at: nsmattei{at}gmail or <a href="http://simonrey.fr">Simon Rey</a> at: s.j.rey{at}uva{dot}nl. </p>
+            <h2 class="left-aligned white-background" id="prefib-tools">PrefLib-Tools</h2>
 
-			{% if random_file_with_image %}
-                {% with random_file_with_image.datapatch.dataset as dataset %}
-                    <p id="center_p" style="margin-top: 50px;">
-                        {% with 'data/'|add:dataset.category|add:'/'|add:dataset.abbreviation|add:'/img/'|add:random_file_with_image.image as img_file %}
-                            <a href="{% url 'preflibapp:datapatch' dataset.category dataset.series_number random_file_with_image.datapatch.series_number %}">
-                                <img src="{% static img_file %}" class="indexPropImg">
-                            </a>
-                        {% endwith %}
-                    </p>
-                {% endwith %}
+            <p>
+                Providing data is only the first step, the next one being actually using the data. To help you with that,
+                we provide a Python library specifically designed to work with PrefLib instances: the
+                <a href="http://github.com/PrefLib/PrefLib-Tools">PrefLib-Tools</a>.
+            </p>
 
-				<p id="center_p">
-					<a href="{% url 'preflibapp:datapatch' random_file_with_image.datapatch.dataset.category random_file_with_image.datapatch.dataset.series_number random_file_with_image.datapatch.series_number %}">{{ random_file_with_image.file_name }}</a> from the <a href="{% url 'preflibapp:dataset' random_file_with_image.datapatch.dataset.category random_file_with_image.datapatch.dataset.series_number %}">{{ random_file_with_image.datapatch.dataset.name }} dataset</a>
-				</p>
-			{% endif %}
+            <p>
+                Have a look at the <a href="http://github.com/PrefLib/PrefLib-Tools">PrefLib-Tools</a>, where you can
+                download the code; and check out the <a href="http://docs.preflib.org">documentation</a>!
+            </p>
 
+            <h2 class="left-aligned white-background">Data Usage and Citation Policy</h2>
+
+            <p>
+                Constructing and maintaining this website and its database require a lot of work. We ask that you
+                provide a reference to our repository when publishing research based on data gathered here. Here are
+                some references you can use.
+            </p>
+            <ul>
+                <li>
+                    Nicholas Mattei and Toby Walsh. PrefLib: A Library of Preference Data. Proceedings of Third
+                    International Conference on Algorithmic Decision Theory (ADT 2013).
+                    <a href="{% static 'preflibADTPaper.pdf' %}">PDF file</a>
+                    <a href="{% static 'preflibADTCite.txt' %}" target="_blank">Bibtex citation</a>
+                </li>
+
+                <li>
+                    Nicholas Mattei and Toby Walsh. A Preflib.org Retrospective: Lessons Learned and New Directions.
+                    Trends in Computational Social Choice.
+                    <a href="{% static 'preflibTrendsComSoCChapter.pdf' %}">PDF file</a>
+                    <a href="{% static 'preflibTrendsComSoCCite.txt' %}" target="_blank">Bibtex citation</a>
+                </li>
+            </ul>
+
+            <p>
+                In addition, many dataset have specific citation requirements. Make sure to always include them whenever
+                you used a file taken from such a dataset (especially if you downloaded aggregated data files).
+            </p>
+
+            <h2 class="left-aligned white-background">Contributing to PrefLib</h2>
+
+            <p>
+                We rely on the support of the community in order to increase the usefulness and coverage of this site.
+                If you want to donate a new dataset, report an issue with an existing dataset, or suggest changes to
+                the website, several GitHub repository are at your disposal. please go to the <a href="https://github.com/PrefLib/contribution">Contribution GitHub</a> and open a new issue. Once the issue has been created, one of the maintainers will work with you on formatting data or servicing the issue. We will host the data set and work with you on keeping it up to date.
+            </p>
+            <ul>
+                <li><a href="https://github.com/PrefLib/contribution">PrefLib-Contrib</a>: used as a discussion platform around PrefLib.</li>
+                <li><a href="https://github.com/PrefLib/PrefLib-Data">PrefLib-Data</a>: hosts the (raw) data and the related scripts.</li>
+                <li><a href="https://github.com/PrefLib/PrefLib-Django">PrefLib-Django</a> hosts the <a href="https://www.djangoproject.com/">Django</a> project for the website.</li>
+                <li><a href="http://github.com/PrefLib/PrefLib-Tools">PrefLib-Tools</a> hosts the code for the <a href="#prefib-tools">PrefLib-Tools</a>.</li>
+            </ul>
+            <p>
+                If you need anything, have a lot at those repositories, open new issues, comments, like and subscribe!
+            </p>
 		</div>
 
 		<div class="side-by-side-right">
@@ -109,7 +162,7 @@
 </div>
 
 <div class="content">
-	<h2 class="noBorder">Some Tools to Work with Preferences</h2>
+	<h2 class="white-background">Some Tools to Work with Preferences</h2>
 
 	<p>Empirical experiments with real data are becoming a more fundamental part of work in computational social choice. In addition to a lightweight set of tools for working with data from PrefLib we also host documentation for several of these project. Please contact Nick if you have code that you would like to share with the community.</p>
 

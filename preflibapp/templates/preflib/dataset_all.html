@@ -17,6 +17,22 @@
 
 {% if datasets %}
 
+    <p>
+        Below you can find all the datasets. You can order them differently and filter them by tag easily.
+    </p>
+
+    </div>
+    <div class="content">
+        <div class="tag-filter-wrapper center">
+            <p class="center">
+                {% for tag in tags %}
+                    <span class="tag-filter-tag tag-filter-active-tag" title="{{ tag.description }}" datatag="{{ tag.name }}">{{ tag.name }}</span>
+                {% endfor %}
+            </p>
+        </div>
+    </div>
+    <div class="content">
+
 	<p>
         Sort by:
         <a href="javascript:sortByName()" id="sort-name" style="font-weight: bold;">Dataset name (A-Z)</a> &middot;
@@ -27,8 +43,10 @@
 	<section id="section-datasets">
 	<nav id="dataset-menu">
 		<ul>
-			{% for ds in datasets %}
-				<li data-number="{{ds.series_number}}" data-name="{{ds.name}}"><a href="#{{ds.series_number}}">{{ ds.name }}</a></li>
+        	{% for dsinfo in dataset_info %}
+		    	<li data-number="{{dsinfo.ds.series_number}}" data-name="{{dsinfo.ds.name}}" data-tags="{{ dsinfo.tags }}" class="dataset-menu-item">
+                    <a href="#{{dsinfo.ds.series_number}}">{{ dsinfo.ds.name }}</a>
+                </li>
 			{% endfor %}
 		</ul>
 	</nav>
@@ -36,7 +54,7 @@
 	<ul id="dataset-list">
 	{% for dsinfo in dataset_info %}
 		{% with dsinfo.ds as ds %}
-			<li id="{{ ds.series_number }}" data-number="{{ ds.series_number }}" data-name="{{ ds.name }}">
+			<li id="{{ ds.series_number }}" data-number="{{ ds.series_number }}" data-name="{{ ds.name }}" data-tags="{{ dsinfo.tags }}" class="dataset-list-item">
 				<h2 class="dataset-title"><a href="{% url 'preflibapp:dataset' ds.series_number %}" id="{{ ds.series_number }}_title">{{ ds.name }}</a></h2>
 
 				<p class="dataset-number">{{ds.series_number}}</p>
@@ -134,10 +152,12 @@
 
 			// figure out where we are
 			document.querySelectorAll("#dataset-list > li").forEach((section) => {
-				const sectionTop = section.offsetTop;
-				if (scrollY >= sectionTop - 122) {
-					current = section.dataset.number;
-				}
+                if (section.style.display !== "none") {
+                    const sectionTop = section.offsetTop;
+                    if (scrollY >= sectionTop - 122) {
+                        current = section.dataset.number;
+                    }
+                }
 			});
 
 			// show current element in menu
@@ -156,6 +176,49 @@
 			};
 		});
 
+        // Tag filter
+        function toggleTag(tagSpan) {
+            var tag = tagSpan.getAttribute('datatag')
+            var datasets = document.getElementsByClassName('dataset-list-item');
+            var menuitems = document.getElementsByClassName('dataset-menu-item');
+            if (tagSpan.classList.contains('tag-filter-active-tag')) {
+                // Deactivating datasets
+                tagSpan.classList.remove('tag-filter-active-tag');
+                tagSpan.classList.add('tag-filter-inactive-tag');
+                for (var i = 0, len = datasets.length; i < len; i++) {
+                    if (datasets[i].getAttribute('data-tags').includes(tag)) {
+                        datasets[i].style.display = "none";
+                    }
+                }
+                for (var i = 0, len = menuitems.length; i < len; i++) {
+                    if (menuitems[i].getAttribute('data-tags').includes(tag)) {
+                        menuitems[i].style.display = "none";
+                    }
+                }
+            } else {
+                // Activating datasets
+                tagSpan.classList.add('tag-filter-active-tag');
+                tagSpan.classList.remove('tag-filter-inactive-tag');
+                for (var i = 0, len = datasets.length; i < len; i++) {
+                    if (datasets[i].getAttribute('data-tags').includes(tag)) {
+                        datasets[i].style.display = "block";
+                    }
+                }
+                for (var i = 0, len = menuitems.length; i < len; i++) {
+                    if (menuitems[i].getAttribute('data-tags').includes(tag)) {
+                        menuitems[i].style.display = "block";
+                    }
+                }
+            }
+            updateDatasetMenu();
+        }
+        var tags = document.getElementsByClassName('tag-filter-tag');
+
+        for (var i = 0, len = tags.length; i < len; i++) {
+            tags[i].addEventListener('click', function () {
+                toggleTag(this)
+            })
+        }
 	</script>
 
 {% else %}

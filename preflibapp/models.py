@@ -40,7 +40,7 @@ class DataSet(models.Model):
                                   blank=True,
                                   verbose_name="tags appliying to the dataset")
     required_citations = models.TextField(blank=True, verbose_name="HTML code describing the required citations")
-    selected_studies = models.TextField()
+    selected_studies = models.TextField(blank=True)
     publication_date = models.DateField()
     modification_date = models.DateField(auto_now=True)
 

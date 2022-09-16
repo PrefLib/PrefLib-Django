@@ -480,6 +480,15 @@ h2 span {
 	font-weight: normal;
 }
 
+.left-aligned {
+	text-align: left;
+	margin-left: 0;
+	padding-left: 0;
+}
+
+.white-background {
+	background: white;
+}
 
 h3 {
 	color: var(--color-blue1);
@@ -776,6 +785,10 @@ ul#dataset-list > li:not(:first-child) {
 	margin-top: 40px;
 }
 
+ul#dataset-list > li:first-child > h2 {
+	margin-top: 0;
+}
+
 ul#dataset-list .dataset-number {
 	font-size: 100%;
 	margin-top: 0;
@@ -808,7 +821,7 @@ ul#dataset-list .dataset-description {
 .dataset-tags .data-tag {
 	font-size: 80%;
 	background-color: var(--color-blue3);
-	box-shadow: 0px 0px 1px 0px var(--color-blue1);
+	box-shadow: 0 0 1px 0 var(--color-blue1);
 	padding: 2px 3px;
 	border-radius: 3px;
 
@@ -831,6 +844,31 @@ nav#dataset-menu {
 	display: none;
 }
 
+.tag-filter-wrapper {
+	margin: 0 auto;
+	padding: 10px 0;
+}
+
+.tag-filter-tag {
+	box-shadow: 0 0 1px 0 var(--color-blue1);
+	padding: 6px 6px;
+	border-radius: 3px;
+}
+
+.tag-filter-tag:not(:first-child) {
+	margin-left: 10px;
+}
+
+.tag-filter-active-tag {
+	background-color: var(--color-blue2);
+	color: white;
+}
+
+.tag-filter-inactive-tag {
+	background-color: #cccccc;
+	color: black;
+
+}
 @media screen and (min-width: 1100px) {
 	#section-datasets {
 		display: grid;
@@ -1093,7 +1131,7 @@ th.headerRotate > div {
 	width: 30px;
 }
 
-span.resNone {
+span.res-none {
 	display: inline-block;
 	width: 1.5em;
 	height: 1.5em;
@@ -1104,7 +1142,7 @@ span.resNone {
 	color: white;
 }
 
-span.resYes {
+span.res-yes {
 	display: inline-block;
 	width: 1.5em;
 	height: 1.5em;
@@ -1115,7 +1153,7 @@ span.resYes {
 	color: white;
 }
 
-span.resNo {
+span.res-no {
 	display: inline-block;
 	width: 1.5em;
 	height: 1.5em;

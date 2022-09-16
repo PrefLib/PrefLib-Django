@@ -75,7 +75,7 @@ def initialize_metadata():
                            "graphs",
             "is_active": True,
             "is_displayed": True,
-            "applies_to": ",".join([t[0] for t in DATATYPES]),
+            "applies_to": 'soc,soi,toc,toi,wmd',
             "inner_module": "preflibtools.properties.basic",
             "inner_function": "num_voters",
             "inner_type": "int",

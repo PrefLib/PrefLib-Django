@@ -119,6 +119,7 @@ def data_format(request):
 
 @cache_page(CACHE_TIME)
 def all_datasets(request):
+    tags = set()
     datasets = DataSet.objects.filter().order_by('name')
     dataset_info = []
     for ds in datasets:
@@ -130,8 +131,11 @@ def all_datasets(request):
             "num_files": len(files),
             "num_hidden_files": max(0, len(files) - max_files_displayed),
             "zip_file": ds.zip_file_path,
-            "zip_file_size": ds.zip_file_size
+            "zip_file_size": ds.zip_file_size,
+            "tags": ",".join(ds.tags.values_list('name', flat=True))
         })
+        for tag in ds.tags.all():
+            tags.add(tag)
     return my_render(request, os.path.join('preflib', 'dataset_all.html'), locals())
 
 
@@ -252,12 +256,6 @@ def data_search(request):
     all_files = all_files.order_by('file_name', 'data_type')
     (paginator, datafiles, page, pages_before, pages_after) = get_paginator(request, all_files, page_size=40)
     return my_render(request, os.path.join('preflib', 'datasearch.html'), locals())
-
-
-# About views
-@cache_page(CACHE_TIME)
-def about(request):
-    return my_render(request, os.path.join('preflib', 'about.html'))
 
 
 # Tools views

@@ -109,7 +109,7 @@
 
 			</div>
 
-			<p id="center_p">
+			<p class="center">
 				<input id="submit_button" type="submit" value="Search" class="downloadButtons"/>
 			</p>
 			
@@ -140,14 +140,14 @@
 					<td><a href="{% url 'preflibapp:dataset' file.dataset.series_number %}#{{ file.short_name }}">{{ file.short_name }}</a></td>
 					<td>{{ file.data_type }}</td>
 					{% for metadata in metadatas %}
-						{% if metadata in file.metadatas.all %}
+						{% if metadata in file.metadata.all %}
 							{% with file.dataproperty_set|get_prop_from_file:metadata as property %}
 								{% if metadata.inner_type == "bool" %}
 									<td>
 										{% if property.typed_value %}
-											<span class="resYes">&#10003;</span>
+											<span class="res-yes">&#10003;</span>
 										{% else %}
-											<span class="resNo">&#10007;</span>
+											<span class="res-no">&#10007;</span>
 										{% endif %}
 									</td>
 								{% else %}
@@ -155,7 +155,7 @@
 								{% endif %}
 							{% endwith %}
 						{% else %}
-							<td><span class="resNone">?</span></td>
+							<td><span class="res-none">?</span></td>
 						{% endif %}
 					{% endfor %}
 					<td>

@@ -13,8 +13,6 @@ urlpatterns = [
 
     re_path(r'^data/search/?$', views.data_search, name="data-search"),
 
-    re_path(r'^about/?$', views.about, name='about'),
-
     re_path(r'^tools/ivs/?$', views.tools_IVS, name='tools-IVS'),
     re_path(r'^tools/kdg/?$', views.tools_KDG, name='tools-KDG'),
     re_path(r'^tools/cris/?$', views.tools_CRIS, name='tools-CRIS'),

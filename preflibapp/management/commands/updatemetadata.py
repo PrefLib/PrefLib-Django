@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand
 from django.contrib.staticfiles import finders
 from django.core import management
 from django.utils import timezone
-from django.db.models import Max
+from django.db.models import Max, Count
 from django.conf import settings
 from random import shuffle
 
@@ -15,13 +15,11 @@ import traceback
 import os
 
 
-def update_dataprop(datafile):
+def update_dataprop(datafile, metadata):
     # Easy access to the dataset containing the datafile
     dataset = datafile.dataset
     # Finding the actual file referred by the datafile and parsing it
     preflib_instance = PreflibInstance(finders.find(datafile.file_path))
-    # Selecting only the active metadata
-    metadata = Metadata.objects.filter(is_active=True)
     for m in metadata:
         if datafile.data_type in m.applies_to_list():
             # If the metadata applies to the datafile we compute its value and save it
@@ -41,6 +39,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('--abb', nargs='*', type=str)
         parser.add_argument('--all', action='store_true')
+        parser.add_argument('--meta', nargs='*', type=str)
 
     def handle(self, *args, **options):
         if not options['all'] and not options['abb']:
@@ -70,7 +69,15 @@ class Command(BaseCommand):
             if options['all']:
                 options['abb'] = DataSet.objects.values_list('abbreviation', flat=True)
 
-            datafiles = DataFile.objects.filter(dataset__abbreviation__in=options["abb"])
+            datafiles = DataFile.objects.filter(dataset__abbreviation__in=options["abb"]).annotate(num_props=Count('metadata')).order_by('num_props')
+
+            metadata = Metadata.objects.filter(is_active=True)
+            if 'meta' in options:
+                metadata = metadata.filter(short_name__in=options['meta'])
+                print("Only considering {}".format(options['meta']))
+
+            relevant_types = set(','.join(metadata.values_list('applies_to', flat=True).distinct()).split(','))
+            datafiles = datafiles.filter(data_type__in=relevant_types)
 
             # Starting the real stuff
             log = ["<h4> Updating the metadata #" + str(new_log_num) + " - " + str(timezone.now()) + "</h4>\n<p><ul>"]
@@ -78,7 +85,7 @@ class Command(BaseCommand):
             for datafile in datafiles:
                 print("\nData file " + str(datafile.file_name) + "...")
                 log.append("\n\t<li>Data file " + str(datafile.file_name) + "... ")
-                update_dataprop(datafile)
+                update_dataprop(datafile, metadata)
                 log.append(" ... done.</li>\n")
 
             # Closing the log
