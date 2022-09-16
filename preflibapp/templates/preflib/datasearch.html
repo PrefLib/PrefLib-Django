@@ -28,16 +28,16 @@
 		<form method="post" action="{% url 'preflibapp:data-search' %}#results">
 			{% csrf_token %}
 
-			<div class="searchGrid2">
+			<div class="searchGrid3">
 
 				<div class="searchCell">
 
 				<table>
 					<tr>
-						<th colspan="6">Type of Data</th>
+						<th colspan="4">Type of Data</th>
 					</tr>
 					{% for type in types %}
-						{% if forloop.counter0|divisibleby:3 %}
+						{% if forloop.counter0|divisibleby:2 %}
 							{% if forloop.counter0 == 0 %}
 								<tr>
 							{% else %}
@@ -65,6 +65,7 @@
 					{% for type in types %}
 						var {{ type.0 }}selectorYes = document.getElementById('{{ type.0 }}selectorYes');
 						var {{ type.0 }}selectorNo = document.getElementById('{{ type.0 }}selectorNo');
+						var {{ type.0 }}selectorIndef = document.getElementById('{{ type.0 }}selectorIndef');
 						{{ type.0 }}selectorYes.addEventListener("change", function(evt) {
 							{% for t in types %}
 								{% if t.0 != type.0 %}
@@ -72,10 +73,70 @@
 								{% endif %}
 							{% endfor %}
 						})
+                        {{ type.0 }}selectorIndef.addEventListener("change", function() {
+                            {% for t in types %}
+                                {% if t.0 != type.0 %}
+                                    if ({{ t.0 }}selectorYes.checked) {
+                                        {{ t.0 }}selectorIndef.checked = true;
+                                    }
+                                {% endif %}
+                            {% endfor %}
+                        })
 					{% endfor %}
 				</script>
 
 				</div>
+
+                <div class="searchCell">
+
+                    <table>
+                        <tr>
+                            <th colspan="2">Modification Type</th>
+                        </tr>
+                        {% for modif_type in modification_types %}
+                            <tr>
+                                <td><a href="{% url 'preflibapp:data-format' %}#modification">{{ modif_type.0 }}</a> </td>
+                                <td>
+                                    <div class="triValuedSelector">
+                                        {% with modif_type.0|add:"selector" as key %}
+                                            {% with request.POST|key_value:key as value %}
+                                                <input type="radio" name="{{ modif_type.0 }}selector" id="{{ modif_type.0 }}selectorYes" class="triValuedSelectorYes" value="yes" {% if value == "yes" %} checked {% endif %}/>
+                                                <label for="{{ modif_type.0 }}selectorYes">&#10003;</label>
+                                                <input type="radio" name="{{ modif_type.0 }}selector" id="{{ modif_type.0 }}selectorIndef" class="triValuedSelectorIndef" value="indef" {% if request.POST %}{% if value == "indef" %} checked {% endif %}{% else %}checked{% endif %}/>
+                                                <label for="{{ modif_type.0 }}selectorIndef"><span style="vertical-align: top; font-size: 0.6em;">&#10003;</span>/<span style="vertical-align: bottom; font-size: 0.6em;">&#10007;</span></label>
+                                                <input type="radio" name="{{ modif_type.0 }}selector" id="{{ modif_type.0 }}selectorNo" class="triValuedSelectorNo" value="no" {% if value == "no" %} checked {% endif %}/>
+                                                <label for="{{ modif_type.0 }}selectorNo">&#10007;</label>
+                                            {% endwith %}
+                                        {% endwith %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                    <script>
+                        {% for modif_type in modification_types %}
+                            var {{ modif_type.0 }}selectorYes = document.getElementById('{{ modif_type.0 }}selectorYes');
+                            var {{ modif_type.0 }}selectorNo = document.getElementById('{{ modif_type.0 }}selectorNo');
+                            var {{ modif_type.0 }}selectorIndef = document.getElementById('{{ modif_type.0 }}selectorIndef');
+                            {{ modif_type.0 }}selectorYes.addEventListener("change", function() {
+                                {% for mt in modification_types %}
+                                    {% if mt.0 != modif_type.0 %}
+                                        {{ mt.0 }}selectorNo.checked = true;
+                                    {% endif %}
+                                {% endfor %}
+                            })
+                            {{ modif_type.0 }}selectorIndef.addEventListener("change", function() {
+                                {% for mt in modification_types %}
+                                    {% if mt.0 != modif_type.0 %}
+                                        if ({{ mt.0 }}selectorYes.checked) {
+                                            {{ mt.0 }}selectorIndef.checked = true;
+                                        }
+                                    {% endif %}
+                                {% endfor %}
+                            })
+                        {% endfor %}
+                    </script>
+                </div>
 
 				<div class="searchCell">
 
@@ -130,6 +191,7 @@
 				<tr>
 					<th class="headerRotate"><div><span>File</span></div></th>
 					<th class="headerRotate"><div><span>Data type</span></div></th>
+					<th class="headerRotate"><div><span>Modif. type</span></div></th>
 					{% for metadata in metadatas %}
 						<th class="headerRotate"><div><span>{{ metadata.search_res_name }}</span></div></th>
 					{% endfor %}
@@ -139,6 +201,7 @@
 				<tr>
 					<td><a href="{% url 'preflibapp:dataset' file.dataset.series_number %}#{{ file.short_name }}">{{ file.short_name }}</a></td>
 					<td>{{ file.data_type }}</td>
+					<td>{{ file.modification_type }}</td>
 					{% for metadata in metadatas %}
 						{% if metadata in file.metadata.all %}
 							{% with file.dataproperty_set|get_prop_from_file:metadata as property %}

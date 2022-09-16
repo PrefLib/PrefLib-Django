@@ -849,6 +849,9 @@ nav#dataset-menu {
 	padding: 10px 0;
 }
 
+.tag-filter-wrapper p {
+	line-height: 220%;
+}
 .tag-filter-tag {
 	box-shadow: 0 0 1px 0 var(--color-blue1);
 	padding: 6px 6px;
@@ -1024,7 +1027,7 @@ Data search page
 
 .searchGrid3 {
 	display: grid;
-	grid-template-columns: 2fr 3fr 2fr;
+	grid-template-columns: 2fr 1fr 2fr;
 	grid-column-gap: 2%;
 	width: 100%;
 }
@@ -1046,6 +1049,8 @@ Data search page
 .searchCell table {
 	border-collapse: collapse;
 	width: 100%;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 .searchCell table th {

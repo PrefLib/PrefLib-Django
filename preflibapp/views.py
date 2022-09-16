@@ -192,6 +192,7 @@ def data_search(request):
     types = copy.deepcopy(DATATYPES)
     types.remove(('dat', 'extra data file'))
     types.remove(('csv', 'comma-separated values'))
+    modification_types = MODIFICATIONTYPES
     metadatas = Metadata.objects.filter(is_active=True, is_displayed=True)
 
     metadata_slider_values = {}
@@ -231,6 +232,16 @@ def data_search(request):
             elif request.POST.get(t[0] + 'selector') == "yes":
                 datatype_filter = [x for x in datatype_filter if x == t[0]]
         all_files = all_files.filter(data_type__in=datatype_filter)
+
+        modiftype_filer = [mt[0] for mt in modification_types]
+        for mt in modification_types:
+            if request.POST.get(mt[0] + 'selector') == "no":
+                if mt[0] in modiftype_filer:
+                    modiftype_filer.remove(mt[0])
+            elif request.POST.get(mt[0] + 'selector') == "yes":
+                modiftype_filer = [x for x in modiftype_filer if x == mt[0]]
+        all_files = all_files.filter(modification_type__in=modiftype_filer)
+
 
         for m in metadatas:
             if m.search_widget == "ternary":
