@@ -1,7 +1,7 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     {% include 'includes/htmlheadercontent.html' %}
 	<title>Preflib | Format</title>
@@ -54,7 +54,7 @@
 
 <h3 id="soc">SOC - Strict Orders - Complete List</h3>
 
-<p class="center"><img src="{% static 'types/soc.png' %}" width="25%"></p>
+<p class="center"><img src="{% static 'types/soc.png' %}" width="25%" alt="Illustration of the SOC type"></p>
 
 <p>
     The SOC extension contains <a href="https://en.wikipedia.org/wiki/Preference_(economics)">preferences</a>
@@ -67,7 +67,7 @@
 
 <h3 id="soi">SOI - Strict Orders - Incomplete List</h3>
 
-<p class="center"><img src="{% static 'types/soi.png' %}" width="25%"></p>
+<p class="center"><img src="{% static 'types/soi.png' %}" width="25%" alt="Illustration of the SOI type"></p>
 
 <p>
     The SOI extension contains <a href="https://en.wikipedia.org/wiki/Preference_(economics)">preferences</a>
@@ -80,7 +80,7 @@
 
 <h3 id="toc">TOC - Orders with Ties - Complete List</h3>
 
-<p class="center"><img src="{% static 'types/toc.png' %}" width="25%"></p>
+<p class="center"><img src="{% static 'types/toc.png' %}" width="25%" alt="Illustration of the TOC type"></p>
 
 <p>
     The TOC extension contains <a href="https://en.wikipedia.org/wiki/Preference_(economics)">preferences</a>
@@ -92,7 +92,7 @@
 
 <h3 id="toi">TOI - Orders with Ties - Incomplete List</h3>
 
-<p class="center"><img src="{% static 'types/toi.png' %}" width="25%"></p>
+<p class="center"><img src="{% static 'types/toi.png' %}" width="25%" alt="Illustration of the TOI type"></p>
 
 <p>
     The TOI extension contains <a href="https://en.wikipedia.org/wiki/Preference_(economics)">preferences</a>
@@ -103,9 +103,23 @@
 
 <p class="center"><a href="{% static 'data/types/toi.zip' %}" class="download-button">Download all the TOI data files</a></p>
 
+<h3 id="cat">CAT - Categorial Preferences</h3>
+
+<p class="center"><img src="{% static 'types/cat.png' %}" width="25%" alt="Illustration of the CAT type"></p>
+
+<p>
+    Files with a CAT extension describe categorical preferences. In this domain, voters are asked to position all the
+    alternatives into pre-determined categories, for instance the categories &ldquo;Yes&rdquo;, &ldquo;Maybe&rdquo;,
+    and &ldquo;No&rdquo;. There exists an underlying ranking over the categories that determine the voters' preferences.
+    Note that these preferences are closely related to the ordinal ones described above, except they allow for some
+    categories to be empty.
+</p>
+
+<p class="center"><a href="{% static 'data/types/cat.zip' %}" class="download-button">Download all the CAT data files</a></p>
+
 <h3 id="wmd">WMD - Weighted Matching Data</h3>
 
-<p class="center"><img src="{% static 'types/wmd.png' %}" width="25%"></p>
+<p class="center"><img src="{% static 'types/wmd.png' %}" width="25%" alt="Illustration of the WMD type"></p>
 
 <p>
     Files with a WMD extension describe a set of weighted matching data. These are weighted directed graphs, i.e., a

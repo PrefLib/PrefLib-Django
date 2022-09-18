@@ -1,9 +1,11 @@
 from django.core.management.base import BaseCommand
 from django.contrib.staticfiles import finders
-from django.utils import timezone
 from django.db.models import Max
 
+import preflibapp
+
 from preflibapp.models import *
+from preflibapp.preflibtools.instances.preflibinstance import OrdinalInstance, MatchingInstance
 
 import traceback
 import shutil
@@ -79,10 +81,9 @@ class Command(BaseCommand):
                 # Write the info file
                 self.write_info_file(dataset, ds_dir)
 
-                # Copy the data files to the folder
+                # Writting the file
                 for datafile in dataset.files.all():
-                    shutil.copyfile(os.path.join(data_dir, datafile.file_path),
-                                    os.path.join(ds_dir, datafile.file_name.split('-')[2]))
+                    self.write_datafile(datafile, ds_dir)
 
             # Finalizing the log
             log.append("</ul>\n<p>The datasets have been successfully written. It took ")
@@ -121,10 +122,31 @@ class Command(BaseCommand):
 
             f.write("file_name, modification_type, relates_to, title, description, publication_date\n")
             for data_file in dataset.files.all():
-                f.write("{}, {}, {}, {}, {}, {}\n".format(data_file.file_name,
+                f.write("{}, {}, {}, {}, {}, {}\n".format(data_file,
                                                           data_file.modification_type,
                                                           '' if data_file.relates_to is None else data_file.relates_to,
                                                           escape_comas(data_file.title),
                                                           escape_comas(data_file.description),
                                                           data_file.publication_date))
             f.close()
+
+    @staticmethod
+    def write_datafile(datafile, ds_dir):
+        if datafile.data_type in ['soc', 'soi', 'toc', 'toi']:
+            instance = OrdinalInstance(os.path.join(os.path.dirname(preflibapp.__file__), "static", datafile.file_path))
+        elif datafile.data_type == 'wmd':
+            instance = MatchingInstance(os.path.join(os.path.dirname(preflibapp.__file__), "static", datafile.file_path))
+        else:
+            shutil.copy(os.path.join(os.path.dirname(preflibapp.__file__), "static", datafile.file_path),
+                        os.path.join(ds_dir, datafile.file_name))
+            return
+        instance.modification_type = datafile.modification_type
+        if datafile.relates_to:
+            instance.relates_to = datafile.relates_to.file_name
+        if datafile.related_files.all():
+            instance.related_files = ','.join([df.file_name for df in datafile.related_files.all()])
+        instance.title = datafile.title
+        instance.description = datafile.description
+        instance.publication_date = str(datafile.publication_date)
+        instance.modification_date = str(datafile.modification_date)
+        instance.write(os.path.join(ds_dir, datafile.file_name))

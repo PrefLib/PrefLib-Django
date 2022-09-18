@@ -20,7 +20,7 @@ def pairwise_scores(instance):
                 # Every alternative appearing before are beating the ones in the current indifference class
                 for alt_beaten in indif_class:
                     for alt_winning in alternatives_before:
-                        scores[alt_winning][alt_beaten] += instance.order_multiplicity[order]
+                        scores[alt_winning][alt_beaten] += instance.multiplicity[order]
                 alternatives_before += [alt for alt in indif_class]
         return scores
 
@@ -43,8 +43,8 @@ def copeland_scores(instance):
                 # Every alternative appearing before are beating the ones in the current indifference class
                 for alt_beaten in indif_class:
                     for alt_winning in alternatives_before:
-                        scores[alt_winning][alt_beaten] += instance.order_multiplicity[order]
-                        scores[alt_beaten][alt_winning] -= instance.order_multiplicity[order]
+                        scores[alt_winning][alt_beaten] += instance.multiplicity[order]
+                        scores[alt_beaten][alt_winning] -= instance.multiplicity[order]
                 alternatives_before += [alt for alt in indif_class]
         return scores
 
@@ -67,14 +67,14 @@ def has_condorcet(instance):
                 return True
         return False
     if instance.data_type in ["tog", "wmg", "mjg"]:
-        for n in instance.graph.dict:
-            if len(instance.graph.neighbours(n)) == len(instance.graph.dict) - 1:
+        for n in instance.graph.node_mapping:
+            if len(instance.graph.neighbours(n)) == len(instance.graph.node_mapping) - 1:
                 return True
         return False
     if instance.data_type == "pwg":
-        for n in instance.graph.dict:
+        for n in instance.graph.node_mapping:
             can_be_condorcet = True
-            for m in instance.graph.dict:
+            for m in instance.graph.node_mapping:
                 if n != m:
                     if (n, m) in instance.graph.weight and (m, n) in instance.graph.weight:
                         if instance.graph.weight[(n, m)] < instance.graph.weight[(m, n)]:
@@ -159,7 +159,7 @@ def num_different_orders(instance):
         :return: The number of different orders of the instance.
         :rtype: int
     """
-    return instance.num_unique_order
+    return instance.num_unique_orders
 
 
 def largest_ballot(instance):

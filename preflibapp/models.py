@@ -1,5 +1,6 @@
-from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
+from django.db import models
 
 from pydoc import locate
 
@@ -42,7 +43,11 @@ class DataSet(models.Model):
     required_citations = models.TextField(blank=True, verbose_name="HTML code describing the required citations")
     selected_studies = models.TextField(blank=True)
     publication_date = models.DateField()
-    modification_date = models.DateField(auto_now=True)
+    modification_date = models.DateField()
+
+    def save(self, *args, **kwargs):
+        self.modification_date = timezone.now()
+        return super(DataSet, self).save(*args, **kwargs)
 
     class Meta:
         ordering = ('series_number',)
@@ -102,13 +107,16 @@ class DataFile(models.Model):
     description = models.TextField(blank=True)
     file_path = models.CharField(max_length=1000, blank=True, unique=True)
     file_size = models.FloatField(default=0)
-    image_js = models.TextField(blank=True)
     relates_to = models.ForeignKey('DataFile',
                                    on_delete=models.CASCADE,
                                    related_name='related_files',
                                    null=True)
     publication_date = models.DateField()
-    modification_date = models.DateField(auto_now=True)
+    modification_date = models.DateField()
+
+    def save(self, *args, **kwargs):
+        self.modification_date = timezone.now()
+        return super(DataFile, self).save(*args, **kwargs)
 
     class Meta:
         ordering = ['file_name']

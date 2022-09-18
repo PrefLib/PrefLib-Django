@@ -14,7 +14,7 @@ def draw_instance(instance, img_file_path):
     """ Generate an image file of the instance.
 
         :param instance: The instance to draw.
-        :type instance: :class:`preflibtools.instances.preflibinstance.PreflibInstance`
+        :type instance: :class:`preflibtools.instances.preflibinstance.OrdinalInstance`
         :param img_file_path: Path to which save the image.
         :type img_file_path: str or path
     """
@@ -35,7 +35,7 @@ def draw_graph(instance, img_file_path, max_num_node=100, is_WMD=False):
     """ Generates the image file for an instance representing a graph.
 
         :param instance: The instance to draw.
-        :type instance: :class:`preflibtools.instances.preflibinstance.PreflibInstance`
+        :type instance: :class:`preflibtools.instances.preflibinstance.OrdinalInstance`
         :param img_file_path: Path to which save the image.
         :type img_file_path: str or path
         :param max_num_node: The maximum number of nodes of the graph to draw, default is 100.
@@ -82,7 +82,7 @@ def draw_order(instance, img_file_path):
     """ Generates the image file for an instance representing orders.
 
         :param instance: The instance to draw.
-        :type instance: :class:`preflibtools.instances.preflibinstance.PreflibInstance`
+        :type instance: :class:`preflibtools.instances.preflibinstance.OrdinalInstance`
         :param img_file_path: Path to which save the image.
         :type img_file_path: str or path
     """

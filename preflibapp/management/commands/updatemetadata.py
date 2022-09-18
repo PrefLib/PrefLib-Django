@@ -6,7 +6,7 @@ from django.db.models import Max, Count
 from django.conf import settings
 from random import shuffle
 
-from preflibapp.preflibtools.instances.preflibinstance import PreflibInstance
+from preflibapp.preflibtools.instances.preflibinstance import OrdinalInstance
 from preflibapp.preflibtools.instances.drawing import draw_instance
 from preflibapp.models import *
 
@@ -19,7 +19,7 @@ def update_dataprop(datafile, metadata):
     # Easy access to the dataset containing the datafile
     dataset = datafile.dataset
     # Finding the actual file referred by the datafile and parsing it
-    preflib_instance = PreflibInstance(finders.find(datafile.file_path))
+    preflib_instance = OrdinalInstance(finders.find(datafile.file_path))
     for m in metadata:
         if datafile.data_type in m.applies_to_list():
             # If the metadata applies to the datafile we compute its value and save it

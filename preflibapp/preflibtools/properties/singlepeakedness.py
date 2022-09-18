@@ -556,7 +556,7 @@ def approx_SP_voter_deletion_ILP(instance, weighted=False):
     # model.start = [(v, 1) for v in votersVars[:-2]]
 
     if weighted:
-        model.objective = xsum(v * instance.order_multiplicity[int(v.name.split('_')[-1])] for v in voter_vars)
+        model.objective = xsum(v * instance.multiplicity[int(v.name.split('_')[-1])] for v in voter_vars)
     else:
         model.objective = xsum(v for v in voter_vars)
 

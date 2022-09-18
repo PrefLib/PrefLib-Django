@@ -7,77 +7,79 @@ from copy import deepcopy
 from os import path
 
 import urllib
+import re
 
 
-class PreflibInstance(object):
-    """ This is the class representing a PrefLib instance. It basically contains the data and information
-         written within a PrefLib file.
-
-        :param file_path: The path to the file the instance is taken from. If a path is provided as a parameter,
-            the file is immediately parsed and the instance populated accordingly.
-        :type file_path: str, optional
+class PrefLibInstance(object):
+    """ This class provide a general template to implement specific classes representing PrefLib instances. It should
+        mainly be used as an abstract class.
 
         :ivar file_path: The path to the file the instance is taken from.
         :ivar file_name: The name of the file the instance is taken from.
         :ivar data_type: The data type of the instance. Whenever a function only applies to certain types of data
             (strict and complete orders for instance), we do so by checking this value.
+        :ivar modification_type: The modification type of the file: original if it represents original data; induced
+            or imbued it is derived from some other data; synthetic if it is synthetically generated.
+        :ivar relates_to: The data file this instance relates to, typically the original data file for induced
+            preferences.
+        :ivar related_files: The data files that are to the instance.
+        :ivar title: The title of the instance.
+        :ivar description: A description of the instance.
+        :ivar publication_date: Date at which the corresponding file has been added to PrefLib.com.
+        :ivar modification_date: Last date the  file has been modified on PrefLib.com.
         :ivar num_alternatives: The number of alternatives in the instance.
         :ivar alternatives_name: A dictionary mapping alternative (int) to their name (str).
         :ivar num_voters: The number of voters in the instance.
-        :ivar sum_vote_count: The sum of the weights of the voters. In most cases, it is equal to the num_voters,
-            but not if we have induced a relation like generating a pairwise graph from a set of linear orders
-            for instance.
-        :ivar num_unique_order: The number of unique orders in the instance.
-        :ivar order_multiplicity: A dictionary mapping each order to the number of voters who submitted that order.
-        :ivar orders: The list of all the distinct orders in the instance.
-        :ivar graph: An instance of the :class:`preflibtools.instances.graph` for when the instance represents
-            a graph.
     """
 
-    def __init__(self, file_path=""):
-        self.file_path = file_path
+    def __init__(self):
+        self.file_path = ""
         self.file_name = ""
         self.data_type = ""
+        self.modification_type = ""
+        self.relates_to = ""
+        self.related_files = ""
+        self.title = ""
+        self.description = ""
+        self.publication_date = ""
+        self.modification_date = ""
         self.num_alternatives = 0
         self.alternatives_name = {}
         self.num_voters = 0
-        self.sum_vote_count = 0
-        self.num_unique_order = 0
-        self.order_multiplicity = {}
-        self.orders = []
-        self.graph = None
+        self.alt_name_pattern = re.compile(r'# ALTERNATIVE NAME (\d+): (.*)')
 
-        # If a filePath is given as argument, we parse it immediately
-        if len(file_path) > 0:
-            self.parse_file(file_path)
+    def type_validator(self, data_type):
+        pass
 
-    def parse_lines(self, lines):
-        """ Parses the lines provided as argument. The parser to be used is deducted from the instance's value of
+    def parse(self, lines, autocorrect=False):
+        pass
+
+    def parse_lines(self, lines, autocorrect=False):
+        """ Parses the lines provided as argument. The parser to be used is deducted from the instance's inner value of
             data_type.
 
             :param lines: A list of string, each string being one line of the ``file'' to parse.
             :type lines: list
+            :param autocorrect: A boolean indicating whether we should try to automatically correct the potential errors
+            in the file. Default is False.
+            :type autocorrect: bool
         """
-        # Parsing the file based on the file extension
-        if self.data_type in ["soc", "soi", "toc", "toi"]:
-            self.parse_order(lines)
-        elif self.data_type in ["tog", "mjg", "wmg", "pwg"]:
-            self.parse_graph(lines)
-        elif self.data_type == "wmd":
-            self.parse_graph(lines, is_WMD=True)
-        elif self.data_type in ["dat", "csv"]:
-            pass
-        else:
-            raise SyntaxError("File extension " + str(self.data_type) + " is unknown to PrefLib instance. " +
-                              "This file cannot be parsed.")
 
-    def parse_file(self, filepath):
+        if self.type_validator(self.data_type):
+            self.parse(lines, autocorrect=autocorrect)
+        else:
+            raise TypeError("File extension " + str(self.data_type) + " is not valid for an ordinal PrefLib instance." +
+                            " This file cannot be parsed.")
+
+    def parse_file(self, filepath, autocorrect=False):
         """ Parses the file whose path is provided as argument and populates the PreflibInstance object accordingly.
-            The parser to be used (whether the file describes a graph or an order for instance) is deduced based
-            on the file extension.
+            The parser to be used is deduced from the file extension.
 
             :param filepath: The path to the file to be parsed.
             :type filepath: str
+            :param autocorrect: A boolean indicating whether we should try to automatically correct the potential errors
+            in the file. Default is False.
+            :type autocorrect: bool
         """
 
         # Populating basic properties of the instance
@@ -87,16 +89,14 @@ class PreflibInstance(object):
 
         # Read the file
         file = open(filepath, "r", encoding="utf-8")
-        res = []
         lines = file.readlines()
         file.close()
 
-        self.parse_lines(lines)
+        self.parse_lines(lines, autocorrect=autocorrect)
 
-    def parse_str(self, string, data_type, file_name = ""):
+    def parse_str(self, string, data_type, file_name="", autocorrect=False):
         """ Parses the string provided as argument and populates the PreflibInstance object accordingly.
-            The parser to be used (whether the file describes a graph or an order for instance) is deduced based
-            on the file extension passed as argument.
+            The parser to be used is deduced from the file extension passed as argument.
 
             :param string: The string to parse.
             :type string: str
@@ -104,21 +104,27 @@ class PreflibInstance(object):
             :type data_type: str
             :param file_name: The value to store in the file_name member of the instance. Default is the empty string.
             :type file_name: str
+            :param autocorrect: A boolean indicating whether we should try to automatically correct the potential errors
+            in the file. Default is False.
+            :type autocorrect: bool
         """
 
         self.file_path = "parsed_from_string"
         self.file_name = file_name
         self.data_type = data_type
 
-        self.parse_lines(string.splitlines())
+        self.parse_lines(string.splitlines(), autocorrect=autocorrect)
 
-    def parse_url(self, url):
+    def parse_url(self, url, autocorrect=False):
         """ Parses the file located at the provided URL and populates the PreflibInstance object accordingly.
             The parser to be used (whether the file describes a graph or an order for instance) is deduced based
             on the file extension.
 
             :param url: The target URL.
             :type url: str
+            :param autocorrect: A boolean indicating whether we should try to automatically correct the potential errors
+            in the file. Default is False.
+            :type autocorrect: bool
         """
 
         data = urllib.request.urlopen(url)
@@ -129,30 +135,233 @@ class PreflibInstance(object):
         self.file_name = url.split('/')[-1].split('.')[0]
         self.data_type = url.split('.')[-1]
 
-        self.parse_lines(lines)
+        self.parse_lines(lines, autocorrect=autocorrect)
+
+    def parse_metadata(self, line, autocorrect=False):
+        if line.startswith("# FILE NAME"):
+            self.file_name = line[12:].strip()
+        elif line.startswith("# TITLE"):
+            self.title = line[8:].strip()
+        elif line.startswith("# DESCRIPTION"):
+            self.description = line[14:].strip()
+        elif line.startswith("# DATA TYPE"):
+            self.data_type = line[12:].strip()
+        elif line.startswith("# MODIFICATION TYPE"):
+            self.modification_type = line[20:].strip()
+        elif line.startswith("# RELATES TO"):
+            self.relates_to = line[13:].strip()
+        elif line.startswith("# RELATED FILES"):
+            self.related_files = line[16:].strip()
+        elif line.startswith("# PUBLICATION DATE"):
+            self.publication_date = line[19:].strip()
+        elif line.startswith("# MODIFICATION DATE"):
+            self.modification_date = line[20:].strip()
+        elif line.startswith("# NUMBER ALTERNATIVES"):
+            self.num_alternatives = int(line[22:].strip())
+        elif line.startswith("# NUMBER VOTERS"):
+            self.num_voters = int(line[16:].strip())
+        elif line.startswith("# ALTERNATIVE NAME"):
+            match = re.match(self.alt_name_pattern, line)
+            if match:
+                alt = int(match.group(1))
+                alt_name = match.group(2)
+                if autocorrect and alt_name in self.alternatives_name.values():
+                    tmp = 1
+                    while alt_name + "__" + str(tmp) in self.alternatives_name.values():
+                        tmp += 1
+                    self.alternatives_name[alt] = alt_name + "__" + str(tmp)
+                else:
+                    self.alternatives_name[alt] = alt_name
 
     def write(self, filepath):
-        """ Writes the instance to the file whose path is provided as argument. If the file path does not contain
-            a file extension, is provided the data type of the instance is used. The function to call (whether 
-            the instance describes a graph or an order for instance) is deduced based on the data type of the 
-            instance.
+        pass
 
-            :param filepath: The path where to write the file.
-            :type filepath: str
+    def write_metadata(self, file):
+        file.write("# FILE NAME: {}\n# TITLE: {}\n# DESCRIPTION: {}\n# DATA TYPE: {}\n# MODIFICATION TYPE: {}\n".format(
+            self.file_name, self.title, self.description, self.data_type, self.modification_type))
+        file.write("# RELATES TO: {}\n# RELATED FILES: {}\n# PUBLICATION DATE: {}\n# MODIFICATION DATE: {}\n".format(
+            self.relates_to, self.related_files, self.publication_date, self.modification_date))
+
+
+class OrdinalInstance(PrefLibInstance):
+    """ This is the class representing a PrefLib instance of ordinal preferences. It basically contains the data and
+        information written within a PrefLib file.
+
+        :param file_path: The path to the file the instance is taken from. If a path is provided as a parameter,
+            the file is immediately parsed and the instance populated accordingly.
+        :type file_path: str, optional
+
+        :ivar num_unique_orders: The number of unique orders in the instance.
+        :ivar multiplicity: A dictionary mapping each order to the number of voters who submitted that order.
+        :ivar orders: The list of all the distinct orders in the instance.
+    """
+
+    def __init__(self, file_path=""):
+        PrefLibInstance.__init__(self)
+        self.file_path = file_path
+        self.num_unique_orders = 0
+        self.multiplicity = {}
+        self.orders = []
+
+        # If a filePath is given as argument, we parse it immediately
+        if len(file_path) > 0:
+            self.parse_file(file_path)
+
+    def type_validator(self, data_type):
+        return data_type in ['soc', 'soi', 'toc', 'toi']
+
+    def parse(self, lines, autocorrect=False):
+        """ Parses the strings provided as argument, assuming that the latter describes an order.
+
+            :param lines: A list of string, each string being one line of the ``file'' to parse.
+            :type lines: list
+            :param autocorrect: A boolean indicating whether we should try to automatically correct the potential errors
+            in the file. Default is False.
+            :type autocorrect: bool
         """
 
-        # Writing the instance based on the data type
-        if self.data_type in ["soc", "soi", "toc", "toi"]:
-            self.write_order(filepath)
-        elif self.data_type in ["tog", "mjg", "wmg", "pwg"]:
-            self.write_graph(filepath)
-        elif self.data_type == "wmd":
-            self.write_graph(filepath, is_WMD=True)
-        elif self.data_type in ["dat", "csv"]:
-            pass
-        else:
-            raise SyntaxError("File extension " + str(self.data_type) + " is unknown to PrefLib instance. " +
-                              "This instance cannot be written.")
+        # The first few lines contain the metadata
+        i = 0
+        for i in range(len(lines)):
+            line = lines[i].strip()
+            if line.startswith('#'):
+                if line.startswith("# NUMBER UNIQUE ORDERS"):
+                    self.num_unique_orders = int(line[23:].strip())
+                else:
+                    self.parse_metadata(line, autocorrect=autocorrect)
+            else:
+                break
+
+        # The rest of the lines are about the preferences
+        order_pattern = re.compile(r'{[\d,]+?}|[\d,]+')
+        for line in lines[i:]:
+            # The first element indicates the multiplicity of the order
+            multiplicity, order_str = line.strip().split(":")
+            multiplicity = int(multiplicity)
+            order = []
+            for group in re.findall(order_pattern, order_str):
+                if group.startswith('{'):
+                    group = group[1:-1]
+                    order.append(tuple(int(alt.strip()) for alt in group.split(',') if len(alt) > 0))
+                else:
+                    for alt in group.split(','):
+                        if len(alt) > 0:
+                            order.append((int(alt.strip()),))
+            order = tuple(order)
+            self.orders.append(order)
+            if autocorrect and order in self.multiplicity:
+                self.multiplicity[tuple(order)] += multiplicity
+            else:
+                self.multiplicity[tuple(order)] = multiplicity
+
+        if autocorrect:
+            self.orders = list(set(self.orders))
+            self.num_alternatives = len(self.alternatives_name)
+            self.num_unique_orders = len(self.orders)
+            self.num_voters = sum(self.multiplicity.values())
+
+    def parse_old(self, lines, autocorrect=False):
+        """ Parses the strings provided as argument, assuming that the latter describes an order, in the old PrefLib
+            format.
+
+            :param lines: A list of string, each string being one line of the ``file'' to parse.
+            :type lines: list
+            :param autocorrect: A boolean indicating whether we should try to automatically correct the potential errors
+            in the file. Default is False.
+            :type autocorrect: bool
+        """
+
+        # The first line gives us the number of alternatives, then comes the names of the alternatives
+        self.num_alternatives = int(lines[0])
+        for i in range(1, self.num_alternatives + 1):
+            alt_name = lines[i].split(",")[1].strip()
+            if autocorrect and alt_name in self.alternatives_name.values():
+                tmp = 1
+                while alt_name + "__" + str(tmp) in self.alternatives_name.values():
+                    tmp += 1
+                self.alternatives_name[i] = alt_name + "__" + str(tmp)
+            else:
+                self.alternatives_name[i] = alt_name
+
+        # We've reached the description of the preferences. We start by some numbers...
+        self.num_voters = int(lines[self.num_alternatives + 1].split(",")[0])
+        self.num_unique_orders = int(lines[self.num_alternatives + 1].split(",")[2])
+
+        # ... and finally comes the preferences
+        for line in lines[self.num_alternatives + 2:]:
+            # The first element indicates the multiplicity of the order
+            elements = line.strip().split(",")
+            multiplicity = int(elements[0])
+
+            # Then we deal with the rest
+            in_braces = False
+            order = []
+            indif_class = []
+            for w in elements[1:]:
+                # If there is something in w
+                if w != "{}" and len(w) > 0:
+                    # If we are entering a series of ties (grouped by {})
+                    if w.startswith("{"):
+                        # If w also ends with a }, we remove it
+                        if w.endswith("}"):
+                            w = w[:-1]
+                        in_braces = True
+                        indif_class.append(int(w[1:]))  # The first element of w is {, so we go beyond that
+                    # If we finished reading a series of ties (grouped by {})
+                    elif w.endswith("}"):
+                        in_braces = False
+                        indif_class.append(int(w[:-1]))  # The first element of w is }, so we go beyond that
+                        order.append(tuple(indif_class))
+                        indif_class = []
+                    # Otherwise, we are just reading numbers
+                    else:
+                        # If we are facing ties, we add in the indifference class
+                        if in_braces:
+                            if int(w) not in indif_class:
+                                indif_class.append(int(w))
+                        # Otherwise, we add the strict preference.
+                        else:
+                            if (int(w),) not in order:
+                                order.append((int(w),))
+            order = tuple(order)
+            self.orders.append(order)
+            if autocorrect and order in self.multiplicity:
+                self.multiplicity[tuple(order)] += multiplicity
+            else:
+                self.multiplicity[tuple(order)] = multiplicity
+
+        if autocorrect:
+            self.orders = list(set(self.orders))
+
+    def write(self, filepath):
+        """ Writes the instance into a file whose destination has been given as argument. If no file extension is
+        provided the data type of the instance is used.
+
+            :param filepath: The destination where to write the instance.
+            :type filepath: str
+        """
+        if len(path.splitext(filepath)[1]) == 0:
+            filepath += str(self.data_type)
+        file = open(filepath, "w", encoding="utf-8")
+        # Writing metadata in the file header
+        self.write_metadata(file)
+        file.write("# NUMBER ALTERNATIVES: {}\n# NUMBER VOTERS: {}\n# NUMBER UNIQUE ORDERS: {}\n".format(
+            self.num_alternatives, self.num_voters, self.num_unique_orders
+        ))
+        for alt, name in self.alternatives_name.items():
+            file.write("# ALTERNATIVE NAME {}: {}\n".format(alt, name))
+        # Writing the actual ballots with their multiplicity
+        orders = deepcopy(self.orders)
+        orders.sort(key=lambda o: (-self.multiplicity[o], -len(o)))
+        for order in orders:
+            order_str = ""
+            for indif_class in order:
+                if len(indif_class) == 1:
+                    order_str += str(indif_class[0]) + ","
+                else:
+                    order_str += "{" + ",".join((str(alt) for alt in indif_class)) + "},"
+            file.write("{}: {}\n".format(self.multiplicity[order], order_str[:-1]))
+        file.close()
 
     def vote_map(self):
         """ Returns the instance described as a vote map, i.e., a dictionary whose keys are orders, mapping
@@ -164,7 +373,7 @@ class PreflibInstance(object):
         """
         vote_map = {}
         for order in self.orders:
-            vote_map[order] = self.order_multiplicity[order]
+            vote_map[order] = self.multiplicity[order]
         return vote_map
 
     def full_profile(self):
@@ -176,12 +385,13 @@ class PreflibInstance(object):
         """
         res = []
         for order in self.orders:
-            res += [order] * self.order_multiplicity[order]
+            res += [order] * self.multiplicity[order]
         return res
 
     def flatten_strict(self):
-        """ Because strict orders are represented as orders with indifference classes of size 1, this function
-            flattens them.
+        """ Strict orders are represented as orders with indifference classes of size 1. This is somewhat heavy when
+            working with strict preferences. This function flattens strict preferences by removing the indifference
+            class.
 
             :return: A list of tuples of preference order and multiplicity.
             :rtype: list
@@ -190,12 +400,11 @@ class PreflibInstance(object):
         for order in self.orders:
             if len(order) != self.num_alternatives:
                 print("WARNING: You are flattening a non-strict order.")
-            res.append((tuple(indif_class[0] for indif_class in order), self.order_multiplicity[order]))
+            res.append((tuple(indif_class[0] for indif_class in order), self.multiplicity[order]))
         return res
 
-    def infer_type_orders(self):
-        """ Loops through the orders of the instance to infer whether the preferences strict and/or complete, assuming
-            the instance represents orders.
+    def infer_type(self):
+        """ Loops through the orders of the instance to infer whether the preferences strict and/or complete,.
 
             :return: The data type of the instance.
             :rtype: str 
@@ -214,6 +423,16 @@ class PreflibInstance(object):
                 return "toi"
         return tmp_type
 
+    def recompute_cardinality_param(self):
+        """ Recomputes the basic cardinality parameters based on the order list in the instance. Numbers that are
+            recomputed are the number of voters, the sum of voter count and the number of unique orders.
+        """
+        num_voters = 0
+        for order in self.orders:
+            num_voters += self.multiplicity[order]
+        self.num_voters = num_voters
+        self.num_unique_orders = len(set(self.orders))
+
     def append_order_list(self, orders):
         """ Appends a vote map to the instance. That function incorporates the new orders into the instance and
             updates the set of alternatives if needed.
@@ -228,19 +447,18 @@ class PreflibInstance(object):
         self.num_alternatives = len(self.alternatives_name)
 
         self.num_voters += len(orders)
-        self.sum_vote_count += len(orders)
 
         for order in orders:
             multiplicity = len([o for o in orders if o == order])
-            if order in self.order_multiplicity:
-                self.order_multiplicity[order] += multiplicity
+            if order in self.multiplicity:
+                self.multiplicity[order] += multiplicity
             else:
-                self.order_multiplicity[order] = multiplicity
+                self.multiplicity[order] = multiplicity
 
-        self.num_unique_order = len(self.order_multiplicity)
+        self.num_unique_orders = len(self.multiplicity)
         self.orders += deepcopy(orders)
 
-        self.data_type = self.infer_type_orders()
+        self.data_type = self.infer_type()
 
     def append_vote_map(self, vote_map):
         """ Appends a vote map to the instance. That function incorporates the new orders into the instance and
@@ -256,11 +474,10 @@ class PreflibInstance(object):
             order = tuple(tuple(indif_class) for indif_class in ballot)
             if order not in self.orders:
                 self.orders.append(order)
-                self.order_multiplicity[order] = multiplicity
+                self.multiplicity[order] = multiplicity
             else:
-                self.order_multiplicity[order] += multiplicity
+                self.multiplicity[order] += multiplicity
             self.num_voters += multiplicity
-            self.sum_vote_count += multiplicity
 
             for indif_class in ballot:
                 for alt in indif_class:
@@ -268,9 +485,9 @@ class PreflibInstance(object):
                         self.alternatives_name[alt] = "Alternative " + str(alt)
 
         self.num_alternatives = len(self.alternatives_name)
-        self.num_unique_order = len(self.order_multiplicity)
+        self.num_unique_orders = len(self.multiplicity)
 
-        self.data_type = self.infer_type_orders()
+        self.data_type = self.infer_type()
 
     def populate_IC(self, num_voters, num_alternatives):
         """ Populates the instance with a random profile of strict preferences taken from the impartial culture
@@ -338,99 +555,108 @@ class PreflibInstance(object):
         """
         self.append_vote_map(generate_mallows_mix(num_voters, list(range(num_alternatives)), num_references))
 
-    def parse_order(self, lines):
-        """ Parses the strings provided as argument, assuming that the latter describes an order.
+
+class ComparisonInstance(PrefLibInstance):
+    """ To be implemented.
+
+    """
+
+    def __init__(self):
+        PrefLibInstance.__init__(self)
+
+
+class CategoricalInstance(PrefLibInstance):
+    """ This is the class representing a PrefLib instance of categorical preferences. It basically contains the data and
+        information written within a PrefLib file.
+    """
+
+    def __init__(self, file_path=""):
+        PrefLibInstance.__init__(self)
+        self.file_path = file_path
+        self.num_unique_preferences = 0
+        self.multiplicity = {}
+        self.num_categories = 0
+        self.categories_name = {}
+        self.preferences = []
+
+        # If a filePath is given as argument, we parse it immediately
+        if len(file_path) > 0:
+            self.parse_file(file_path)
+
+    def type_validator(self, data_type):
+        return data_type == "cat"
+
+    def parse(self, lines, autocorrect=False):
+        """ Parses the strings provided as argument, assuming that the latter describes categorical preferences.
 
             :param lines: A list of string, each string being one line of the ``file'' to parse.
             :type lines: list
+            :param autocorrect: A boolean indicating whether we should try to automatically correct the potential errors
+            in the file. Default is False.
+            :type autocorrect: bool
         """
 
-        # The first line gives us the number of alternatives, then comes the names of the alternatives
-        self.num_alternatives = int(lines[0])
-        for i in range(1, self.num_alternatives + 1):
-            self.alternatives_name[i] = lines[i].split(",")[1].strip()
-
-        # We've reached the description of the preferences. We start by some numbers...
-        self.num_voters = int(lines[self.num_alternatives + 1].split(",")[0])
-        self.sum_vote_count = int(lines[self.num_alternatives + 1].split(",")[1])
-        self.num_unique_order = int(lines[self.num_alternatives + 1].split(",")[2])
-
-        # ... and finally comes the preferences
-        for l in lines[self.num_alternatives + 2:]:
-            # The first element indicates the multiplicity of the order
-            elements = l.strip().split(",")
-            multiplicity = int(elements[0])
-
-            # Then we deal with the rest
-            in_braces = False
-            order = []
-            indif_class = []
-            for w in elements[1:]:
-                # If there is something in w
-                if w != "{}" and len(w) > 0:
-                    # If we are entering a series of ties (grouped by {})
-                    if w.startswith("{"):
-                        # If w also ends with a }, we remove it
-                        if w.endswith("}"):
-                            w = w[:-1]
-                        in_braces = True
-                        indif_class.append(int(w[1:]))  # The first element of w is {, so we go beyond that
-                    # If we finished reading a series of ties (grouped by {})
-                    elif w.endswith("}"):
-                        in_braces = False
-                        indif_class.append(int(w[:-1]))  # The first element of w is }, so we go beyond that
-                        order.append(tuple(indif_class))
-                        indif_class = []
-                    # Otherwise, we are just reading numbers
-                    else:
-                        # If we are facing ties, we add in the indifference class
-                        if in_braces:
-                            if int(w) not in indif_class:
-                                indif_class.append(int(w))
-                        # Otherwise, we add the strict preference.
+        # The first few lines contain the metadata
+        i = 0
+        cat_name_pattern = re.compile(r'# CATEGORY NAME (\d+): (.*)')
+        for i in range(len(lines)):
+            line = lines[i].strip()
+            if line.startswith('#'):
+                if line.startswith("# NUMBER UNIQUE PREFERENCES"):
+                    self.num_unique_preferences = int(line[28:].strip())
+                if line.startswith("# NUMBER CATEGORIES"):
+                    self.num_categories = int(line[20:].strip())
+                elif line.startswith("# CATEGORY NAME"):
+                    match = re.match(cat_name_pattern, line)
+                    if match:
+                        cat = int(match.group(1))
+                        cat_name = match.group(2)
+                        if autocorrect and cat_name in self.categories_name.values():
+                            tmp = 1
+                            while cat_name + "__" + str(tmp) in self.categories_name.values():
+                                tmp += 1
+                            self.categories_name[cat] = cat_name + "__" + str(tmp)
                         else:
-                            if (int(w),) not in order:
-                                order.append((int(w),))
-            self.orders.append(tuple(order))
-            self.order_multiplicity[tuple(order)] = multiplicity
-
-    def parse_graph(self, lines, is_WMD=False):
-        """ Parses the strings, assuming that the latter describes a graph.
-
-            :param lines: A list of string, each string being one line of the ``file'' to parse.
-            :type lines: list
-            :param is_WMD: True if the graph to parse represents weighted matching data, default is False.
-            :type is_WMD: bool
-        """
-
-        # For Weighted Matching Data, the meaning are not the same
-        if is_WMD:
-            self.num_alternatives = int(lines[0].strip().split(",")[0])
-            self.num_voters = int(lines[0].strip().split(",")[1])
-        else:
-            self.num_alternatives = int(lines[0])
-        for i in range(1, self.num_alternatives + 1):
-            self.alternatives_name[i] = lines[i].split(",")[1].strip()
-        if not is_WMD:
-            self.num_voters = int(lines[self.num_alternatives + 1].split(",")[0])
-            self.sum_vote_count = int(lines[self.num_alternatives + 1].split(",")[1])
-            self.num_unique_order = int(lines[self.num_alternatives + 1].split(",")[2])
-        # Skip the lines that describe the data
-        graph_first_line = self.num_alternatives + 1 if is_WMD else self.num_alternatives + 2
-        self.graph = Graph()
-        for l in lines[graph_first_line:]:
-            if is_WMD:
-                (vertex1, vertex2, weight) = l.strip().split(",")
+                            self.categories_name[cat] = cat_name
+                else:
+                    self.parse_metadata(line, autocorrect=autocorrect)
             else:
-                (weight, vertex1, vertex2) = l.strip().split(",")
-            weight = int(weight)
-            vertex1 = int(vertex1)
-            vertex2 = int(vertex2)
-            self.graph.add_edge(vertex1, vertex2, weight)
+                break
 
-    def write_order(self, filepath):
-        """ Writes the instance into a file whose destination has been given as argument, assuming the instance
-            represents an order. If no file extension is provided the data type of the instance is used.
+        # The rest of the lines are about the preferences
+        pref_pattern = re.compile(r'{[\d,]+?}|[\d,]+|{}')
+        for line in lines[i:]:
+            # The first element indicates the multiplicity of the order
+            multiplicity, pref_str = line.strip().split(":")
+            multiplicity = int(multiplicity)
+            pref = []
+            for group in re.findall(pref_pattern, pref_str):
+                if group == '{}':
+                    pref.append(tuple())
+                elif group.startswith('{'):
+                    group = group[1:-1]
+                    pref.append(tuple(int(alt.strip()) for alt in group.split(',') if len(alt) > 0))
+                else:
+                    for alt in group.split(','):
+                        if len(alt) > 0:
+                            pref.append((int(alt.strip()),))
+            pref = tuple(pref)
+            self.preferences.append(pref)
+            if autocorrect and pref in self.multiplicity:
+                self.multiplicity[tuple(pref)] += multiplicity
+            else:
+                self.multiplicity[tuple(pref)] = multiplicity
+
+        if autocorrect:
+            self.preferences = list(set(self.preferences))
+
+        self.num_alternatives = len(self.alternatives_name)
+        self.num_unique_preferences = len(self.preferences)
+        self.num_voters = sum(self.multiplicity.values())
+
+    def write(self, filepath):
+        """ Writes the instance into a file whose destination has been given as argument. If no file extension is
+        provided the data type of the instance is used.
 
             :param filepath: The destination where to write the instance.
             :type filepath: str
@@ -438,59 +664,33 @@ class PreflibInstance(object):
         if len(path.splitext(filepath)[1]) == 0:
             filepath += str(self.data_type)
         file = open(filepath, "w", encoding="utf-8")
-        # Writing number of alternatives and their names
-        file.write(str(self.num_alternatives) + "\n")
+        # Writing metadata in the file header
+        self.write_metadata(file)
+        file.write("# NUMBER ALTERNATIVES: {}\n# NUMBER VOTERS: {}\n# NUMBER UNIQUE PREFERENCES: {}\n".format(
+            self.num_alternatives, self.num_voters, self.num_unique_preferences
+        ))
+        file.write("# NUMBER CATEGORIES: {}\n".format(self.num_categories))
+        for cat, name in self.categories_name.items():
+            file.write("# CATEGORY NAME {}: {}\n".format(cat, name))
         for alt, name in self.alternatives_name.items():
-            file.write("{},{}\n".format(alt, name))
-        # Writing the ballot counts
-        file.write("{},{},{}\n".format(self.num_voters, self.sum_vote_count, self.num_unique_order))
+            file.write("# ALTERNATIVE NAME {}: {}\n".format(alt, name))
         # Writing the actual ballots with their multiplicity
-        for order in self.orders:
-            order_str = ""
-            for indif_class in order:
-                if len(indif_class) == 1:
-                    order_str += str(indif_class[0]) + ","
+        preferences = deepcopy(self.preferences)
+        preferences.sort(key=lambda o: (-self.multiplicity[o], -len(o)))
+        for pref in preferences:
+            pref_str = ""
+            for category in pref:
+                if len(category) == 0:
+                    pref_str += '{},'
+                elif len(category) == 1:
+                    pref_str += str(category[0]) + ","
                 else:
-                    order_str += "{" + ",".join((str(alt) for alt in indif_class)) + "},"
-            file.write("{},{}\n".format(self.order_multiplicity[order], order_str[:-1]))
-        file.close()
-
-    def write_graph(self, filepath, is_WMD=False):
-        """ Writes the instance into a file whose destination has been given as argument, assuming the instance
-            represents a graph. If no file extension is provided the data type of the instance is used.
-
-            :param filepath: The destination where to write the instance.
-            :type filepath: str
-            :param is_WMD: True if the graph to parse represents weighted matching data, default is False.
-            :type is_WMD: bool
-        """
-        if len(path.splitext(filepath)[1]) == 0:
-            filepath += str(self.data_type)
-        file = open(filepath, "w", encoding="utf-8")
-        # Writing number of alternatives, or edges and nodes in the case of WMD
-        if is_WMD:
-            file.write("{},{}\n".format(self.num_alternatives, self.num_voters))
-        else:
-            file.write(str(self.num_alternatives) + "\n")
-        # Writing alternative names
-        for alt, name in self.alternatives_name.items():
-            file.write("{},{}\n".format(alt, name))
-        # Writing the ballot counts when not WMD
-        if not is_WMD:
-            file.write("{},{},{}\n".format(self.num_voters, self.sum_vote_count, self.num_unique_order))
-        # Writing the actual graph
-        nodes = sorted(list(self.graph.nodes()))
-        for n in nodes:
-            out_egdes = sorted(list(self.graph.outgoing_edges(n)), key=lambda x: x[1])
-            for (vertex1, vertex2, weight) in out_egdes:
-                if is_WMD:
-                    file.write("{},{},{}\n".format(vertex1, vertex2, weight))
-                else:
-                    file.write("{},{},{}\n".format(weight, vertex1, vertex2))
+                    pref_str += "{" + ",".join((str(alt) for alt in category)) + "},"
+            file.write("{}: {}\n".format(self.multiplicity[pref], pref_str[:-1]))
         file.close()
 
 
-class Graph(object):
+class WeightedGraph(object):
     """ This class is used to represent (weighted) graphs.
 
         :ivar dict: The dictionary representing the graph mapping each node to its neighbourhood (set of nodes
@@ -499,7 +699,7 @@ class Graph(object):
     """
 
     def __init__(self):
-        self.dict = dict()
+        self.node_mapping = dict()
         self.weight = dict()
 
     def neighbours(self, node):
@@ -510,7 +710,7 @@ class Graph(object):
             :return: The set of the neighbours of the node.
             :rtype: set
         """
-        return self.dict[node]
+        return self.node_mapping[node]
 
     def outgoing_edges(self, node):
         """ Returns all the edges leaving a given node.
@@ -520,15 +720,15 @@ class Graph(object):
             :return: The set of the tuples (node, neighbour, edgeWeight) representing (weighted) edges.
             :rtype: set of tuples
         """
-        return {(node, n, self.weight[(node, n)]) for n in self.dict[node]}
+        return {(node, n, self.weight[(node, n)]) for n in self.node_mapping[node]}
 
     def add_node(self, node):
         """ Adds a node to the graph if the node does not already exist.
 
             :param node: The node to add.
         """
-        if node not in self.dict:
-            self.dict[node] = set()
+        if node not in self.node_mapping:
+            self.node_mapping[node] = set()
 
     def add_edge(self, node1, node2, weight):
         """ Adds an edge to the graph. If the nodes do not exist in the graph, those are also added.
@@ -539,7 +739,7 @@ class Graph(object):
         """
         self.add_node(node1)
         self.add_node(node2)
-        self.dict[node1].add(node2)
+        self.node_mapping[node1].add(node2)
         self.weight[(node1, node2)] = weight
 
     def edges(self):
@@ -548,7 +748,7 @@ class Graph(object):
             :return: A set of tuples (node, neighbour, weight) representing (weighted) edges.
             :rtype: set of tuples
         """
-        return {(n1, n2, self.weight[(n1, n2)]) for n1 in self.dict for n2 in self.dict[n1]}
+        return {(n1, n2, self.weight[(n1, n2)]) for n1 in self.node_mapping for n2 in self.node_mapping[n1]}
 
     def nodes(self):
         """ Returns the set of all the nodes of the graph.
@@ -556,14 +756,109 @@ class Graph(object):
             :return: The set of all the nodes of the graph.
             :rtype: set
         """
-        return self.dict.keys()
+        return self.node_mapping.keys()
 
     def __str__(self):
         """ Returns the string used when printing the graph """
-        res = "Graph with {} vertices and {} edges :\n".format(len(self.dict), len(self.edges()))
-        for node in self.dict:
+        res = "Graph with {} vertices and {} edges :\n".format(len(self.node_mapping), len(self.edges()))
+        for node in self.node_mapping:
             res += str(node) + ": "
             for edge in self.outgoing_edges(node):
                 res += str(edge) + " "
             res = res[:-1] + "\n"
         return res[:-1]
+
+
+class MatchingInstance(PrefLibInstance, WeightedGraph):
+    """ This is the class representing a PrefLib instance for matching preferences. It basically contains the data and
+        information written within a PrefLib file.
+
+    """
+
+    def __init__(self, file_path = ""):
+        PrefLibInstance.__init__(self)
+        WeightedGraph.__init__(self)
+        self.num_edges = 0
+        self.file_path = file_path
+
+        # If a filePath is given as argument, we parse it immediately
+        if len(file_path) > 0:
+            self.parse_file(file_path)
+
+    def type_validator(self, data_type):
+        return data_type == "wmd"
+
+    def parse(self, lines, autocorrect=False):
+        """ Parses the strings, assuming that the latter describes a graph.
+
+            :param lines: A list of string, each string being one line of the ``file'' to parse.
+            :type lines: list
+            :param autocorrect: A boolean indicating whether we should try to automatically correct the potential errors
+            in the file. Default is False.
+            :type autocorrect: bool
+        """
+        # The first few lines contain the metadata
+        i = 0
+        for i in range(len(lines)):
+            line = lines[i].strip()
+            if line.startswith('#'):
+                self.parse_metadata(line, autocorrect=autocorrect)
+            else:
+                break
+
+        for line in lines[i:]:
+            (vertex1, vertex2, weight) = line.strip().split(",")
+            self.add_edge(int(vertex1), int(vertex2), float(weight))
+        self.num_edges = sum(len(edge_set) for edge_set in self.node_mapping.values())
+
+    def parse_old(self, lines, autocorrect=False):
+        """ Parses the strings, assuming that the latter describes a graph.
+
+            :param lines: A list of string, each string being one line of the ``file'' to parse.
+            :type lines: list
+            :param autocorrect: A boolean indicating whether we should try to automatically correct the potential errors
+            in the file. Default is False.
+            :type autocorrect: bool
+        """
+
+        self.num_alternatives = int(lines[0].strip().split(",")[0])
+        self.num_voters = int(lines[0].strip().split(",")[1])
+        for i in range(1, self.num_alternatives + 1):
+            self.alternatives_name[i] = lines[i].split(",")[1].strip()
+
+        # Skip the lines that describe the data
+        graph_first_line = self.num_alternatives + 1
+        for line in lines[graph_first_line:]:
+            (vertex1, vertex2, weight) = line.strip().split(",")
+            weight = float(weight)
+            vertex1 = int(vertex1)
+            vertex2 = int(vertex2)
+            self.add_edge(vertex1, vertex2, weight)
+        self.num_edges = sum(len(edge_set) for edge_set in self.node_mapping.values())
+
+    def write(self, filepath):
+        """ Writes the instance into a file whose destination has been given as argument, assuming the instance
+            represents a graph. If no file extension is provided the data type of the instance is used.
+
+            :param filepath: The destination where to write the instance.
+            :type filepath: str
+        """
+
+        if len(path.splitext(filepath)[1]) == 0:
+            filepath += str(self.data_type)
+        file = open(filepath, "w", encoding="utf-8")
+        # Writing metadata in the file header
+        self.write_metadata(file)
+        file.write("# NUMBER ALTERNATIVES: {}\n# NUMBER EDGES: {}\n".format(
+            self.num_alternatives, self.num_edges,
+        ))
+        for alt, name in self.alternatives_name.items():
+            file.write("# ALTERNATIVE NAME {}: {}\n".format(alt, name))
+
+        # Writing the actual graph
+        nodes = sorted(list(self.nodes()))
+        for n in nodes:
+            out_edges = sorted(list(self.outgoing_edges(n)), key=lambda x: x[1])
+            for (vertex1, vertex2, weight) in out_edges:
+                file.write("{},{},{}\n".format(vertex1, vertex2, weight))
+        file.close()

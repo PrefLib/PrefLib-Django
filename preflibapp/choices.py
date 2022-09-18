@@ -17,6 +17,7 @@ DATATYPES = [
     ('soi', 'strict order incomplete'),
     ('toc', 'tie order complete'),
     ('toi', 'tie order incomplete'),
+    ('cat', 'categorical'),
     # ('tog', 'tournament graph'),
     # ('mjg', 'majority graph'),
     # ('wmg', 'weighted majority graph'),

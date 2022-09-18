@@ -9,11 +9,9 @@ from django.core.paginator import Paginator
 
 from math import floor, ceil
 
-import random
 import copy
 import os
 
-from .choices import *
 from .models import *
 from .forms import *
 
@@ -98,11 +96,6 @@ def main(request):
     nb_datafile = DataFile.objects.count()
     total_size = DataFile.objects.aggregate(Sum('file_size'))['file_size__sum']
     nb_datatype = DataFile.objects.values('data_type').distinct().count()
-
-    # files_with_images = DataFile.objects.filter(image__isnull=False,
-    #                                             data_type__in=['soc', 'soi', 'toc', 'toi', 'wmd'])
-    # if files_with_images.exists():
-    #     random_file_with_image = random.choice(files_with_images)
 
     (paginator, papers, page, pages_before, pages_after) = get_paginator(request, Paper.objects.all(), page_size=15)
 
@@ -200,15 +193,21 @@ def data_search(request):
     # We compute the max and min values of the slider for each metadata
     for m in metadatas:
         if m.search_widget == "range":
-            props = DataProperty.objects.filter(metadata=m).annotate(float_value=Cast('value', models.FloatField()))
-            max_value = ceil(props.aggregate(Max('float_value'))['float_value__max'])
-            min_value = floor(props.aggregate(Min('float_value'))['float_value__min'])
-            intermediate_value = floor((max_value - min_value) * 0.3) if max_value > 30 else floor(
-                (max_value - min_value) * 0.5)
-            metadata_slider_values[m] = (min_value, intermediate_value, max_value)
-            # If the min and max are equal, filtering on that metadata is useless so we remove it
-            if max_value == min_value:
+            props = DataProperty.objects.filter(metadata=m)
+            if props.exists():
+                props = props.annotate(float_value=Cast('value', models.FloatField()))
+                max_value = ceil(props.aggregate(Max('float_value'))['float_value__max'])
+                min_value = floor(props.aggregate(Min('float_value'))['float_value__min'])
+                intermediate_value = floor((max_value - min_value) * 0.3) if max_value > 30 else floor(
+                    (max_value - min_value) * 0.5)
+                metadata_slider_values[m] = (min_value, intermediate_value, max_value)
+
+                # If the min and max are equal, filtering on that metadata is useless so we remove it
+                if max_value == min_value:
+                    remove_metadata.append(m)
+            else:
                 remove_metadata.append(m)
+
     for m in remove_metadata:
         metadatas = metadatas.exclude(pk=m.pk)
 
@@ -241,7 +240,6 @@ def data_search(request):
             elif request.POST.get(mt[0] + 'selector') == "yes":
                 modiftype_filer = [x for x in modiftype_filer if x == mt[0]]
         all_files = all_files.filter(modification_type__in=modiftype_filer)
-
 
         for m in metadatas:
             if m.search_widget == "ternary":
