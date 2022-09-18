@@ -1,12 +1,13 @@
 from django.core.management.base import BaseCommand
 from django.contrib.staticfiles import finders
 from django.core import management
-from django.utils import timezone
 from django.db.models import Max
 
 import preflibapp
 
 from preflibapp.models import *
+
+from preflibtools.instances.preflibinstance import OrdinalInstance, CategoricalInstance, MatchingInstance
 
 import traceback
 import zipfile
@@ -77,7 +78,7 @@ def read_info_file(file_name):
     return infos
 
 
-def add_dataset(file_path, tmp_dir, data_dir, log):
+def add_dataset(file_path, tmp_dir, data_dir, keepzip, log):
     # We start by extracting the zip file
     with zipfile.ZipFile(file_path, 'r') as archive:
         archive.extractall(tmp_dir)
@@ -122,27 +123,37 @@ def add_dataset(file_path, tmp_dir, data_dir, log):
         os.remove(os.path.join(data_dir, infos['abb'], "info.txt"))
     os.rename(os.path.join(tmp_dir, "info.txt"), os.path.join(data_dir, infos['abb'], "info.txt"))
 
-    # We create the 'img' folder in the previously created folder, this folder
-    # will contain all the visualizations of the datafiles
-    try:
-        os.makedirs(os.path.join(data_dir, infos['abb'], 'img'))
-    except FileExistsError:
-        pass
-
     # Let's now add the datafiles to the database
     relates_to_dict = {}
     for file_name in os.listdir(tmp_dir):
+        extension  = os.path.splitext(file_name)[1][1:] # Using [1:] here to remove the dot
+
         # We only do it if it actually is a file we're interested in
-        if is_choice(DATATYPES, os.path.splitext(file_name)[1][1:]):  # Using [1:] here to remove the dot
+        if is_choice(DATATYPES, extension):
+            print("\t{}".format(file_name))
 
             # Move the file to the folder of the dataset
             if os.path.exists(os.path.join(data_dir, infos['abb'], file_name)):
                 os.remove(os.path.join(data_dir, infos['abb'], file_name))
             os.rename(os.path.join(tmp_dir, file_name), os.path.join(data_dir, infos['abb'], file_name))
 
-            # Looking through the infos we collected to see if the file appears there
-            file_info = infos['files'].get(file_name)
-            # If not, we proceed with default values and raise a warning
+            # Parsing the parsable files or looking through the infos we collected to see if the file appears there
+            if extension in ["soc", "soi", "toc", "toi", "cat", "wmd"]:
+                if extension == "cat":
+                    instance = CategoricalInstance(os.path.join(data_dir, infos['abb'], file_name))
+                elif extension == "wmd":
+                    instance = MatchingInstance(os.path.join(data_dir, infos['abb'], file_name))
+                else:
+                    instance = OrdinalInstance(os.path.join(data_dir, infos['abb'], file_name))
+                file_info = {
+                    'modification_type': instance.modification_type,
+                    'title': instance.title,
+                    'description': instance.description,
+                    'relates_to': instance.relates_to,
+                    'publication_date': instance.publication_date,
+                }
+            else:
+                file_info = infos['files'].get(file_name)
             if not file_info:
                 file_info = {
                     'modification_type': '-',
@@ -151,10 +162,11 @@ def add_dataset(file_path, tmp_dir, data_dir, log):
                     'relates_to': '',
                     'publication_date': timezone.now(),
                 }
-
                 print("No info found for {}".format(file_name))
                 log.append("</li>\n</ul>\n<p><strong>No info has been found for the file " + str(file_name) +
                            " in the info file of " + str(file_path) + "</strong></p>\n<ul>")
+
+
 
             # We can finally create (or update) the datafile object in the database
             datafile_obj, _ = DataFile.objects.update_or_create(
@@ -178,7 +190,8 @@ def add_dataset(file_path, tmp_dir, data_dir, log):
         datafile.save()
 
     # Finally, we remove the zip file from the datatoadd directory since everything went well
-    os.remove(file_path)
+    if not keepzip:
+        os.remove(file_path)
 
 
 class Command(BaseCommand):
@@ -188,6 +201,7 @@ class Command(BaseCommand):
         parser.add_argument('-d', nargs='*', type=str)
         parser.add_argument('-f', nargs='*', type=str)
         parser.add_argument('--all', action='store_true')
+        parser.add_argument('--keepzip', action='store_true')
 
     def handle(self, *args, **options):
         if not options['d'] and not options['f']:
@@ -260,7 +274,7 @@ class Command(BaseCommand):
                     log.append("\n\t<li>Dataset " + str(file_name) + "... ")
                     try:
                         # Actually adding the dataset
-                        add_dataset(file_path, tmp_dir, data_dir, log)
+                        add_dataset(file_path, tmp_dir, data_dir, options['keepzip'], log)
                         log.append(" ... done.</li>\n")
                     except Exception as e:
                         # If something happened, we log it and move on

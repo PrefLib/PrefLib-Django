@@ -1,36 +1,40 @@
 from django.core.management.base import BaseCommand
 from django.contrib.staticfiles import finders
 from django.core import management
-from django.utils import timezone
 from django.db.models import Max, Count
-from django.conf import settings
-from random import shuffle
 
-from preflibapp.preflibtools.instances.preflibinstance import OrdinalInstance
-from preflibapp.preflibtools.instances.drawing import draw_instance
+import django
+
+from preflibtools.instances.preflibinstance import get_parsed_instance
 from preflibapp.models import *
+
+from concurrent.futures import ProcessPoolExecutor
 
 import importlib
 import traceback
-import os
 
 
-def update_dataprop(datafile, metadata):
-    # Easy access to the dataset containing the datafile
-    dataset = datafile.dataset
+def update_dataprop(pk_log_meta):
+    django.setup()
+    datafile_pk, log, metadata = pk_log_meta
+    datafile = DataFile.objects.get(pk=datafile_pk)
+    log.append("\n\t<li>Data file " + str(datafile.file_name) + "... ")
     # Finding the actual file referred by the datafile and parsing it
-    preflib_instance = OrdinalInstance(finders.find(datafile.file_path))
-    for m in metadata:
-        if datafile.data_type in m.applies_to_list():
-            # If the metadata applies to the datafile we compute its value and save it
-            dataprop_obj, _ = DataProperty.objects.update_or_create(
-                datafile=datafile,
-                metadata=m,
-                defaults={
-                    "value": getattr(importlib.import_module("preflibapp." + m.inner_module), m.inner_function)(
-                        preflib_instance)
-                })
-            dataprop_obj.save()
+    preflib_instance = get_parsed_instance(finders.find(datafile.file_path))
+    if preflib_instance is not None:
+        print("\nData file " + str(datafile.file_name) + "...")
+        for m in metadata:
+            if datafile.data_type in m.applies_to_list():
+                # If the metadata applies to the datafile we compute its value and save it
+                dataprop_obj, _ = DataProperty.objects.update_or_create(
+                    datafile=datafile,
+                    metadata=m,
+                    defaults={
+                        "value": getattr(importlib.import_module(m.inner_module), m.inner_function)(
+                            preflib_instance)
+                    })
+                dataprop_obj.save()
+    log.append(" ... done.</li>\n")
 
 
 class Command(BaseCommand):
@@ -72,21 +76,25 @@ class Command(BaseCommand):
             datafiles = DataFile.objects.filter(dataset__abbreviation__in=options["abb"]).annotate(num_props=Count('metadata')).order_by('num_props')
 
             metadata = Metadata.objects.filter(is_active=True)
-            if 'meta' in options:
+            if options['meta']:
                 metadata = metadata.filter(short_name__in=options['meta'])
                 print("Only considering {}".format(options['meta']))
 
-            relevant_types = set(','.join(metadata.values_list('applies_to', flat=True).distinct()).split(','))
-            datafiles = datafiles.filter(data_type__in=relevant_types)
-
             # Starting the real stuff
             log = ["<h4> Updating the metadata #" + str(new_log_num) + " - " + str(timezone.now()) + "</h4>\n<p><ul>"]
+            multiproc = False
             start_time = timezone.now()
-            for datafile in datafiles:
-                print("\nData file " + str(datafile.file_name) + "...")
-                log.append("\n\t<li>Data file " + str(datafile.file_name) + "... ")
-                update_dataprop(datafile, metadata)
-                log.append(" ... done.</li>\n")
+            if multiproc:
+                print("Starting the pool")
+                pks_log_meta = [(df.pk, log, metadata) for df in datafiles]
+                with ProcessPoolExecutor(initializer=django.setup) as executor:
+                    futures = {executor.map(update_dataprop, pks_log_meta)}
+                for f in futures:
+                    pass
+                print("Done with the pool")
+            else:
+                for datafile in datafiles:
+                    update_dataprop((datafile.pk, log, metadata))
 
             # Closing the log
             log.append("\n<p>Metadata updated in ")

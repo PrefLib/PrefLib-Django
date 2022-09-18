@@ -57,7 +57,7 @@ def initialize_metadata():
                            "available for data representing orderings of the alternatives.",
             "is_active": True,
             "is_displayed": True,
-            "applies_to": 'soc,soi,toc,toi,wmd',
+            "applies_to": 'soc,soi,toc,toi,cat,wmd',
             "inner_module": "preflibtools.properties.basic",
             "inner_function": "num_alternatives",
             "inner_type": "int",
@@ -75,7 +75,7 @@ def initialize_metadata():
                            "graphs",
             "is_active": True,
             "is_displayed": True,
-            "applies_to": 'soc,soi,toc,toi,wmd',
+            "applies_to": 'soc,soi,toc,toi,cat,wmd',
             "inner_module": "preflibtools.properties.basic",
             "inner_function": "num_voters",
             "inner_type": "int",
@@ -85,32 +85,14 @@ def initialize_metadata():
             "search_res_name": "#Voters",
             "order_priority": 2})
 
-    metadata_sum_vote, _ = Metadata.objects.update_or_create(
-        name="Sum of vote count",
+    metadata_uniq_preferences, _ = Metadata.objects.update_or_create(
+        name="Number of unique preferences",
         defaults={
             "category": "general",
-            "description": """The sum of the weights of the ballots cast. See the data <a 
-            href="/data/format#election">format page</a> for more information.""",
+            "description": "The number of distinct preferences that were casts.",
             "is_active": True,
             "is_displayed": True,
-            "applies_to": ",".join([t[0] for t in DATATYPES]),
-            "inner_module": "preflibtools.properties.basic",
-            "inner_function": "sum_vote_count",
-            "inner_type": "int",
-            "search_widget": "range",
-            "short_name": "sumVot",
-            "search_question": "Sum of vote count:",
-            "search_res_name": "Sum Vote Count",
-            "order_priority": 3})
-
-    metadata_uniq_orders, _ = Metadata.objects.update_or_create(
-        name="Number of unique orders",
-        defaults={
-            "category": "general",
-            "description": "The number of distinct ballots that were casts.",
-            "is_active": True,
-            "is_displayed": True,
-            "applies_to": ",".join([t[0] for t in DATATYPES]),
+            "applies_to": 'soc,soi,toc,toi',
             "inner_module": "preflibtools.properties.basic",
             "inner_function": "num_different_orders",
             "inner_type": "int",
