@@ -137,11 +137,13 @@
 
 <h2 id="format">File Format</h2>
 
-<h3>Ordinal Preferences</h3>
+<p>
+    All the data file share a common file format, with few adaptions for each specific type. Data files contain two
+    parts, first a list of metadata with lines starting with a &ldquo;#&rdquo;; second the preferences themselves.
+</p>
 
 <p>
-    The data types <a href="#soc">SOC</a>, <a href="#soi">SOI</a>, <a href="#toc">TOC</a>, and <a href="#toi">TOI</a>
-    all represent ordinal preferences. We encode them using the following format.
+    Below, you will find an example of the first 8 lines of the header of a file in the <a href="{% url 'preflibapp:dataset' '00001' %}">irish dataset</a>.
 </p>
 
 <div class='codebox'>
@@ -149,66 +151,90 @@
         <tbody>
             <tr>
                 <td class='lineNumber'>1</td>
-                <td class='code-line-content'>Number of alternatives</td>
+                <td class='code-line-content'># FILE NAME: 00001-00000001.soi</td>
             </tr>
             <tr>
                 <td class='lineNumber'>2</td>
-                <td class='code-line-content'>1, First alternative's name</td>
+                <td class='code-line-content'># TITLE: 2002 Dublin North</td>
             </tr>
             <tr>
                 <td class='lineNumber'>3</td>
-                <td class='code-line-content'>2, Second alternative's name</td>
+                <td class='code-line-content'># DESCRIPTION: </td>
             </tr>
             <tr>
-                <td class='lineNumber'>...</td>
-                <td class='code-line-content'></td>
+                <td class='lineNumber'>4</td>
+                <td class='code-line-content'># DATA TYPE: soi</td>
             </tr>
             <tr>
-                <td class='lineNumber'>m + 2</td>
-                <td class='code-line-content'>Number of Voters, Sum of Vote Count, Number of Unique Orders</td>
+                <td class='lineNumber'>5</td>
+                <td class='code-line-content'># MODIFICATION TYPE: original</td>
             </tr>
             <tr>
-                <td class='lineNumber'>m + 3</td>
-                <td class='code-line-content'>Count, Preference list</td>
+                <td class='lineNumber'>6</td>
+                <td class='code-line-content'># RELATES TO: </td>
             </tr>
             <tr>
-                <td class='lineNumber'>m + 4</td>
-                <td class='code-line-content'>Count, Preference list</td>
+                <td class='lineNumber'>7</td>
+                <td class='code-line-content'># RELATED FILES: 00001-00000001.toc</td>
             </tr>
             <tr>
-                <td class='lineNumber'>...</td>
-                <td class='code-line-content'></td>
+                <td class='lineNumber'>8</td>
+                <td class='code-line-content'># PUBLICATION DATE: 2021-06-22</td>
             </tr>
         </tbody>
     </table>
 </div>
 
 <p>
-    The first lines describe the alternatives. The first line indicates the number of alternatives. The following lines
-    give for each alternative, their real name.
-</p>
-
-<p>
-    After the alternatives, comes the ballots. A first line provides several figures:
+    Let us describe each of the metadata that are common to all files.
 </p>
 <ul>
-    <li><em>Number of Voters</em>: the number of actual ballots that were cast.</li>
-    <li><em>Sum of Vote Count</em>: the sum of the weightsof the voters which is almost always equals to the number of voters.</li>
-    <li><em>Number of Unique Orders</em>: the number of distinct ballots that were cast.</li>
+    <li><em>FILE NAME</em>: the name of the file.</li>
+    <li><em>TITLE</em>: the title of the data file, for instance the year of the election represented in the data file.</li>
+    <li><em>DESCRIPTION</em>: a description of the data file, providing additional information about it.</li>
+    <li><em>DATA TYPE</em>: the type of the data in the data file as described <a href="#types">above</a>.</li>
+    <li><em>MODIFICATION TYPE</em>: the modification type of the data file as described <a href="#modification">below</a>.</li>
+    <li><em>RELATES TO</em>: the name of the data file that the current file relates to, typically the source file in case the current file has been derived from another one.</li>
+    <li><em>RELATED FILES</em>: the list of all the data files related to this one, comma separated.</li>
+    <li><em>PUBLICATION DATE</em>: the date at which the data file was publish in the PrefLib system for the first time.</li>
+    <li><em>MODIFICATION DATE</em>: the last time the data file was modified.</li>
+    <li><em>NUMBER ALTERNATIVES</em>: the number of alternatives in the data file (not all of them have to appear in the preferences).</li>
+    <li><em>ALTERNATIVE NAME X</em>: the name of alternative number X.</li>
 </ul>
 
 <p>
-    Finally, the actual preferences are presented. Each line indicates first the number of voters who submitted the
-    given preference list, and then the preference list. Inside a preference list, a strict ordering is indicated by
-    comma, and indifference classes are gouped with brackets. We provide some examples below for a better understanding.
+    The preference part of the file is specific to each data type, we will describe it in the following.
 </p>
+
+<h3>Ordinal Preferences</h3>
+
+<p>
+    Ordinal preferences are represented using the data types <a href="#soc">SOC</a>, <a href="#soi">SOI</a>,
+    <a href="#toc">TOC</a>, and <a href="#toi">TOI</a> all represent ordinal preferences.
+</p>
+
+<p>
+    On top of the metadata described above, additional ones are specific to ordinal preferences.
+</p>
+<ul>
+    <li><em>NUMBER VOTERS</em>: the number of voters who submitted an order.</li>
+    <li><em>NUMBER UNIQUE ORDERS</em>: the number unique orders that have been submitted.</li>
+</ul>
+
+<p>
+    The orders are described in the following way. Each line indicates first the number of voters who submitted the
+    given preference list, and then, after a column, the preference list. Inside a preference list, a strict ordering
+    is indicated by comma, and indifference classes are gouped with brackets. We provide some examples below for a
+    better understanding.
+</p>
+
 <ul>
     <li><em>1, 4, 3, 2</em>: indicates that 1 is preferred to 4, that is preferred to 3, itself preferred to 2.</li>
     <li><em>1, {4, 3}, 2</em>: indicates that 1 is preferred to 4 and 3, that are both preferred to 2, but 4 and 3 are ranked at the same position.</li>
 </ul>
 
 <p>
-    To conclude, here is an example of the 25 first lines of a data file of complete orders with ties
+    To conclude, here is an example of the 27 first lines of a data file of complete orders with ties
     (<a href="#toc">TOC</a>) (taken from the <a href="{% url 'preflibapp:dataset' '00002' %}">debian election dataset</a>).
 </p>
 
@@ -217,161 +243,142 @@
         <tbody>
             <tr>
                 <td class='lineNumber'> 1 </td>
-                <td class='code-line-content'> 4 </td>
+                <td class='code-line-content'># FILE NAME: 00002-00000001.toc</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 2 </td>
-                <td class='code-line-content'> 1, Branden Robinson </td>
+                <td class='code-line-content'># TITLE: Debian 2002 Leader</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 3 </td>
-                <td class='code-line-content'> 2, Raphael Hertzog </td>
+                <td class='code-line-content'># DESCRIPTION: Obtained from the soi by adding the unranked alternatives at the bottom</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 4 </td>
-                <td class='code-line-content'> 3, Bdale Garbee </td>
+                <td class='code-line-content'># DATA TYPE: toc</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 5 </td>
-                <td class='code-line-content'> 4, None Of The Above </td>
+                <td class='code-line-content'># MODIFICATION TYPE: imbued</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 6 </td>
-                <td class='code-line-content'> 475, 475, 41 </td>
+                <td class='code-line-content'># RELATES TO: 00002-00000001.soi</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 7 </td>
-                <td class='code-line-content'> 60, 3, 1, 2, 4 </td>
+                <td class='code-line-content'># RELATED FILES:</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 8 </td>
-                <td class='code-line-content'> 50, 1, 3, 2, 4 </td>
+                <td class='code-line-content'># PUBLICATION DATE: 2021-06-22</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 9 </td>
-                <td class='code-line-content'> 40, 3, 1, 2,  4 </td>
+                <td class='code-line-content'># MODIFICATION DATE: 2022-09-16</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 10 </td>
-                <td class='code-line-content'> 34, 3, 2, 1, 4 </td>
+                <td class='code-line-content'># NUMBER ALTERNATIVES: 4</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 11 </td>
-                <td class='code-line-content'> 31, 3, 2, 4, 1 </td>
+                <td class='code-line-content'># NUMBER VOTERS: 475</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 12 </td>
-                <td class='code-line-content'> 29, 2, 3, 1, 4 </td>
+                <td class='code-line-content'># NUMBER UNIQUE ORDERS: 31</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 13 </td>
-                <td class='code-line-content'> 29, 1, 3, 2,  4 </td>
+                <td class='code-line-content'># ALTERNATIVE NAME 1: Branden Robinson</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 14 </td>
-                <td class='code-line-content'> 24, 2, 1, 3, 4 </td>
+                <td class='code-line-content'># ALTERNATIVE NAME 2: Raphael Hertzog</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 15 </td>
-                <td class='code-line-content'> 22, 1, 2, 3, 4 </td>
+                <td class='code-line-content'># ALTERNATIVE NAME 3: Bdale Garbee</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 16 </td>
-                <td class='code-line-content'> 20, 3, 2, 1,  4 </td>
+                <td class='code-line-content'># ALTERNATIVE NAME 4: None Of The Above</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 17 </td>
-                <td class='code-line-content'> 15, 1, 3, 4, 2 </td>
+                <td class='code-line-content'>100: 3,1,2,4</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 18 </td>
-                <td class='code-line-content'> 14, 2, 3, 1,  4 </td>
+                <td class='code-line-content'>79: 1,3,2,4</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 19 </td>
-                <td class='code-line-content'> 11, 3, 1, 4, 2 </td>
+                <td class='code-line-content'>54: 3,2,1,4</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 20 </td>
-                <td class='code-line-content'> 9, 2, 3, 4, 1 </td>
+                <td class='code-line-content'>43: 2,3,1,4</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 21 </td>
-                <td class='code-line-content'> 9, 3, {1, 2, 4} </td>
+                <td class='code-line-content'>34: 3,2,4,1</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 22 </td>
-                <td class='code-line-content'> 8, 1, 2, 3,  4 </td>
+                <td class='code-line-content'>30: 1,2,3,4</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 23 </td>
-                <td class='code-line-content'> 7, 1, {2, 3, 4} </td>
+                <td class='code-line-content'>29: 2,1,3,4</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 24 </td>
-                <td class='code-line-content'> 5, 3, 4, {1, 2} </td>
+                <td class='code-line-content'>16: 1,3,4,2</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 25 </td>
-                <td class='code-line-content'> 5, 3, 2, {1, 4} </td>
-            </tr>
-        </tbody>
-    </table>
-</div> 
-
-<h3>Weighted Matching</h3>
-
-<p>
-    The format for all weighted matching data is as follow with each element being on a new line. Only the file
-    extensions <a href="#wmd">WMD</a> uses this format.
-</p>
-
-<div class='codebox'>
-    <table>
-        <tbody>
-            <tr>
-                <td class='lineNumber'>1</td>
-                <td class='code-line-content'>Number of Nodes, Number of Edges/td>
+                <td class='code-line-content'>14: 2,3,4,1</td>
             </tr>
             <tr>
-                <td class='lineNumber'>2</td>
-                <td class='code-line-content'>1, First node's name</td>
+                <td class='lineNumber'> 26 </td>
+                <td class='code-line-content'>12: 3,1,4,2</td>
             </tr>
             <tr>
-                <td class='lineNumber'>3</td>
-                <td class='code-line-content'>2, Second node's name</td>
-            </tr>
-            <tr>
-                <td class='lineNumber'>...</td>
-                <td class='code-line-content'></td>
-            </tr>
-            <tr>
-                <td class='lineNumber'>n + 2</td>
-                <td class='code-line-content'>Source, Destination, Weight</td>
-            </tr>
-            <tr>
-                <td class='lineNumber'>n + 3</td>
-                <td class='code-line-content'>Source, Destination, Weight</td>
-            </tr>
-            <tr>
-                <td class='lineNumber'>...</td>
-                <td class='code-line-content'></td>
+                <td class='lineNumber'> 27 </td>
+                <td class='code-line-content'>9: 3,{1,2,4}</td>
             </tr>
         </tbody>
     </table>
 </div>
 
-<p>Each of the field above are described below.</p>
+<h3>Categorical Preferences</h3>
+
+<p>
+    Categorical preferences are very similar to ordinal ones. Some metadata are also specific to them.
+</p>
 <ul>
-    <li><em>Number of Nodes</em>: the number of nodes in the graph.</li>
-    <li><em>Number of Edges</em>: the number of edges in the graph.</li>
-    <li><em>X, Node Name</em>: the name of the node labeled by the number X.</li>
-    <li><em>Source, Destination, Weight</em>: an edge represented by its source node, its destination node and its weight.</li>
+    <li><em>NUMBER VOTERS</em>: the number of voters who submitted their preference.</li>
+    <li><em>NUMBER UNIQUE PREFERENCES</em>: the number unique preferences that have been submitted.</li>
+    <li><em>NUMBER CATEGORIES</em>: the number of categories the voters were asked to put alternatives in.</li>
+    <li><em>CATEGORY NAME X</em>: the name of category number X.</li>
 </ul>
 
 <p>
-    Here is an example of the 25 first lines of a weighted matching data file (<a href="#wmd">WMD</a>)
-    (taken from the <a href="{% url "preflibapp:dataset" '00036' %}">kidney matching dataset</a>).
+    The preferences are described in the following way. Each line indicates first the number of voters who submitted the
+    given preference list, and then, after a column, the preference list. Inside a preference list, each category is
+    grouped around brackets, except for the categories with a single alternative, the empty category being
+    &ldquo;{}&rdquo;. We provide some examples below for abetter understanding.
+</p>
+
+<ul>
+    <li><em>1, 3, {}</em>: indicates that the alternative 1 is in category 1, alternative 3 in the second category, and the last category is left empty.</li>
+    <li><em>{}, 1, {2, 3}</em>: indicates that the first category is empty, alternative 1 is in the second category and alternatives 2 and 3 are in the last category.</li>
+</ul>
+
+<p>
+    Let's conclude with an example from the <a href="{% url 'preflibapp:dataset' '00026' %}">french approval dataset</a>.
 </p>
 
 <div class='codebox'>
@@ -379,103 +386,196 @@
         <tbody>
             <tr>
                 <td class='lineNumber'> 1 </td>
-                <td class='code-line-content'> 16, 26 </td>
+                <td class='code-line-content'># FILE NAME: 00026-00000001.cat</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 2 </td>
-                <td class='code-line-content'> 1, Pair 1 </td>
+                <td class='code-line-content'># TITLE: GylesNonains</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 3 </td>
-                <td class='code-line-content'> 2, Pair 2 </td>
+                <td class='code-line-content'># DESCRIPTION:</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 4 </td>
-                <td class='code-line-content'> 3, Pair 3 </td>
+                <td class='code-line-content'># DATA TYPE: cat</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 5 </td>
-                <td class='code-line-content'> 4, Pair 4 </td>
+                <td class='code-line-content'># MODIFICATION TYPE: original</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 6 </td>
-                <td class='code-line-content'> 5, Pair 5 </td>
+                <td class='code-line-content'># RELATES TO:</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 7 </td>
-                <td class='code-line-content'> 6, Pair 6 </td>
+                <td class='code-line-content'># RELATED FILES: 00026-00000001.toc</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 8 </td>
-                <td class='code-line-content'> 7, Pair 7 </td>
+                <td class='code-line-content'># PUBLICATION DATE: 2021-06-25</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 9 </td>
-                <td class='code-line-content'> 8, Pair 8 </td>
+                <td class='code-line-content'># MODIFICATION DATE: 2022-09-16</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 10 </td>
-                <td class='code-line-content'> 9, Pair 9 </td>
+                <td class='code-line-content'># NUMBER ALTERNATIVES: 16</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 11 </td>
-                <td class='code-line-content'> 10, Pair 10 </td>
+                <td class='code-line-content'># NUMBER VOTERS: 365</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 12 </td>
-                <td class='code-line-content'> 11, Pair 11 </td>
+                <td class='code-line-content'># NUMBER UNIQUE PREFERENCES: 216</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 13 </td>
-                <td class='code-line-content'> 12, Pair 12 </td>
+                <td class='code-line-content'># NUMBER CATEGORIES: 2</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 14 </td>
-                <td class='code-line-content'> 13, Pair 13 </td>
+                <td class='code-line-content'># CATEGORY NAME 1: Yes</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 15 </td>
-                <td class='code-line-content'> 14, Pair 14 </td>
+                <td class='code-line-content'># CATEGORY NAME 2: No</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 16 </td>
-                <td class='code-line-content'> 15, Pair 15 </td>
+                <td class='code-line-content'># ALTERNATIVE NAME 1: Megret</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 17 </td>
-                <td class='code-line-content'> 16, Pair 16 </td>
+                <td class='code-line-content'># ALTERNATIVE NAME 2: Lepage</td>
             </tr>
             <tr>
                 <td class='lineNumber'> 18 </td>
-                <td class='code-line-content'> 0, 4, 1 </td>
+                <td class='code-line-content'># ALTERNATIVE NAME 3: Gluckstein</td>
             </tr>
             <tr>
-                <td class='lineNumber'> 19 </td>
-                <td class='code-line-content'> 2, 7, 1 </td>
+                <td class='lineNumber'>...</td>
+                <td class='code-line-content'></td>
             </tr>
             <tr>
-                <td class='lineNumber'> 20 </td>
-                <td class='code-line-content'> 2, 3, 1 </td>
+                <td class='lineNumber'>32</td>
+                <td class='code-line-content'>13: 6,{1,2,3,4,5,7,8,9,10,11,12,13,14,15,16}</td>
             </tr>
             <tr>
-                <td class='lineNumber'> 21 </td>
-                <td class='code-line-content'> 3, 4, 1 </td>
+                <td class='lineNumber'> 33 </td>
+                <td class='code-line-content'>13: {},{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16}</td>
             </tr>
             <tr>
-                <td class='lineNumber'> 22 </td>
-                <td class='code-line-content'> 5, 7, 1 </td>
+                <td class='lineNumber'> 34 </td>
+                <td class='code-line-content'>10: {9,10},{1,2,3,4,5,6,7,8,11,12,13,14,15,16}</td>
             </tr>
             <tr>
-                <td class='lineNumber'> 23 </td>
-                <td class='code-line-content'> 5, 3, 1 </td>
+                <td class='lineNumber'> 35 </td>
+                <td class='code-line-content'>10: {1,6},{2,3,4,5,7,8,9,10,11,12,13,14,15,16}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<h3>Weighted Matching</h3>
+
+<p>
+    Let us start, as usual, for the metadata that are specific to the matching data.
+</p>
+<ul>
+    <li><em>NUMBER EDGES</em>: the number of edges in the matching graph.</li>
+</ul>
+
+<p>
+    The matching grap iteself is described as a list of <em>Source, Destination, Weight</em>. Below is an example from
+    the <a href="{% url "preflibapp:dataset" '00036' %}">kidney matching dataset</a>.
+</p>
+
+<div class='codebox'>
+    <table>
+        <tbody>
+            <tr>
+                <td class='lineNumber'> 1 </td>
+                <td class='code-line-content'># FILE NAME: 00036-00000001.wmd</td>
             </tr>
             <tr>
-                <td class='lineNumber'> 24 </td>
-                <td class='code-line-content'> 6, 7, 1 </td>
+                <td class='lineNumber'> 2 </td>
+                <td class='code-line-content'># TITLE: Kidney Matching - 16 with 0</td>
             </tr>
             <tr>
-                <td class='lineNumber'> 25 </td>
-                <td class='code-line-content'> 6, 3, 1 </td>
+                <td class='lineNumber'> 3 </td>
+                <td class='code-line-content'># DESCRIPTION:</td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 4 </td>
+                <td class='code-line-content'># DATA TYPE: wmd</td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 5 </td>
+                <td class='code-line-content'># MODIFICATION TYPE: synthetic</td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 6 </td>
+                <td class='code-line-content'># RELATES TO:</td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 7 </td>
+                <td class='code-line-content'># RELATED FILES: 00036-00000001.dat</td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 8 </td>
+                <td class='code-line-content'># PUBLICATION DATE: 2021-06-25</td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 9 </td>
+                <td class='code-line-content'># MODIFICATION DATE: 2022-09-16</td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 10 </td>
+                <td class='code-line-content'># NUMBER ALTERNATIVES: 16</td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 11 </td>
+                <td class='code-line-content'># NUMBER VOTERS: 365</td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 12 </td>
+                <td class='code-line-content'># NUMBER EDGES: 59</td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 13 </td>
+                <td class='code-line-content'># ALTERNATIVE NAME 1: Pair 1</td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 14 </td>
+                <td class='code-line-content'># ALTERNATIVE NAME 2: Pair 2</td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 15 </td>
+                <td class='code-line-content'># ALTERNATIVE NAME 3: Pair 3</td>
+            </tr>
+            <tr>
+                <td class='lineNumber'>...</td>
+                <td class='code-line-content'></td>
+            </tr>
+            <tr>
+                <td class='lineNumber'>28</td>
+                <td class='code-line-content'>1,5,1.0</td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 29 </td>
+                <td class='code-line-content'>1,6,1.0</td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 30 </td>
+                <td class='code-line-content'>2,1,1.0</td>
+            </tr>
+            <tr>
+                <td class='lineNumber'> 31 </td>
+                <td class='code-line-content'>2,3,1.0</td>
             </tr>
         </tbody>
     </table>

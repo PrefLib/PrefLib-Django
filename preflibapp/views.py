@@ -158,24 +158,32 @@ def dataset_view(request, dataset_num):
                     file_dict["num_vot"] = prop.typed_value()
             file_dict["meta_per_cat"] = meta_per_category
             # Getting the first few lines of the file
-            if "num_alt" in file_dict:
-                number_alt = file_dict["num_alt"]
-                with open(finders.find(file.file_path), "r") as f:
-                    if number_alt <= 12:
-                        tmp_lines = f.readlines()
-                        lines = tmp_lines[:min(number_alt + 2 + 10, len(tmp_lines))]
-                        lines = [(str(i + 1), lines[i]) for i in range(len(lines))]
-                        if len(lines) < len(tmp_lines):
-                            lines.append(("...", ""))
+            meta_lines = []
+            pref_lines = []
+            with open(finders.find(file.file_path), "r") as f:
+                for line in f.readlines():
+                    if line.startswith('#'):
+                        meta_lines.append(line.strip())
                     else:
-                        tmp_lines = f.readlines()
-                        lines = [(str(i + 1), tmp_lines[i]) for i in range(12)]
-                        lines.append(("...", ""))
-                        lines += [(str(i + 1), tmp_lines[i][:45] + ("..." if len(tmp_lines[i]) > 45 else "")) for i in
-                                  range(number_alt + 1, min(number_alt + 12, len(tmp_lines)))]
-                        if min(number_alt + 12, len(tmp_lines)) < len(tmp_lines):
-                            lines.append(("...", ""))
-                file_dict["preview"] = lines
+                        pref_lines.append(line.strip())
+            lines = []
+            index = 1
+            if len(meta_lines) > 15:
+                for line in meta_lines[:15]:
+                    lines.append((index, line))
+                    index += 1
+                lines.append(("...", "..."))
+                index = len(meta_lines) + 1
+            else:
+                for line in meta_lines:
+                    lines.append((index, line))
+                    index += 1
+            for line in pref_lines[:10]:
+                lines.append((index, line))
+                index += 1
+            if len(pref_lines) > 10:
+                lines.append(("...", "..."))
+            file_dict["preview"] = lines
             files_info.append(file_dict)
     return my_render(request, os.path.join('preflib', 'dataset.html'), locals())
 

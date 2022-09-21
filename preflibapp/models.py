@@ -29,7 +29,7 @@ class DataSet(models.Model):
     name = models.CharField(max_length=1000,
                             unique=True,
                             verbose_name="name")
-    abbreviation = models.CharField(max_length=100,
+    abbreviation = models.SlugField(max_length=100,
                                     unique=True,
                                     verbose_name="abbreviation of the dataset")
     series_number = models.SlugField(unique=True,

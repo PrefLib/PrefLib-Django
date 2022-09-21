@@ -53,15 +53,15 @@ def read_info_file(file_name):
                     split = split.strip()
                     if len(split) > 0:
                         if inside_quotes:
-                            if split[-1] == "'":
-                                tmp_split += split[:-1]
+                            if split[-3:] == '"""':
+                                tmp_split += split[:-3]
                                 new_split_line.append(tmp_split)
                                 inside_quotes = False
                             else:
                                 tmp_split += split + ', '
                         else:
-                            if split[0] == "'":
-                                tmp_split += split[1:] + ', '
+                            if split[0:3] == '"""':
+                                tmp_split += split[3:] + ', '
                                 inside_quotes = True
                             else:
                                 new_split_line.append(split)

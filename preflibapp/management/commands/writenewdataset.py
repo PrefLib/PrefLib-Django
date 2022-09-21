@@ -5,7 +5,7 @@ from django.db.models import Max
 import preflibapp
 
 from preflibapp.models import *
-from preflibapp.preflibtools.instances.preflibinstance import OrdinalInstance, MatchingInstance
+from preflibtools.instances.preflibinstance import OrdinalInstance, MatchingInstance
 
 import traceback
 import shutil

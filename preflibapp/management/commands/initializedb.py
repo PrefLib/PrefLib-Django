@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand
 
 from preflibapp.models import Metadata, DataTag
-from preflibapp.choices import *
 
 
 def initialize_tags():
