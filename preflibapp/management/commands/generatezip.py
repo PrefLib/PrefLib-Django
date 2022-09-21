@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.contrib.staticfiles import finders
 from django.core import management
-from django.utils import timezone
 from django.db.models import Max
 
 from preflibapp.models import *
@@ -35,7 +34,7 @@ def zip_dataset(dataset, data_dir):
 def zip_type(data_type, data_dir):
     zipf = zipfile.ZipFile(os.path.join(data_dir, "types", data_type + ".zip"), "w", zipfile.ZIP_DEFLATED)
     for datafile in DataFile.objects.filter(data_type=data_type):
-        zipf.write(os.path.join(data_dir, datafile.file_path), datafile.file_name)
+        zipf.write(os.path.join(os.path.dirname(data_dir), datafile.file_path), datafile.file_name)
     zipf.close()
 
 

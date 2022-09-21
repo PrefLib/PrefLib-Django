@@ -5,6 +5,7 @@
 <html>
 <head>
 	{% include 'includes/htmlheadercontent.html' %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<title>Preflib | {{ dataset.name }}</title>
 </head>
 
@@ -23,13 +24,13 @@
 
 		{% if dataset.required_citations %}
 			{% autoescape off %}
-			<p><span class="bold">Required citations:</span> {{ dataset.required_citations }} </p>
+	    		<p><span class="bold">Required citations:</span> {{ dataset.required_citations }} </p>
 			{% endautoescape %}
 		{% endif %}
 
-		{% if dataset.required_citations %}
+		{% if dataset.selected_studies %}
 			{% autoescape off %}
-			<p><span class="bold">Selected studies:</span> {{ dataset.selected_studies }} </p>
+		    	<p><span class="bold">Selected studies:</span> {{ dataset.selected_studies }} </p>
 			{% endautoescape %}
 		{% endif %}
 
