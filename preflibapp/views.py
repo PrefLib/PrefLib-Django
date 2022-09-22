@@ -163,29 +163,28 @@ def dataset_view(request, dataset_num):
             # Getting the first few lines of the file
             meta_lines = []
             pref_lines = []
+            global_index = 0
+            meta_index = 1
+            pref_index = 1
             with open(finders.find(file.file_path), "r", encoding="utf-8") as f:
                 for line in f.readlines():
+                    global_index += 1
                     if line.startswith('#'):
-                        meta_lines.append(line.strip())
+                        if meta_index is not None:
+                            if meta_index <= 15:
+                                meta_lines.append((global_index, line.strip()))
+                                meta_index += 1
+                            else:
+                                meta_lines.append(("...", "..."))
+                                meta_index = None
                     else:
-                        pref_lines.append(line.strip())
-            lines = []
-            index = 1
-            if len(meta_lines) > 15:
-                for line in meta_lines[:15]:
-                    lines.append((index, line))
-                    index += 1
-                lines.append(("...", "..."))
-                index = len(meta_lines) + 1
-            else:
-                for line in meta_lines:
-                    lines.append((index, line))
-                    index += 1
-            for line in pref_lines[:10]:
-                lines.append((index, line))
-                index += 1
-            if len(pref_lines) > 10:
-                lines.append(("...", "..."))
+                        if pref_index <= 10:
+                            pref_lines.append((global_index, line.strip()))
+                            pref_index += 1
+                        else:
+                            pref_lines.append(("...", "..."))
+                            break
+            lines = meta_lines + pref_lines
             file_dict["preview"] = lines
             files_info.append(file_dict)
     return my_render(request, os.path.join('preflib', 'dataset.html'), locals())
