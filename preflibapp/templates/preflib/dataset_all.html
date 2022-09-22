@@ -178,35 +178,39 @@
 
         // Tag filter
         function toggleTag(tagSpan) {
-            var tag = tagSpan.getAttribute('datatag')
-            var datasets = document.getElementsByClassName('dataset-list-item');
-            var menuitems = document.getElementsByClassName('dataset-menu-item');
             if (tagSpan.classList.contains('tag-filter-active-tag')) {
-                // Deactivating datasets
                 tagSpan.classList.remove('tag-filter-active-tag');
                 tagSpan.classList.add('tag-filter-inactive-tag');
-                for (var i = 0, len = datasets.length; i < len; i++) {
-                    if (datasets[i].getAttribute('data-tags').includes(tag)) {
-                        datasets[i].style.display = "none";
-                    }
-                }
-                for (var i = 0, len = menuitems.length; i < len; i++) {
-                    if (menuitems[i].getAttribute('data-tags').includes(tag)) {
-                        menuitems[i].style.display = "none";
-                    }
-                }
             } else {
-                // Activating datasets
                 tagSpan.classList.add('tag-filter-active-tag');
                 tagSpan.classList.remove('tag-filter-inactive-tag');
-                for (var i = 0, len = datasets.length; i < len; i++) {
+            }
+            var tags = document.getElementsByClassName('tag-filter-tag');
+            var datasets = document.getElementsByClassName('dataset-list-item');
+            var menuitems = document.getElementsByClassName('dataset-menu-item');
+            for (var i = 0, ds_len = datasets.length; i < ds_len; i++) {
+                datasets[i].style.display = "none";
+            }
+            for (var i = 0, menu_len = menuitems.length; i < menu_len; i++) {
+                menuitems[i].style.display = "none";
+            }
+            for (var i = 0, ds_len = datasets.length; i < ds_len; i++) {
+                for (var j = 0, tag_len = tags.length; j < tag_len; j++) {
+                    var tag = tags[j].getAttribute('datatag');
                     if (datasets[i].getAttribute('data-tags').includes(tag)) {
-                        datasets[i].style.display = "block";
+                        if (tags[j].classList.contains('tag-filter-active-tag')) {
+                            datasets[i].style.display = "block";
+                        }
                     }
                 }
-                for (var i = 0, len = menuitems.length; i < len; i++) {
+            }
+            for (var i = 0, menu_len = menuitems.length; i < menu_len; i++) {
+                for (var j = 0, tag_len = tags.length; j < tag_len; j++) {
+                    var tag = tags[j].getAttribute('datatag');
                     if (menuitems[i].getAttribute('data-tags').includes(tag)) {
-                        menuitems[i].style.display = "block";
+                        if (tags[j].classList.contains('tag-filter-active-tag')) {
+                            menuitems[i].style.display = "block";
+                        }
                     }
                 }
             }

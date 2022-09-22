@@ -25,6 +25,20 @@ def initialize_tags():
         }
     )
 
+    politics_tag, _ = DataTag.objects.update_or_create(
+        name="STV",
+        defaults={
+            "description": "STV (single-transferable vote) was the voting rule used for the selection of the winner.",
+        }
+    )
+
+    politics_tag, _ = DataTag.objects.update_or_create(
+        name="MTurk",
+        defaults={
+            "description": "The preferences were collected on Amazon Mechanical Turk.",
+        }
+    )
+
     matching_tag, _ = DataTag.objects.update_or_create(
         name="Matching",
         defaults={

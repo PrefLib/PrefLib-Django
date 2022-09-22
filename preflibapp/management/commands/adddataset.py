@@ -107,8 +107,7 @@ def add_dataset(file_path, tmp_dir, data_dir, keepzip, log):
         tag_obj, _ = DataTag.objects.get_or_create(
             name=tag,
             defaults={
-                'description': 'No description provided.',
-                'parent': None
+                'description': 'No description provided.'
             }
         )
         dataset_obj.tags.add(tag_obj)
@@ -165,8 +164,6 @@ def add_dataset(file_path, tmp_dir, data_dir, keepzip, log):
                 print("No info found for {}".format(file_name))
                 log.append("</li>\n</ul>\n<p><strong>No info has been found for the file " + str(file_name) +
                            " in the info file of " + str(file_path) + "</strong></p>\n<ul>")
-
-
 
             # We can finally create (or update) the datafile object in the database
             datafile_obj, _ = DataFile.objects.update_or_create(

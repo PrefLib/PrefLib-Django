@@ -160,7 +160,7 @@ def dataset_view(request, dataset_num):
             # Getting the first few lines of the file
             meta_lines = []
             pref_lines = []
-            with open(finders.find(file.file_path), "r") as f:
+            with open(finders.find(file.file_path), "r", encoding="utf-8") as f:
                 for line in f.readlines():
                     if line.startswith('#'):
                         meta_lines.append(line.strip())
