@@ -17,20 +17,21 @@ python packages for the script to run through. After the script is done, we advi
 the newly created website. To do so, first download some zipped datasets from
 `PrefLib.org website <https://www.preflib.org/>`_. You can use the following links:
 
-* **AGH course selection**: `https://www.preflib.org/static/data/ED/agh/agh.zip <https://www.preflib.org/static/data/ED/agh/agh.zip>`_
-* **Aspen election data**: `https://www.preflib.org/static/data/ED/aspen/aspen.zip <https://www.preflib.org/static/data/ED/aspen/aspen.zip>`_
+* **AGH course selection**: `https://www.preflib.org/static/data/agh/agh.zip <https://www.preflib.org/static/data/agh/agh.zip>`_
+* **Aspen election data**: `https://www.preflib.org/static/data/aspen/aspen.zip <https://www.preflib.org/static/data/aspen/aspen.zip>`_
 
-The zip files should be place in :code:`preflibApp/static/datatoadd`. Once you have put all the zip files in the folder, run the following command:
+To add the dataset to the website, run the following commands:
 
 .. code-block:: bash
 
-	python3 manage.py adddataset --all
+	python3 manage.py adddataset -f path/to/the/file/agh.zip
+	python3 manage.py adddataset -f path/to/the/file/aspen.zip
 
 You are now almost done, just run two more scripts and you will have a fully functional website.
 
 .. code-block:: bash
 
-	python3 manage.py updatemetadata
+	python3 manage.py updatemetadata --all
 	python3 manage.py generatezip
 
 Note that these two last scripts can take long, especially if you have added a lot of data.
