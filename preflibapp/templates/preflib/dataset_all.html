@@ -37,15 +37,16 @@
         Sort by:
         <a href="javascript:sortByName()" id="sort-name" style="font-weight: bold;">Dataset name (A-Z)</a> &middot;
         <a href="javascript:sortByNew()" id="sort-new">Newest first</a> &middot;
-        <a href="javascript:sortByOld()" id="sort-old">Oldest first</a>
+        <a href="javascript:sortByOld()" id="sort-old">Oldest first</a> &middot;
+        <a href="javascript:sortByNum()" id="sort-num">Series Number</a>
     </p>
 	
 	<section id="section-datasets">
 	<nav id="dataset-menu">
 		<ul>
         	{% for dsinfo in dataset_info %}
-		    	<li data-number="{{dsinfo.ds.series_number}}" data-name="{{dsinfo.ds.name}}" data-tags="{{ dsinfo.tags }}" class="dataset-menu-item">
-                    <a href="#{{dsinfo.ds.series_number}}">{{ dsinfo.ds.name }}</a>
+		    	<li data-timestamp="{{ dsinfo.timestamp }}" data-number="{{ dsinfo.ds.series_number }}" data-name="{{ dsinfo.ds.name }}" data-tags="{{ dsinfo.tags }}" class="dataset-menu-item">
+                    <a href="#{{ dsinfo.ds.series_number }}">{{ dsinfo.ds.name }}</a>
                 </li>
 			{% endfor %}
 		</ul>
@@ -54,7 +55,7 @@
 	<ul id="dataset-list">
 	{% for dsinfo in dataset_info %}
 		{% with dsinfo.ds as ds %}
-			<li id="{{ ds.series_number }}" data-number="{{ ds.series_number }}" data-name="{{ ds.name }}" data-tags="{{ dsinfo.tags }}" class="dataset-list-item">
+			<li id="{{ ds.series_number }}" data-timestamp="{{ dsinfo.timestamp }}" data-number="{{ ds.series_number }}" data-name="{{ ds.name }}" data-tags="{{ dsinfo.tags }}" class="dataset-list-item">
 				<h2 class="dataset-title"><a href="{% url 'preflibapp:dataset' ds.series_number %}" id="{{ ds.series_number }}_title">{{ ds.name }}</a></h2>
 
 				<p class="dataset-number">{{ds.series_number}}</p>
@@ -99,7 +100,7 @@
 		var menu = document.querySelector('#dataset-menu ul');
 
 		function bolden(id) {
-			for (link of ["#sort-name", "#sort-new", "#sort-old"]) {
+			for (link of ["#sort-name", "#sort-new", "#sort-old", "#sort-num"]) {
 				if (link == id) {
 					document.querySelector(link).style.fontWeight = "bold";
 				} else {
@@ -119,21 +120,30 @@
 		}
 		function sortByNew() {
 			[...list.children]
-			.sort((a,b)=>b.dataset.number.localeCompare(a.dataset.number))
+			.sort((a,b)=>b.dataset.timestamp.localeCompare(a.dataset.timestamp))
 			.forEach(node=>list.appendChild(node));
 			[...menu.children]
-			.sort((a,b)=>b.dataset.number.localeCompare(a.dataset.number))
+			.sort((a,b)=>b.dataset.timestamp.localeCompare(a.dataset.timestamp))
 			.forEach(node=>menu.appendChild(node));
 			bolden("#sort-new");
 		}
 		function sortByOld() {
+			[...list.children]
+			.sort((a,b)=>a.dataset.timestamp.localeCompare(b.dataset.timestamp))
+			.forEach(node=>list.appendChild(node));
+			[...menu.children]
+			.sort((a,b)=>a.dataset.timestamp.localeCompare(b.dataset.timestamp))
+			.forEach(node=>menu.appendChild(node));
+			bolden("#sort-old");
+		}
+		function sortByNum() {
 			[...list.children]
 			.sort((a,b)=>a.dataset.number.localeCompare(b.dataset.number))
 			.forEach(node=>list.appendChild(node));
 			[...menu.children]
 			.sort((a,b)=>a.dataset.number.localeCompare(b.dataset.number))
 			.forEach(node=>menu.appendChild(node));
-			bolden("#sort-old");
+			bolden("#sort-num");
 		}
 
 		// menu updates

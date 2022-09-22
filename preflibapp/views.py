@@ -1,3 +1,5 @@
+import datetime
+
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect, Http404
@@ -120,6 +122,7 @@ def all_datasets(request):
         files = list(ds.files.filter(related_files__isnull=True))
         dataset_info.append({
             "ds": ds,
+            "timestamp": (ds.publication_date - datetime.date(2000, 1, 1)).days,
             "files": files[:max_files_displayed],
             "num_files": len(files),
             "num_hidden_files": max(0, len(files) - max_files_displayed),
