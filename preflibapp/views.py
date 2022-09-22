@@ -179,7 +179,7 @@ def dataset_view(request, dataset_num):
                                 meta_index = None
                     else:
                         if pref_index <= 10:
-                            pref_lines.append((global_index, line.strip()))
+                            pref_lines.append((global_index, line.strip().replace(',', ', ')))
                             pref_index += 1
                         else:
                             pref_lines.append(("...", "..."))
