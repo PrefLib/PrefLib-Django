@@ -21,7 +21,7 @@ from .forms import *
 #   Auxiliary functions
 # ========================
 
-CACHE_TIME = 60 * 60 * 24
+CACHE_TIME = 60 * 60 * 24 * 30
 
 
 # Returns a nice paginator of the iterable for a give window size around the current page
