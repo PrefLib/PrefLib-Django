@@ -165,9 +165,18 @@
 {% if extra_files %}
     <p>For optimised performances, {{ extra_files|length }} files have been omitted. You can still download them below.</p>
     {% for file in extra_files %}
-        <p id="{{ file.short_name }}">
-            <span style="color: var(--color-blue1)">&#8226;</span> <a href="{% static file.file_path %}">{{ file.title }}</a>
-        </p>
+        <div class="data-file-wrapper">
+            <div class="data-file-title collapsible" id="{{ file.short_name }}">
+                <div class="file-name">
+                    {{ file.title }} &#8212; {{ file.file_name }}
+                </div>
+                <div class="vot-alt-numbers">
+                </div>
+                <div class="button-wrapper">
+                    <a href="{% static file.file_path %}" class="download-button">Download [{{ file.file_size|filesizeformat }}]</a>
+                </div>
+            </div>
+        </div>
     {% endfor %}
 {% endif %}
 
