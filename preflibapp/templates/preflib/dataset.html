@@ -39,6 +39,13 @@
 
 	<div class="side-by-side-right">
 		<h2>Details</h2>
+        {% if dataset.tags.all %}
+            <p class="dataset-tags">
+                {% for tag in dataset.tags.all %}
+                    <span title="{{ tag.description }}" class="data-tag">{{ tag.name }}</span>
+                {% endfor %}
+            </p>
+        {% endif %}
 		<ul>
 			<li> Number of files: {{ num_files }}</li>
 			<li> Total size: {{ total_size|filesizeformat }}</li>
