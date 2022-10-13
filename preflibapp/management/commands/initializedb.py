@@ -107,7 +107,7 @@ def initialize_metadata():
             "is_displayed": True,
             "applies_to": 'soc,soi,toc,toi',
             "inner_module": "preflibtools.properties.basic",
-            "inner_function": "num_different_orders",
+            "inner_function": "num_different_preferences",
             "inner_type": "int",
             "search_widget": "range",
             "short_name": "numUniq",
