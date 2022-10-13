@@ -490,6 +490,10 @@ h2 span {
 	background: white;
 }
 
+.no-margin-top {
+	margin-top: 0;
+}
+
 h3 {
 	color: var(--color-blue1);
 	text-align: left;

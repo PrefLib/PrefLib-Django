@@ -39,6 +39,13 @@
 
 	<div class="side-by-side-right">
 		<h2>Details</h2>
+        {% if dataset.tags.all %}
+            <p class="dataset-tags">
+                {% for tag in dataset.tags.all %}
+                    <span title="{{ tag.description }}" class="data-tag">{{ tag.name }}</span>
+                {% endfor %}
+            </p>
+        {% endif %}
 		<ul>
 			<li> Number of files: {{ num_files }}</li>
 			<li> Total size: {{ total_size|filesizeformat }}</li>
@@ -161,6 +168,24 @@
         </div>
     {% endfor %}
 </div>
+
+{% if extra_files %}
+    <p>For optimised performances, {{ extra_files|length }} files have been omitted. You can still download them below.</p>
+    {% for file in extra_files %}
+        <div class="data-file-wrapper">
+            <div class="data-file-title collapsible" id="{{ file.short_name }}">
+                <div class="file-name">
+                    {{ file.title }} &#8212; {{ file.file_name }}
+                </div>
+                <div class="vot-alt-numbers">
+                </div>
+                <div class="button-wrapper">
+                    <a href="{% static file.file_path %}" class="download-button">Download [{{ file.file_size|filesizeformat }}]</a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}
 
 <script>
 	var coll = document.getElementsByClassName("collapsible");

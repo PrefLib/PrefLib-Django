@@ -21,7 +21,8 @@ from .forms import *
 #   Auxiliary functions
 # ========================
 
-CACHE_TIME = 60 * 60 * 24
+CACHE_TIME = 60 * 60 * 24 * 30
+MAX_FILE_DISPLAYED = 150
 
 
 # Returns a nice paginator of the iterable for a give window size around the current page
@@ -144,50 +145,53 @@ def dataset_view(request, dataset_num):
     all_types = data_files.order_by('data_type').values_list('data_type').distinct()
 
     files_info = []
+    extra_files = []
     for file in data_files:
         if file.relates_to is None:
-            file_dict = {"f": file}
-            # Getting the metadata value for each category
-            meta_per_category = {}
-            for prop in file.dataproperty_set.all():
-                category_long_name = find_choice_value(METADATACATEGORIES, prop.metadata.category)
-                if category_long_name in meta_per_category:
-                    meta_per_category[category_long_name].append(prop)
-                else:
-                    meta_per_category[category_long_name] = [prop]
-                if prop.metadata.short_name == "numAlt":
-                    file_dict["num_alt"] = prop.typed_value()
-                if prop.metadata.short_name == "numVot":
-                    file_dict["num_vot"] = prop.typed_value()
-            file_dict["meta_per_cat"] = meta_per_category
-            # Getting the first few lines of the file
-            meta_lines = []
-            pref_lines = []
-            with open(finders.find(file.file_path), "r", encoding="utf-8") as f:
-                for line in f.readlines():
-                    if line.startswith('#'):
-                        meta_lines.append(line.strip())
-                    else:
-                        pref_lines.append(line.strip())
-            lines = []
-            index = 1
-            if len(meta_lines) > 15:
-                for line in meta_lines[:15]:
-                    lines.append((index, line))
-                    index += 1
-                lines.append(("...", "..."))
-                index = len(meta_lines) + 1
+            if len(files_info) > MAX_FILE_DISPLAYED:
+                extra_files.append(file)
             else:
-                for line in meta_lines:
-                    lines.append((index, line))
-                    index += 1
-            for line in pref_lines[:10]:
-                lines.append((index, line))
-                index += 1
-            if len(pref_lines) > 10:
-                lines.append(("...", "..."))
-            file_dict["preview"] = lines
-            files_info.append(file_dict)
+                file_dict = {"f": file}
+                # Getting the metadata value for each category
+                meta_per_category = {}
+                for prop in file.dataproperty_set.all():
+                    category_long_name = find_choice_value(METADATACATEGORIES, prop.metadata.category)
+                    if category_long_name in meta_per_category:
+                        meta_per_category[category_long_name].append(prop)
+                    else:
+                        meta_per_category[category_long_name] = [prop]
+                    if prop.metadata.short_name == "numAlt":
+                        file_dict["num_alt"] = prop.typed_value()
+                    if prop.metadata.short_name == "numVot":
+                        file_dict["num_vot"] = prop.typed_value()
+                file_dict["meta_per_cat"] = meta_per_category
+                # Getting the first few lines of the file
+                meta_lines = []
+                pref_lines = []
+                global_index = 0
+                meta_index = 1
+                pref_index = 1
+                with open(finders.find(file.file_path), "r", encoding="utf-8") as f:
+                    for line in f.readlines():
+                        global_index += 1
+                        if line.startswith('#'):
+                            if meta_index is not None:
+                                if meta_index <= 15:
+                                    meta_lines.append((global_index, line.strip()))
+                                    meta_index += 1
+                                else:
+                                    meta_lines.append(("...", "..."))
+                                    meta_index = None
+                        else:
+                            if pref_index <= 10:
+                                pref_lines.append((global_index, line.strip().replace(',', ', ')))
+                                pref_index += 1
+                            else:
+                                pref_lines.append(("...", "..."))
+                                break
+                lines = meta_lines + pref_lines
+                file_dict["preview"] = lines
+                files_info.append(file_dict)
     return my_render(request, os.path.join('preflib', 'dataset.html'), locals())
 
 
@@ -276,6 +280,11 @@ def data_search(request):
     all_files = all_files.order_by('file_name', 'data_type')
     (paginator, datafiles, page, pages_before, pages_after) = get_paginator(request, all_files, page_size=40)
     return my_render(request, os.path.join('preflib', 'datasearch.html'), locals())
+
+
+@cache_page(CACHE_TIME)
+def boehmer_schaar(request):
+    return my_render(request, os.path.join('preflib', 'boehmer_schaar.html'))
 
 
 # Tools views
