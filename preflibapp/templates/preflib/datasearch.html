@@ -189,6 +189,7 @@
 
 			<table align="center">
 				<tr>
+                    <th class="headerRotate"><div><span>Dataset</span></div></th>
 					<th class="headerRotate"><div><span>File</span></div></th>
 					<th class="headerRotate"><div><span>Data type</span></div></th>
 					<th class="headerRotate"><div><span>Modif. type</span></div></th>
@@ -199,6 +200,7 @@
 				</tr>
 				{% for file in datafiles %}
 				<tr>
+					<td><a href="{% url 'preflibapp:dataset' file.dataset.series_number %}">{{ file.dataset.name }}</a></td>
 					<td><a href="{% url 'preflibapp:dataset' file.dataset.series_number %}#{{ file.short_name }}">{{ file.short_name }}</a></td>
 					<td>{{ file.data_type }}</td>
 					<td>{{ file.modification_type }}</td>
