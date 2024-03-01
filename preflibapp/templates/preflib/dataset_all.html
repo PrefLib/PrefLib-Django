@@ -35,9 +35,9 @@
 
 	<p>
         Sort by:
-        <a href="javascript:sortByName()" id="sort-name" style="font-weight: bold;">Dataset name (A-Z)</a> &middot;
-        <a href="javascript:sortByNew()" id="sort-new">Newest first</a> &middot;
+        <a href="javascript:sortByNew()" id="sort-new" style="font-weight: bold;">Newest first</a> &middot;
         <a href="javascript:sortByOld()" id="sort-old">Oldest first</a> &middot;
+        <a href="javascript:sortByName()" id="sort-name">Dataset name (A-Z)</a> &middot;
         <a href="javascript:sortByNum()" id="sort-num">Series Number</a>
     </p>
 	
@@ -184,6 +184,7 @@
 			window.onscroll = () => {
 				debounce(updateDatasetMenu, 75)();
 			};
+			sortByNew();
 		});
 
         // Tag filter
