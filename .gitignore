@@ -12,3 +12,5 @@ local_settings.py
 /cache/
 .idea/
 venv/
+
+output/

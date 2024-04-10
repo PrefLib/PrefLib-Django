@@ -1,8 +1,9 @@
 import os
 
-## Write the settings.py file that we do not git for security reasons
-with open("preflib/local_settings.py", "w") as f:
-    f.write("""
+if __name__ == "__main__":
+    ## Write the settings.py file that we do not git for security reasons
+    with open("preflib/local_settings.py", "w") as f:
+        f.write("""
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -35,29 +36,29 @@ STATIC_ROOT = "static/"
 
 # Path to the unix convert command for the image handling
 CONVERT_PATH = 'convert'
-""")
-    f.close()
+    """)
+        f.close()
 
-## Create the migration folder and run the initial migration to set up the
-## database (a simple SQLlite db here since it should be only use to play around).
-try:
-    os.makedirs(os.path.join("preflibapp", "migrations"))
-except:
-    pass
-with open(os.path.join("preflibapp", "migrations", "__init__.py"), "w") as f:
-    f.write("")
-    f.close()
+    ## Create the migration folder and run the initial migration to set up the
+    ## database (a simple SQLlite db here since it should be only use to play around).
+    try:
+        os.makedirs(os.path.join("preflibapp", "migrations"))
+    except:
+        pass
+    with open(os.path.join("preflibapp", "migrations", "__init__.py"), "w") as f:
+        f.write("")
+        f.close()
 
-os.system("python3 manage.py makemigrations")
-os.system("python3 manage.py migrate")
+    os.system("python3 manage.py makemigrations")
+    os.system("python3 manage.py migrate")
 
-## Initialize the website
-os.system("python3 manage.py initializedb")
-os.system("python3 manage.py updatepapers")
-os.system("python3 manage.py collectstatic")
+    ## Initialize the website
+    os.system("python3 manage.py initializedb")
+    os.system("python3 manage.py updatepapers")
+    os.system("python3 manage.py collectstatic")
 
-## Set everything up to add data
-try:
-    os.makedirs(os.path.join("preflibapp", "static", "datatoadd"))
-except:
-    pass
+    ## Set everything up to add data
+    try:
+        os.makedirs(os.path.join("preflibapp", "static", "datatoadd"))
+    except:
+        pass
