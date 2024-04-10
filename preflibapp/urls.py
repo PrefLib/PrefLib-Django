@@ -16,7 +16,7 @@ urlpatterns = [
     distill_re_path(r'^format/?$', views.data_format, name='data-format', distill_file="format.html"),
 
     distill_re_path(r'^datasets/?$', views.all_datasets, name='all-datasets', distill_file="datasets.html"),
-    distill_re_path(r'^dataset/(?P<dataset_num>[0-9]{5})/?$', views.dataset_view, name='dataset', distill_func=get_all_dataset_num),
+    distill_re_path(r'^dataset/(?P<dataset_num>[0-9]{5})/?$', views.dataset_view, name='dataset', distill_func=get_all_dataset_num, distill_file="dataset/{dataset_num}.html"),
 
     distill_re_path(r'^data/search/?$', views.data_search, name="data-search"),
 

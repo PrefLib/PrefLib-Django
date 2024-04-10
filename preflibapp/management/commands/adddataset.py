@@ -125,7 +125,7 @@ def add_dataset(file_path, tmp_dir, data_dir, keepzip, log):
     # Let's now add the datafiles to the database
     relates_to_dict = {}
     for file_name in os.listdir(tmp_dir):
-        extension  = os.path.splitext(file_name)[1][1:] # Using [1:] here to remove the dot
+        extension = os.path.splitext(file_name)[1][1:]  # Using [1:] here to remove the dot
 
         # We only do it if it actually is a file we're interested in
         if is_choice(DATATYPES, extension):

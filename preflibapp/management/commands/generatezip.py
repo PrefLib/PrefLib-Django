@@ -33,6 +33,8 @@ def zip_dataset(dataset, data_dir):
 
 
 def zip_type(data_type, data_dir):
+    if data_type in ('dat',):
+        return
     zipf = zipfile.ZipFile(os.path.join(data_dir, "types", data_type + ".zip"), "w", zipfile.ZIP_DEFLATED)
     for datafile in DataFile.objects.filter(data_type=data_type):
         zipf.write(os.path.join(os.path.dirname(data_dir), datafile.file_path), datafile.file_name)
