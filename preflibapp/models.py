@@ -26,15 +26,15 @@ class DataTag(models.Model):
 
 
 class DataSet(models.Model):
-    name = models.CharField(max_length=1000,
+    name = models.CharField(max_length=50,
                             unique=True,
                             verbose_name="name")
-    abbreviation = models.SlugField(max_length=100,
+    abbreviation = models.SlugField(max_length=10,
                                     unique=True,
                                     verbose_name="abbreviation of the dataset")
     series_number = models.SlugField(unique=True,
                                      verbose_name="series number of the dataset")
-    zip_file_path = models.CharField(max_length=1000, blank=True, null=True, unique=True)
+    zip_file_path = models.CharField(max_length=255, blank=True, null=True, unique=True)
     zip_file_size = models.FloatField(default=0)
     description = models.TextField(blank=True, verbose_name="description of the dataset")
     tags = models.ManyToManyField(DataTag,
@@ -66,7 +66,7 @@ class Metadata(models.Model):
     description = models.TextField()
     is_active = models.BooleanField()
     is_displayed = models.BooleanField()
-    applies_to = models.CharField(max_length=1000)
+    applies_to = models.CharField(max_length=100)
     upper_bounds = models.ManyToManyField('self',
                                           symmetrical=False,
                                           related_name="upperBoundedBy",
@@ -76,7 +76,7 @@ class Metadata(models.Model):
     inner_type = models.CharField(max_length=100)
     search_widget = models.CharField(choices=SEARCHWIDGETS,
                                      max_length=100)
-    search_question = models.CharField(max_length=1000)
+    search_question = models.TextField()
     search_res_name = models.CharField(max_length=100)
     order_priority = models.IntegerField()
 
@@ -94,7 +94,7 @@ class DataFile(models.Model):
     dataset = models.ForeignKey(DataSet,
                                 on_delete=models.CASCADE,
                                 related_name='files')
-    file_name = models.CharField(max_length=255,
+    file_name = models.CharField(max_length=100,
                                  unique=True)
     data_type = models.CharField(choices=DATATYPES,
                                  max_length=5)
@@ -105,7 +105,7 @@ class DataFile(models.Model):
                                          max_length=20)
     title = models.CharField(max_length=100, blank=True)
     description = models.TextField(blank=True)
-    file_path = models.CharField(max_length=1000, blank=True, unique=True)
+    file_path = models.CharField(max_length=255, blank=True, unique=True)
     file_size = models.FloatField(default=0)
     relates_to = models.ForeignKey('DataFile',
                                    on_delete=models.CASCADE,
@@ -133,7 +133,7 @@ class DataProperty(models.Model):
                                  on_delete=models.CASCADE)
     metadata = models.ForeignKey(Metadata,
                                  on_delete=models.CASCADE)
-    value = models.CharField(max_length=1000)
+    value = models.CharField(max_length=100)
 
     def typed_value(self):
         if self.metadata.inner_type == "bool":
@@ -155,11 +155,11 @@ class DataProperty(models.Model):
 class Paper(models.Model):
     name = models.CharField(max_length=50,
                             unique=True)
-    title = models.CharField(max_length=1000)
-    authors = models.CharField(max_length=1000)
-    publisher = models.CharField(max_length=1000)
+    title = models.TextField()
+    authors = models.TextField()
+    publisher = models.TextField()
     year = models.IntegerField(default=0)
-    url = models.URLField(max_length=1000)
+    url = models.URLField(max_length=100)
 
     class Meta:
         ordering = ['-year', 'title']
@@ -174,7 +174,7 @@ class Paper(models.Model):
 
 class Log(models.Model):
     log = models.TextField()
-    log_type = models.CharField(max_length=200)
+    log_type = models.CharField(max_length=50)
     log_num = models.IntegerField(default=0)
     publication_date = models.DateTimeField()
 
