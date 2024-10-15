@@ -3,7 +3,8 @@ import os
 if __name__ == "__main__":
     ## Write the settings.py file that we do not git for security reasons
     with open("preflib/local_settings.py", "w") as f:
-        f.write("""
+        f.write(
+            """
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -36,7 +37,8 @@ STATIC_ROOT = "static/"
 
 # Path to the unix convert command for the image handling
 CONVERT_PATH = 'convert'
-    """)
+    """
+        )
         f.close()
 
     ## Create the migration folder and run the initial migration to set up the

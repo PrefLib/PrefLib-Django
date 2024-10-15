@@ -19,14 +19,22 @@ class Command(BaseCommand):
 
         try:
             # Initializing a new log
-            new_log_num = Log.objects.filter(log_type="papers").aggregate(Max('log_num'))['log_num__max']
+            new_log_num = Log.objects.filter(log_type="papers").aggregate(
+                Max("log_num")
+            )["log_num__max"]
             if new_log_num is None:
                 new_log_num = 0
             else:
                 new_log_num += 1
 
             # Starting the log
-            log = ["<h4> Updating the list of papers #" + str(new_log_num) + " - " + str(timezone.now()) + "</h4>\n"]
+            log = [
+                "<h4> Updating the list of papers #"
+                + str(new_log_num)
+                + " - "
+                + str(timezone.now())
+                + "</h4>\n"
+            ]
 
             # We start by emptying the Paper table
             Paper.objects.all().delete()
@@ -37,8 +45,8 @@ class Command(BaseCommand):
             log.append("<p>Reading bib file</p>\n<ul>\n")
 
             # Some regexpr that will be used to parse the bib file
-            field_regex = re.compile(r'\b(?P<key>\w+)={(?P<value>[^}]+)}')
-            name_regex = re.compile(r'@article{(?P<name>.+),')
+            field_regex = re.compile(r"\b(?P<key>\w+)={(?P<value>[^}]+)}")
+            name_regex = re.compile(r"@article{(?P<name>.+),")
 
             # Parsing the bib file
             reading_paper = False
@@ -47,13 +55,13 @@ class Command(BaseCommand):
             num_parenthesis = 0
             for line in file.readlines():
                 for char in line:
-                    if char == '@':
+                    if char == "@":
                         reading_paper = True
                         in_at = True
-                    elif char == '{':
+                    elif char == "{":
                         in_at = False
                         num_parenthesis += 1
-                    elif char == '}':
+                    elif char == "}":
                         num_parenthesis -= 1
                     if reading_paper:
                         paper_block += char
@@ -72,9 +80,14 @@ class Command(BaseCommand):
                                 authors=paper_dict["author"],
                                 publisher=paper_dict["journal"],
                                 year=paper_dict["year"],
-                                url=paper_dict["url"])
+                                url=paper_dict["url"],
+                            )
 
-                            log.append("\t<li>Created entry for " + paper_dict["name"] + "</li>\n")
+                            log.append(
+                                "\t<li>Created entry for "
+                                + paper_dict["name"]
+                                + "</li>\n"
+                            )
 
                             paper_block = ""
             # We close the log
@@ -83,13 +96,20 @@ class Command(BaseCommand):
 
         except Exception as e:
             # If something happend, we log it and move on
-            log.append("<p><strong>" + str(e) + "<br>\n" + str(traceback.format_exc()) + "</strong></p>")
+            log.append(
+                "<p><strong>"
+                + str(e)
+                + "<br>\n"
+                + str(traceback.format_exc())
+                + "</strong></p>"
+            )
             print(e)
             print(traceback.format_exc())
         finally:
             # In any cases we add the log to the database
             Log.objects.create(
-                log=''.join(log),
+                log="".join(log),
                 log_type="papers",
                 log_num=new_log_num,
-                publication_date=timezone.now())
+                publication_date=timezone.now(),
+            )

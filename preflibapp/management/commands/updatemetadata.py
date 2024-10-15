@@ -30,9 +30,11 @@ def update_dataprop(pk_log_meta):
                     datafile=datafile,
                     metadata=m,
                     defaults={
-                        "value": getattr(importlib.import_module(m.inner_module), m.inner_function)(
-                            preflib_instance)
-                    })
+                        "value": getattr(
+                            importlib.import_module(m.inner_module), m.inner_function
+                        )(preflib_instance)
+                    },
+                )
                 dataprop_obj.save()
     log.append(" ... done.</li>\n")
 
@@ -41,15 +43,16 @@ class Command(BaseCommand):
     help = "Update the metadata of the data file"
 
     def add_arguments(self, parser):
-        parser.add_argument('--abb', nargs='*', type=str)
-        parser.add_argument('--all', action='store_true')
-        parser.add_argument('--meta', nargs='*', type=str)
+        parser.add_argument("--abb", nargs="*", type=str)
+        parser.add_argument("--all", action="store_true")
+        parser.add_argument("--meta", nargs="*", type=str)
 
     def handle(self, *args, **options):
-        if not options['all'] and not options['abb']:
+        if not options["all"] and not options["abb"]:
             print(
                 "ERROR: you need to pass at least one dataset to write (with option --abb DATASET_ABBREVIATION) or "
-                "the option --all.")
+                "the option --all."
+            )
             return
 
         # Check if there is directory "data" exists in the statics
@@ -63,25 +66,37 @@ class Command(BaseCommand):
 
         try:
             # Initialize a new log
-            new_log_num = Log.objects.filter(log_type="metadata").aggregate(Max('log_num'))['log_num__max']
+            new_log_num = Log.objects.filter(log_type="metadata").aggregate(
+                Max("log_num")
+            )["log_num__max"]
             if new_log_num is None:
                 new_log_num = 0
             else:
                 new_log_num += 1
 
             # Either the datasets have been specified or we run through all of them
-            if options['all']:
-                options['abb'] = DataSet.objects.values_list('abbreviation', flat=True)
+            if options["all"]:
+                options["abb"] = DataSet.objects.values_list("abbreviation", flat=True)
 
-            datafiles = DataFile.objects.filter(dataset__abbreviation__in=options["abb"]).annotate(num_props=Count('metadata')).order_by('num_props')
+            datafiles = (
+                DataFile.objects.filter(dataset__abbreviation__in=options["abb"])
+                .annotate(num_props=Count("metadata"))
+                .order_by("num_props")
+            )
 
             metadata = Metadata.objects.filter(is_active=True)
-            if options['meta']:
-                metadata = metadata.filter(short_name__in=options['meta'])
-                print("Only considering {}".format(options['meta']))
+            if options["meta"]:
+                metadata = metadata.filter(short_name__in=options["meta"])
+                print("Only considering {}".format(options["meta"]))
 
             # Starting the real stuff
-            log = ["<h4> Updating the metadata #" + str(new_log_num) + " - " + str(timezone.now()) + "</h4>\n<p><ul>"]
+            log = [
+                "<h4> Updating the metadata #"
+                + str(new_log_num)
+                + " - "
+                + str(timezone.now())
+                + "</h4>\n<p><ul>"
+            ]
             multiproc = False
             start_time = timezone.now()
             if multiproc:
@@ -98,7 +113,10 @@ class Command(BaseCommand):
 
             # Closing the log
             log.append("\n<p>Metadata updated in ")
-            log.append(str((timezone.now() - start_time).total_seconds() / 60) + " minutes</p>\n")
+            log.append(
+                str((timezone.now() - start_time).total_seconds() / 60)
+                + " minutes</p>\n"
+            )
 
             # Collecting statics at the end
             print("Finished, collecting statics")
@@ -106,14 +124,21 @@ class Command(BaseCommand):
 
         except Exception as e:
             # If an exception occured during runtime, we log it and continue
-            log.append("\n</ul>\n<p><strong>" + str(e) + "<br>\n" + str(traceback.format_exc()) + "</strong></p>")
+            log.append(
+                "\n</ul>\n<p><strong>"
+                + str(e)
+                + "<br>\n"
+                + str(traceback.format_exc())
+                + "</strong></p>"
+            )
             print(traceback.format_exc())
             print("Exception " + str(e))
 
         finally:
             # In any cases, we save the log
             Log.objects.create(
-                log=''.join(log),
+                log="".join(log),
                 log_type="metadata",
                 log_num=new_log_num,
-                publication_date=timezone.now())
+                publication_date=timezone.now(),
+            )
