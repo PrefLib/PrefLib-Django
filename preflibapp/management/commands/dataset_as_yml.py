@@ -34,5 +34,5 @@ class Command(BaseCommand):
         if not options["f"]:
             options["f"] = "dataset.yml"
 
-        with open(options["f"], "w") as f:
+        with open(options["f"], "w", encoding="utf-8") as f:
             yaml.dump(yml_data, f, default_flow_style=False, sort_keys=False)
