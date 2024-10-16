@@ -35,4 +35,4 @@ class Command(BaseCommand):
             options["f"] = "dataset.yml"
 
         with open(options["f"], "w", encoding="utf-8") as f:
-            yaml.dump(yml_data, f, default_flow_style=False, sort_keys=False)
+            yaml.dump(yml_data, f, default_flow_style=False, sort_keys=False, encoding='utf-8', allow_unicode=True)
