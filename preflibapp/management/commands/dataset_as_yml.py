@@ -28,7 +28,7 @@ class Command(BaseCommand):
                 "selected_studies": dataset.selected_studies,
                 "publication_date": dataset.publication_date,
                 "modification_date": dataset.modification_date,
-                "tags": [t.name for t in dataset.tags]
+                "tags": [t.name for t in dataset.tags.all()]
             })
 
         if not options["f"]:

@@ -2,3 +2,4 @@ Django
 numpy
 preflibtools
 django-distill
+pyyaml
